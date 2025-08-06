@@ -98,8 +98,8 @@ func displaySeatMap(booked []string) {
 	}
 }
 
-func BlockShow(ctx context.Context) {
-	fmt.Println("enter ID of show want to block")
+func ModerateShow(ctx context.Context) {
+	fmt.Println("enter id of show to be blocked")
 	var showID string
 	fmt.Scanf("%s", &showID)
 	shows := storage.LoadShows()
@@ -108,18 +108,31 @@ func BlockShow(ctx context.Context) {
 	for _, show := range shows {
 		if show.ID == showID {
 			requiredShow = &show
-			printShow(show)
+			printShow(*requiredShow)
 			found = true
 		}
 	}
 	if !found {
-		fmt.Println("Show not found, please enter correct ID")
+		fmt.Println("show not found, please enter correct ID")
 	} else {
-		fmt.Printf("Are you sure you want to block the show: y/n")
-		var choice string
-		fmt.Scanf("%s", choice)
-		if choice == "y" {
+		if !requiredShow.IsBlocked {
+			fmt.Print("Are you sure you want to unblock the show: y/n")
 			requiredShow.IsBlocked = true
+		} else {
+			fmt.Printf("Are you sure you want to block the user: y/n")
+			var choice string
+			fmt.Scanf("%s", choice)
+			if choice == "y" {
+				requiredShow.IsBlocked = true
+			}
 		}
+	}
+	storage.SaveShows(shows)
+}
+
+func ViewBlockedShows(ctx context.Context) {
+	shows := storage.LoadShows()
+	for _, show := range shows {
+		printShow(show)
 	}
 }

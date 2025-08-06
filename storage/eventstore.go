@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/json"
+	"eventro/config"
 	"eventro/models"
 	"log"
 	"os"
@@ -20,4 +21,13 @@ func LoadEvents() []models.Event {
 	}
 
 	return events
+}
+
+func SaveEvents(events []models.Event) error {
+	data, err := json.MarshalIndent(events, "", "")
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(config.EventsFile, data, 0644)
+	return err
 }

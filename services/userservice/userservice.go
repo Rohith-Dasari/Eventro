@@ -8,7 +8,7 @@ import (
 )
 
 func ModerateUser(ctx context.Context) {
-	fmt.Println("enter mailid of user want to block")
+	fmt.Println("enter mail id of user to be blocked")
 	var userMailID string
 	fmt.Scanf("%s", &userMailID)
 	users := storage.LoadUsers()
@@ -24,20 +24,27 @@ func ModerateUser(ctx context.Context) {
 	if !found {
 		fmt.Println("User not found, please enter correct ID")
 	} else {
-		if requiredUser.Role != "blocked" {
+		if !requiredUser.IsBlocked {
 			fmt.Print("Are you sure you want to unblock the user: y/n")
-			requiredUser.isBlocked = true
+			requiredUser.IsBlocked = true
 		} else {
 			fmt.Printf("Are you sure you want to block the user: y/n")
 			var choice string
 			fmt.Scanf("%s", choice)
 			if choice == "y" {
-				requiredUser.isBlocked = true
+				requiredUser.IsBlocked = true
 			}
 		}
 	}
+	storage.SaveUsers(users)
 }
 func ViewBlockedUsers(ctx context.Context) {
+	users := storage.LoadUsers()
+	for _, user := range users {
+		if user.IsBlocked {
+			PrintUser(user)
+		}
+	}
 
 }
 

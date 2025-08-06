@@ -18,6 +18,8 @@ type Event struct {
 	Artists     []string      `json:"artists"`
 	Duration    string        `json:"duration"`
 	Category    EventCategory `json:"category"`
+	IsBlocked   bool          `json:"is_blocked"`
+	Locations   []string      `json:"locations"`
 }
 
 func (e *Event) AddHype() {

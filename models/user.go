@@ -15,4 +15,5 @@ type User struct {
 	PhoneNumber string `json:"phone_number"`
 	Password    string `json:"password"`
 	Role        Role   `json:"role"`
+	IsBlocked   bool   `json:"is_blocked"`
 }

@@ -21,3 +21,12 @@ func LoadShows() []models.Show {
 	}
 	return shows
 }
+
+func SaveShows(shows []models.Show) error {
+	data, err := json.MarshalIndent(shows, "", "")
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(config.ShowsFile, data, 0644)
+	return err
+}

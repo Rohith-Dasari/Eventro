@@ -23,7 +23,7 @@ func LoginFlow(ctx context.Context) context.Context {
 	user, err := authorisation.ValidateLogin(users, email, password)
 	ctx = context.WithValue(ctx, config.UserIDKey, user.UserID)
 	ctx = context.WithValue(ctx, config.UserRoleKey, user.Role)
-	if err != nil {
+	if err != nil || user.IsBlocked {
 		fmt.Println("Login failed:", err)
 		return ctx
 	}
@@ -67,6 +67,7 @@ func SignupFlow(ctx context.Context) context.Context {
 		PhoneNumber: phoneNumber,
 		Password:    hashedPassword,
 		Role:        role,
+		IsBlocked:   false,
 	}
 
 	users = append(users, newUser)
