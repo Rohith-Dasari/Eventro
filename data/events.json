@@ -1,0 +1,47 @@
+[
+  {
+    "id": "E001",
+    "name": "Rocking Nights",
+    "description": "A live rock concert featuring top bands.",
+    "hype_meter": 87,
+    "artists": ["The Firebeats", "Echo Storm"],
+    "duration": "3h",
+    "category": "concert"
+  },
+  {
+    "id": "E002",
+    "name": "Football Mania",
+    "description": "Live screening of the World Cup finals.",
+    "hype_meter": 95,
+    "artists": [],
+    "duration": "2.5h",
+    "category": "sports"
+  },
+  {
+    "id": "E003",
+    "name": "Go Workshop",
+    "description": "Golang workshop for developers.",
+    "hype_meter": 100,
+    "artists": ["Utkarsh sir", "Aarushi ma'am"],
+    "duration": "3h",
+    "category": "workshop"
+  },
+  {
+    "id": "E004",
+    "name": "Superman",
+    "description": "American Superhero film",
+    "hype_meter": 80,
+    "artists": ["Lead Actor: David Corenswet", "Director: James Gunn"],
+    "duration": "2h",
+    "category": "movie"
+  },
+  {
+    "id": "E005",
+    "name": "Neon Night Party",
+    "description": "A glow-in-the-dark EDM party.",
+    "hype_meter": 90,
+    "artists": ["DJ Vibe", "LunaMix"],
+    "duration": "4h",
+    "category": "party"
+  }
+]

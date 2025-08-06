@@ -1,0 +1,57 @@
+[
+  {
+    "id": "S001",
+    "host_id": "H001",
+    "venue_id": "V001",
+    "event_id": "E001",
+    "created_at": "2025-08-01T10:00:00Z",
+    "is_blocked": false,
+    "price": 499.00,
+    "show_time": "2025-08-10T19:00:00",
+    "booked_seats": ["A1", "A2", "B5"]
+  },
+  {
+    "id": "S002",
+    "host_id": "H002",
+    "venue_id": "V002",
+    "event_id": "E002",
+    "created_at": "2025-08-02T11:30:00Z",
+    "is_blocked": false,
+    "price": 350.00,
+    "show_time": "2025-08-12T21:00:00",
+    "booked_seats": ["C3", "C4", "D1"]
+  },
+  {
+    "id": "S003",
+    "host_id": "H003",
+    "venue_id": "V003",
+    "event_id": "E003",
+    "created_at": "2025-08-03T09:45:00Z",
+    "is_blocked": true,
+    "price": 299.00,
+    "show_time": "2025-08-15T15:30:00",
+    "booked_seats": []
+  },
+  {
+    "id": "S004",
+    "host_id": "H004",
+    "venue_id": "V001",
+    "event_id": "E004",
+    "created_at": "2025-08-04T14:15:00Z",
+    "is_blocked": false,
+    "price": 250.00,
+    "show_time": "2025-08-16T18:00:00",
+    "booked_seats": ["F1", "F2", "F3", "F4"]
+  },
+  {
+    "id": "S005",
+    "host_id": "H005",
+    "venue_id": "V002",
+    "event_id": "E005",
+    "created_at": "2025-08-04T16:00:00Z",
+    "is_blocked": false,
+    "price": 799.00,
+    "show_time": "2025-08-18T22:00:00",
+    "booked_seats": []
+  }
+]

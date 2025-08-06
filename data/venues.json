@@ -1,0 +1,34 @@
+[
+  {
+    "id": "V001",
+    "name": "Galaxy Hall",
+    "host_id": "H001",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "is_seat_layout_required": true
+  },
+  {
+    "id": "V002",
+    "name": "Sunset Grounds",
+    "host_id": "H002",
+    "city": "Delhi",
+    "state": "Delhi",
+    "is_seat_layout_required": false
+  },
+  {
+    "id": "V003",
+    "name": "Goa Beach Arena",
+    "host_id": "H003",
+    "city": "Goa",
+    "state": "Goa",
+    "is_seat_layout_required": false
+  },
+  {
+    "id": "V004",
+    "name": "Tech Convention Center",
+    "host_id": "H004",
+    "city": "Bengaluru",
+    "state": "Karnataka",
+    "is_seat_layout_required": true
+  }
+]
