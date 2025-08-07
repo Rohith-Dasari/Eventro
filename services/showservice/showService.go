@@ -6,6 +6,7 @@ import (
 	"eventro/config"
 	"eventro/models"
 	"eventro/storage"
+	utils "eventro/utils/userinput"
 	"fmt"
 	"os"
 	"strings"
@@ -189,4 +190,40 @@ func CreateShow(ctx context.Context) {
 
 	fmt.Println("Show created successfully:")
 	fmt.Printf("%+v\n", show)
+}
+
+func BrowseHostShows(ctx context.Context) {
+	shows := storage.LoadShows()
+	for _, show := range shows {
+		if show.HostID == config.GetUserID(ctx) {
+			printShow(show)
+			displaySeatMap(show.BookedSeats)
+		}
+	}
+}
+
+func RemoveHostShows(ctx context.Context) {
+	fmt.Println("Enter show id need to be removed")
+	reader := bufio.NewReader(os.Stdin)
+	showID, _ := reader.ReadString('\n')
+	showID = strings.TrimSpace(showID)
+	shows := storage.LoadShows()
+	for index, show := range shows {
+		if show.ID == showID {
+			if show.HostID == config.GetUserID(ctx) {
+				printShow(show)
+				fmt.Println("Are you sure you want to delete this ")
+				fmt.Println("1. yes 2. no, go back")
+				choice, _ := utils.TakeUserInput()
+				if choice == 1 {
+					shows = append(shows[:index], shows[index+1:]...)
+					storage.SaveShows(shows)
+				}
+			} else {
+				fmt.Println("You dont have access to remove this show")
+			}
+		} else {
+			fmt.Println("show not found")
+		}
+	}
 }

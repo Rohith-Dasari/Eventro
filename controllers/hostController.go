@@ -24,7 +24,7 @@ func ShowHostDashboard(ctx context.Context) {
 	case 2:
 		showservice.BrowseHostShows(ctx)
 	case 3:
-		showservice.RemoveShows(ctx)
+		showservice.RemoveHostShows(ctx)
 	case 4:
 		venueservice.AddVenue(ctx)
 	case 5:
