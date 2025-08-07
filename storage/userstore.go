@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/json"
+	"eventro/config"
 	"eventro/models"
 	"log"
 	"os"
@@ -38,7 +39,7 @@ func SaveUsers(users []models.User) error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile("data/users.json", data, 0644)
+	err = os.WriteFile(config.VenuesFile, data, 0644)
 	return err
 
 }

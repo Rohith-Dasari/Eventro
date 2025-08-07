@@ -9,6 +9,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 func BrowseShowsByEvent(eventID string, shows []models.Show) {
@@ -141,4 +144,49 @@ func ViewBlockedShows(ctx context.Context) {
 	for _, show := range shows {
 		printShow(show)
 	}
+}
+
+func CreateShow(ctx context.Context) {
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print("Enter Venue ID: ")
+	venueID, _ := reader.ReadString('\n')
+
+	fmt.Print("Enter Event ID: ")
+	eventID, _ := reader.ReadString('\n')
+
+	fmt.Print("Enter Price: ")
+	var price float64
+	fmt.Scanf("%f\n", &price)
+
+	fmt.Print("Enter Show Date (YYYY-MM-DD): ")
+	showDate, _ := reader.ReadString('\n')
+
+	fmt.Print("Enter Show Time (HH:MM): ")
+	showTime, _ := reader.ReadString('\n')
+
+	venueID = strings.TrimSpace(venueID)
+	eventID = strings.TrimSpace(eventID)
+	showDate = strings.TrimSpace(showDate)
+	showTime = strings.TrimSpace(showTime)
+
+	show := models.Show{
+		ID:          uuid.New().String(),
+		HostID:      config.GetUserID(ctx),
+		VenueID:     venueID,
+		EventID:     eventID,
+		CreatedAt:   time.Now().Format(time.RFC3339),
+		IsBlocked:   false,
+		Price:       price,
+		ShowDate:    showDate,
+		ShowTime:    showTime,
+		BookedSeats: []string{},
+	}
+
+	shows := storage.LoadShows()
+	shows = append(shows, show)
+	storage.SaveShows(shows)
+
+	fmt.Println("Show created successfully:")
+	fmt.Printf("%+v\n", show)
 }

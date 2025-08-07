@@ -24,3 +24,12 @@ func LoadVenues() []models.Venue {
 	}
 	return venues
 }
+
+func SaveVenues(venues []models.Venue) error {
+	data, err := json.MarshalIndent(venues, "", " ")
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(config.VenuesFile, data, 0644)
+	return err
+}
