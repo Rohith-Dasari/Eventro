@@ -12,15 +12,12 @@ func TakeUserInput() (int, error) {
 	reader := bufio.NewReader(os.Stdin)
 	input, err := reader.ReadString('\n')
 	if err != nil {
-		fmt.Println("Error reading input:", err)
-		return 0, err
+		return 0, fmt.Errorf("error reading input: %w", err)
 	}
 	input = strings.TrimSpace(input)
 	choice, err := strconv.Atoi(input)
 	if err != nil {
-		fmt.Println("Invalid input. Please enter a number.")
-		return 0, err
+		return 0, fmt.Errorf("invalid input: %w", err)
 	}
-
 	return choice, nil
 }

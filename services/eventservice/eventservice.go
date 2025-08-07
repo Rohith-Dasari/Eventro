@@ -3,8 +3,8 @@ package eventservice
 import (
 	"bufio"
 	"context"
-	"eventro/models"
-	"eventro/storage"
+	"eventro2/models"
+	eventsrepository "eventro2/repository/event_repository"
 	"fmt"
 	"os"
 	"strconv"
@@ -13,83 +13,70 @@ import (
 	"github.com/google/uuid"
 )
 
-func ModerateEvents(ctx context.Context) {
-	fmt.Println("enter id of event of show to be blocked")
+type EventService struct {
+	EventRepo eventsrepository.EventRepository
+}
+
+func NewEventService(eventRepo eventsrepository.EventRepository) *EventService {
+	return &EventService{EventRepo: eventRepo}
+}
+
+func (e *EventService) ModerateEvents(ctx context.Context) {
+	fmt.Println("Enter ID of the event/show to be moderated:")
 	var eventID string
 	fmt.Scanf("%s", &eventID)
-	events := storage.LoadEvents()
+
+	events := e.EventRepo.Events
 	var requiredEvent *models.Event
 	var found bool
-	for _, event := range events {
-		if event.ID == eventID {
-			requiredEvent = &event
-			PrintEvent(*requiredEvent)
+
+	for i := range events {
+		if events[i].ID == eventID {
+			requiredEvent = &events[i]
+			e.PrintEvent(*requiredEvent)
 			found = true
+			break
 		}
 	}
+
 	if !found {
-		fmt.Println("event not found, please enter correct ID")
+		fmt.Println("Event not found. Please enter a correct ID.")
+		return
+	}
+
+	if requiredEvent.IsBlocked {
+		fmt.Print("Are you sure you want to UNBLOCK the event? (y/n): ")
 	} else {
-		if !requiredEvent.IsBlocked {
-			fmt.Print("Are you sure you want to unblock the show: y/n")
-			requiredEvent.IsBlocked = true
-		} else {
-			fmt.Printf("Are you sure you want to block the user: y/n")
-			var choice string
-			fmt.Scanf("%s", choice)
-			if choice == "y" {
-				requiredEvent.IsBlocked = true
-			}
+		fmt.Print("Are you sure you want to BLOCK the event? (y/n): ")
+	}
+
+	var choice string
+	fmt.Scanf("%s", &choice)
+
+	if strings.ToLower(choice) == "y" {
+		requiredEvent.IsBlocked = !requiredEvent.IsBlocked
+		status := "unblocked"
+		if requiredEvent.IsBlocked {
+			status = "blocked"
 		}
+		fmt.Printf("Event successfully %s.\n", status)
+	} else {
+		fmt.Println("Action canceled.")
 	}
-	storage.SaveEvents(events)
+
+	e.EventRepo.SaveEvents(events)
 }
 
-func PrintEvent(e models.Event) {
-	fmt.Println("-------------")
-	fmt.Printf("ID: %s\n", e.ID)
-	fmt.Printf("Name: %s\n", e.Name)
-	fmt.Printf("Description: %s\n", e.Description)
-	fmt.Printf("Hype Meter: %d\n", e.HypeMeter)
-	fmt.Printf("Duration: %s\n", e.Duration)
-	fmt.Printf("Category: %s\n", e.Category)
-	if len(e.Artists) > 0 {
-		fmt.Printf("Artists: %s\n", strings.Join(e.Artists, ", "))
-	}
-	fmt.Println("-------------")
-}
-
-func ViewBlockedEvents(ctx context.Context) {
-	events := storage.LoadEvents()
+func (e *EventService) ViewBlockedEvents(ctx context.Context) {
+	events := e.EventRepo.Events
 	for _, event := range events {
 		if event.IsBlocked {
-			PrintEvent(event)
+			e.PrintEvent(event)
 		}
 	}
 }
 
-type EventBuilder struct {
-	Event models.Event
-}
-
-func NewEventBuilder() *EventBuilder {
-	return &EventBuilder{}
-}
-
-func (e *EventBuilder) AddName(name string) *EventBuilder {
-	e.Event.Name = name
-	return e
-}
-
-func (e *EventBuilder) AddDescription() *EventBuilder {
-	var description string
-	fmt.Println("enter description")
-	fmt.Scanf("%s", description)
-	e.Event.Description = description
-	return e
-}
-
-func CreateNewEvent() models.Event {
+func (e *EventService) CreateNewEvent() models.Event {
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Enter event name: ")
@@ -100,27 +87,30 @@ func CreateNewEvent() models.Event {
 	description, _ := reader.ReadString('\n')
 	description = strings.TrimSpace(description)
 
-	fmt.Print("Enter Number of artists : ")
+	fmt.Print("Enter number of artists: ")
 	var numArtists int
-	artists := make([]string, numArtists)
 	fmt.Scanf("%d", &numArtists)
+
+	reader.ReadString('\n')
+	artists := make([]string, numArtists)
 	for i := 0; i < numArtists; i++ {
+		fmt.Printf("Enter artist %d: ", i+1)
 		artist, _ := reader.ReadString('\n')
-		artist = strings.TrimSpace(artist)
-		artists[i] = artist
+		artists[i] = strings.TrimSpace(artist)
 	}
 
-	fmt.Print("Enter event duration (e.g. 2h30m): ")
+	fmt.Print("Enter event duration (e.g., 2h30m): ")
 	duration, _ := reader.ReadString('\n')
 	duration = strings.TrimSpace(duration)
-	var category models.EventCategory
 
+	var category models.EventCategory
 	for {
 		fmt.Println("Select category:")
-		fmt.Printf("1. %s 2.%s 3.%s 4.%s 5.%s", models.Movie, models.Sports, models.Concert, models.Party, models.Workshop)
+		fmt.Printf("1. %s\n2. %s\n3. %s\n4. %s\n5. %s\n", models.Movie, models.Sports, models.Concert, models.Party, models.Workshop)
 		catChoice, _ := reader.ReadString('\n')
 		catChoice = strings.TrimSpace(catChoice)
-		cat, _ := strconv.Atoi(strings.TrimSpace(catChoice))
+		cat, _ := strconv.Atoi(catChoice)
+
 		switch cat {
 		case 1:
 			category = models.Movie
@@ -148,4 +138,18 @@ func CreateNewEvent() models.Event {
 		Category:    category,
 		IsBlocked:   false,
 	}
+}
+
+func (e *EventService) PrintEvent(event models.Event) {
+	fmt.Println("-------------")
+	fmt.Printf("ID: %s\n", event.ID)
+	fmt.Printf("Name: %s\n", event.Name)
+	fmt.Printf("Description: %s\n", event.Description)
+	fmt.Printf("Hype Meter: %d\n", event.HypeMeter)
+	fmt.Printf("Duration: %s\n", event.Duration)
+	fmt.Printf("Category: %s\n", event.Category)
+	if len(event.Artists) > 0 {
+		fmt.Printf("Artists: %s\n", strings.Join(event.Artists, ", "))
+	}
+	fmt.Println("-------------")
 }

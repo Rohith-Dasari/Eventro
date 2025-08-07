@@ -3,10 +3,10 @@ package venueservice
 import (
 	"bufio"
 	"context"
-	"eventro/config"
-	"eventro/models"
-	"eventro/storage"
-	utils "eventro/utils/userinput"
+	"eventro2/config"
+	"eventro2/models"
+	venuerepository "eventro2/repository/venue_repository"
+	utils "eventro2/utils/userinput"
 	"fmt"
 	"os"
 	"strings"
@@ -14,14 +14,19 @@ import (
 	"github.com/google/uuid"
 )
 
-func AddVenue(ctx context.Context) {
+type VenueService struct {
+	VenueRepo venuerepository.VenueRepository
+}
+
+func NewVenueService(repo venuerepository.VenueRepository) *VenueService {
+	return &VenueService{VenueRepo: repo}
+}
+
+func (vs *VenueService) AddVenue(ctx context.Context) {
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Enter Venue Name: ")
 	name, _ := reader.ReadString('\n')
-
-	fmt.Print("Enter Host ID: ")
-	hostID, _ := reader.ReadString('\n')
 
 	fmt.Print("Enter City: ")
 	city, _ := reader.ReadString('\n')
@@ -33,69 +38,69 @@ func AddVenue(ctx context.Context) {
 	seatLayoutInput, _ := reader.ReadString('\n')
 
 	name = strings.TrimSpace(name)
-	hostID = strings.TrimSpace(hostID)
 	city = strings.TrimSpace(city)
 	state = strings.TrimSpace(state)
-	seatLayoutInput = strings.TrimSpace(strings.ToLower(seatLayoutInput))
-	var isSeatLayoutRequired bool
-	if seatLayoutInput == "y" {
-		isSeatLayoutRequired = true
-	} else {
-		isSeatLayoutRequired = false
-	}
+	seatLayoutInput = strings.ToLower(strings.TrimSpace(seatLayoutInput))
+
+	isSeatLayoutRequired := seatLayoutInput == "y"
+
 	venue := models.Venue{
 		ID:                   uuid.New().String(),
 		Name:                 name,
-		HostID:               hostID,
+		HostID:               config.GetUserID(ctx),
 		City:                 city,
 		State:                state,
 		IsSeatLayoutRequired: isSeatLayoutRequired,
 	}
-	venues := storage.LoadVenues()
+
+	venues := vs.VenueRepo.Venues
 	venues = append(venues, venue)
-	storage.SaveVenues(venues)
+	vs.VenueRepo.SaveVenues(venues)
+
 	fmt.Println("Venue created successfully:")
-	fmt.Printf("%+v\n", venue)
+	vs.PrintVenue(venue)
 }
-func BrowseHostVenues(ctx context.Context) {
-	venues := storage.LoadVenues()
+
+func (vs *VenueService) BrowseHostVenues(ctx context.Context) {
+	venues := vs.VenueRepo.Venues
 	for _, venue := range venues {
 		if venue.HostID == config.GetUserID(ctx) {
-			PrintVenue(venue)
+			vs.PrintVenue(venue)
 		}
 	}
-
 }
 
-func RemoveVenue(ctx context.Context) {
-	fmt.Println("Enter Venue id need to be removed")
+func (vs *VenueService) RemoveVenue(ctx context.Context) {
 	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter Venue ID to remove: ")
 	venueID, _ := reader.ReadString('\n')
 	venueID = strings.TrimSpace(venueID)
-	venues := storage.LoadVenues()
 
-	for index, venue := range venues {
+	venues := vs.VenueRepo.Venues
+	for i, venue := range venues {
 		if venue.ID == venueID {
-			if venue.HostID == config.GetUserID(ctx) {
-				PrintVenue(venue)
-				fmt.Println("Are you sure you want to delete this ")
-				fmt.Println("1. yes 2. no, go back")
-				choice, _ := utils.TakeUserInput()
-				if choice == 1 {
-					venues = append(venues[:index], venues[index+1:]...)
-					storage.SaveVenues(venues)
-				}
-			} else {
-				fmt.Println("You dont have access to remove the venue.")
-
+			if venue.HostID != config.GetUserID(ctx) {
+				fmt.Println("Unauthorized: You cannot remove this venue.")
+				return
 			}
-		} else {
-			fmt.Println("Venue not found")
+
+			vs.PrintVenue(venue)
+			fmt.Println("Are you sure you want to delete this venue?")
+			fmt.Println("1. Yes")
+			fmt.Println("2. No")
+			choice, _ := utils.TakeUserInput()
+			if choice == 1 {
+				venues = append(venues[:i], venues[i+1:]...)
+				vs.VenueRepo.SaveVenues(venues)
+				fmt.Println("Venue removed successfully.")
+			}
+			return
 		}
 	}
+	fmt.Println("Venue not found.")
 }
 
-func PrintVenue(venue models.Venue) {
+func (vs *VenueService) PrintVenue(venue models.Venue) {
 	fmt.Println("Venue Details:")
 	fmt.Println("ID:                    ", venue.ID)
 	fmt.Println("Name:                  ", venue.Name)

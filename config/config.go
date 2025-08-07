@@ -1,7 +1,7 @@
 package config
 
 import (
-	"eventro/models"
+	"eventro2/models"
 
 	"github.com/fatih/color"
 )

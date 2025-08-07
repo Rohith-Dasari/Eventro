@@ -3,10 +3,11 @@ package showservice
 import (
 	"bufio"
 	"context"
-	"eventro/config"
-	"eventro/models"
-	"eventro/storage"
-	utils "eventro/utils/userinput"
+	"eventro2/config"
+	"eventro2/models"
+	showrepository "eventro2/repository/show_repository"
+	venuerepository "eventro2/repository/venue_repository"
+	utils "eventro2/utils/userinput"
 	"fmt"
 	"os"
 	"strings"
@@ -15,19 +16,29 @@ import (
 	"github.com/google/uuid"
 )
 
-func BrowseShowsByEvent(eventID string, shows []models.Show) {
-	//unmarshall shows file into slices of shows and display shows which has the eventID and date same as selected
+type ShowService struct {
+	ShowRepo  showrepository.ShowRepository
+	VenueRepo venuerepository.VenueRepository
+}
+
+func NewShowService(showRepo showrepository.ShowRepository, venueRepo venuerepository.VenueRepository) *ShowService {
+	return &ShowService{
+		ShowRepo:  showRepo,
+		VenueRepo: venueRepo,
+	}
+}
+
+func (s *ShowService) BrowseShowsByEvent(ctx context.Context, eventID string) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter the date you want to book for (YYYY-MM-DD): ")
 	inputDate, _ := reader.ReadString('\n')
 	inputDate = strings.TrimSpace(inputDate)
+
+	shows := s.ShowRepo.Shows
 	found := false
-	fmt.Printf("Available Shows for the Event:\n")
 	for _, show := range shows {
 		if show.EventID == eventID && show.ShowDate == inputDate && !show.IsBlocked {
-			printShow(show)
-			//create map of show and venue(name, city )
-			//
+			s.printShow(show)
 			found = true
 		}
 	}
@@ -36,9 +47,9 @@ func BrowseShowsByEvent(eventID string, shows []models.Show) {
 	}
 }
 
-func DisplayShow(showID string, shows []models.Show) {
+func (s *ShowService) DisplayShow(ctx context.Context, showID string) {
+	shows := s.ShowRepo.Shows
 	var selectedShow *models.Show
-
 	for i := range shows {
 		if shows[i].ID == showID {
 			selectedShow = &shows[i]
@@ -47,11 +58,11 @@ func DisplayShow(showID string, shows []models.Show) {
 	}
 
 	if selectedShow == nil {
-		fmt.Println("Show not found")
+		fmt.Println("Show not found.")
 		return
 	}
 
-	venues := storage.LoadVenues()
+	venues := s.VenueRepo.Venues
 	var venue *models.Venue
 	for i := range venues {
 		if venues[i].ID == selectedShow.VenueID {
@@ -59,32 +70,161 @@ func DisplayShow(showID string, shows []models.Show) {
 			break
 		}
 	}
+
 	if venue == nil {
 		fmt.Println("Venue not found.")
 		return
 	}
+
 	fmt.Println("Show Details")
 	fmt.Printf("Show ID: %s\n", selectedShow.ID)
 	fmt.Printf("Venue: %s (%s, %s)\n", venue.Name, venue.City, venue.State)
 	fmt.Printf("Price per ticket: ₹%.2f\n", selectedShow.Price)
 	if venue.IsSeatLayoutRequired {
 		fmt.Println("([X] = Booked)")
-		displaySeatMap(selectedShow.BookedSeats)
+		s.displaySeatMap(selectedShow.BookedSeats)
 	} else {
 		fmt.Println("This venue does not have a seat layout.")
-		fmt.Println("How many tickets do you want to book")
 	}
 }
 
-func printShow(s models.Show) {
-	//venue as well-
-	fmt.Printf("Show ID: %s\n", s.ID)
-	fmt.Printf("Show Time: %s\n", s.ShowTime)
-	fmt.Printf("Price: ₹%.2f\n", s.Price)
+func (s *ShowService) ModerateShow(ctx context.Context) {
+	fmt.Println("Enter ID of show to moderate:")
+	var showID string
+	fmt.Scanf("%s", &showID)
+
+	shows := s.ShowRepo.Shows
+	var requiredShow *models.Show
+	var found bool
+	for i := range shows {
+		if shows[i].ID == showID {
+			requiredShow = &shows[i]
+			s.printShow(*requiredShow)
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		fmt.Println("Show not found.")
+		return
+	}
+
+	reader := bufio.NewReader(os.Stdin)
+	if requiredShow.IsBlocked {
+		fmt.Print("Unblock this show? (y/n): ")
+	} else {
+		fmt.Print("Block this show? (y/n): ")
+	}
+	choice, _ := reader.ReadString('\n')
+	if strings.TrimSpace(choice) == "y" {
+		requiredShow.IsBlocked = !requiredShow.IsBlocked
+		fmt.Println("Show moderation status changed.")
+		s.ShowRepo.SaveShows(shows)
+	} else {
+		fmt.Println("No changes made.")
+	}
+}
+
+func (s *ShowService) ViewBlockedShows(ctx context.Context) {
+	shows := s.ShowRepo.Shows
+	for _, show := range shows {
+		if show.IsBlocked {
+			s.printShow(show)
+		}
+	}
+}
+
+func (s *ShowService) CreateShow(ctx context.Context) {
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print("Enter Venue ID: ")
+	venueID, _ := reader.ReadString('\n')
+
+	fmt.Print("Enter Event ID: ")
+	eventID, _ := reader.ReadString('\n')
+
+	fmt.Print("Enter Price: ")
+	var price float64
+	fmt.Scanf("%f\n", &price)
+
+	fmt.Print("Enter Show Date (YYYY-MM-DD): ")
+	showDate, _ := reader.ReadString('\n')
+
+	fmt.Print("Enter Show Time (HH:MM): ")
+	showTime, _ := reader.ReadString('\n')
+
+	show := models.Show{
+		ID:          uuid.New().String(),
+		HostID:      config.GetUserID(ctx),
+		VenueID:     strings.TrimSpace(venueID),
+		EventID:     strings.TrimSpace(eventID),
+		CreatedAt:   time.Now().Format(time.RFC3339),
+		IsBlocked:   false,
+		Price:       price,
+		ShowDate:    strings.TrimSpace(showDate),
+		ShowTime:    strings.TrimSpace(showTime),
+		BookedSeats: []string{},
+	}
+
+	shows := s.ShowRepo.Shows
+	shows = append(shows, show)
+	s.ShowRepo.SaveShows(shows)
+
+	fmt.Println("Show created successfully:")
+	s.printShow(show)
+}
+
+func (s *ShowService) BrowseHostShows(ctx context.Context) {
+	shows := s.ShowRepo.Shows
+	for _, show := range shows {
+		if show.HostID == config.GetUserID(ctx) {
+			s.printShow(show)
+			s.displaySeatMap(show.BookedSeats)
+		}
+	}
+}
+
+func (s *ShowService) RemoveHostShow(ctx context.Context) {
+	fmt.Print("Enter Show ID to remove: ")
+	reader := bufio.NewReader(os.Stdin)
+	showID, _ := reader.ReadString('\n')
+	showID = strings.TrimSpace(showID)
+
+	shows := s.ShowRepo.Shows
+	for i, show := range shows {
+		if show.ID == showID {
+			if show.HostID != config.GetUserID(ctx) {
+				fmt.Println("Unauthorized: You cannot delete this show.")
+				return
+			}
+
+			s.printShow(show)
+			fmt.Println("Are you sure you want to delete this show?")
+			fmt.Println("1. Yes")
+			fmt.Println("2. No")
+			choice, _ := utils.TakeUserInput()
+			if choice == 1 {
+				shows = append(shows[:i], shows[i+1:]...)
+				s.ShowRepo.SaveShows(shows)
+				fmt.Println("Show removed successfully.")
+			}
+			return
+		}
+	}
+	fmt.Println("Show not found.")
+}
+
+func (s *ShowService) printShow(show models.Show) {
+	fmt.Println("-------------------------")
+	fmt.Printf("Show ID: %s\n", show.ID)
+	fmt.Printf("Show Date: %s\n", show.ShowDate)
+	fmt.Printf("Show Time: %s\n", show.ShowTime)
+	fmt.Printf("Price: ₹%.2f\n", show.Price)
 	fmt.Println("-------------------------")
 }
 
-func displaySeatMap(booked []string) {
+func (s *ShowService) displaySeatMap(booked []string) {
 	const rows = 10
 	const cols = 10
 
@@ -105,125 +245,5 @@ func displaySeatMap(booked []string) {
 			}
 		}
 		fmt.Println()
-	}
-}
-
-func ModerateShow(ctx context.Context) {
-	fmt.Println("enter id of show to be blocked")
-	var showID string
-	fmt.Scanf("%s", &showID)
-	shows := storage.LoadShows()
-	var requiredShow *models.Show
-	var found bool
-	for _, show := range shows {
-		if show.ID == showID {
-			requiredShow = &show
-			printShow(*requiredShow)
-			found = true
-		}
-	}
-	if !found {
-		fmt.Println("show not found, please enter correct ID")
-	} else {
-		if !requiredShow.IsBlocked {
-			fmt.Print("Are you sure you want to unblock the show: y/n")
-			requiredShow.IsBlocked = true
-		} else {
-			fmt.Printf("Are you sure you want to block the user: y/n")
-			var choice string
-			fmt.Scanf("%s", choice)
-			if choice == "y" {
-				requiredShow.IsBlocked = true
-			}
-		}
-	}
-	storage.SaveShows(shows)
-}
-
-func ViewBlockedShows(ctx context.Context) {
-	shows := storage.LoadShows()
-	for _, show := range shows {
-		printShow(show)
-	}
-}
-
-func CreateShow(ctx context.Context) {
-	reader := bufio.NewReader(os.Stdin)
-
-	fmt.Print("Enter Venue ID: ")
-	venueID, _ := reader.ReadString('\n')
-
-	fmt.Print("Enter Event ID: ")
-	eventID, _ := reader.ReadString('\n')
-
-	fmt.Print("Enter Price: ")
-	var price float64
-	fmt.Scanf("%f\n", &price)
-
-	fmt.Print("Enter Show Date (YYYY-MM-DD): ")
-	showDate, _ := reader.ReadString('\n')
-
-	fmt.Print("Enter Show Time (HH:MM): ")
-	showTime, _ := reader.ReadString('\n')
-
-	venueID = strings.TrimSpace(venueID)
-	eventID = strings.TrimSpace(eventID)
-	showDate = strings.TrimSpace(showDate)
-	showTime = strings.TrimSpace(showTime)
-
-	show := models.Show{
-		ID:          uuid.New().String(),
-		HostID:      config.GetUserID(ctx),
-		VenueID:     venueID,
-		EventID:     eventID,
-		CreatedAt:   time.Now().Format(time.RFC3339),
-		IsBlocked:   false,
-		Price:       price,
-		ShowDate:    showDate,
-		ShowTime:    showTime,
-		BookedSeats: []string{},
-	}
-
-	shows := storage.LoadShows()
-	shows = append(shows, show)
-	storage.SaveShows(shows)
-
-	fmt.Println("Show created successfully:")
-	fmt.Printf("%+v\n", show)
-}
-
-func BrowseHostShows(ctx context.Context) {
-	shows := storage.LoadShows()
-	for _, show := range shows {
-		if show.HostID == config.GetUserID(ctx) {
-			printShow(show)
-			displaySeatMap(show.BookedSeats)
-		}
-	}
-}
-
-func RemoveHostShows(ctx context.Context) {
-	fmt.Println("Enter show id need to be removed")
-	reader := bufio.NewReader(os.Stdin)
-	showID, _ := reader.ReadString('\n')
-	showID = strings.TrimSpace(showID)
-	shows := storage.LoadShows()
-	for index, show := range shows {
-		if show.ID == showID {
-			if show.HostID == config.GetUserID(ctx) {
-				printShow(show)
-				fmt.Println("Are you sure you want to delete this ")
-				fmt.Println("1. yes 2. no, go back")
-				choice, _ := utils.TakeUserInput()
-				if choice == 1 {
-					shows = append(shows[:index], shows[index+1:]...)
-					storage.SaveShows(shows)
-				}
-			} else {
-				fmt.Println("You dont have access to remove this show")
-			}
-		} else {
-			fmt.Println("show not found")
-		}
 	}
 }

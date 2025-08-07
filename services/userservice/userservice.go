@@ -2,54 +2,98 @@ package userservice
 
 import (
 	"context"
-	"eventro/models"
-	"eventro/storage"
+	"eventro2/models"
+	userrepository "eventro2/repository/user_repository"
+	utils "eventro2/utils/userinput"
 	"fmt"
 )
 
-func ModerateUser(ctx context.Context) {
-	fmt.Println("enter mail id of user to be blocked")
+type UserService struct {
+	UserRepo userrepository.UserRepository
+}
+
+func NewUserService(userRepo userrepository.UserRepository) *UserService {
+	return &UserService{UserRepo: userRepo}
+}
+
+func (u *UserService) ModerateUser(ctx context.Context) {
+	fmt.Println("Enter email ID of user to be moderated:")
 	var userMailID string
 	fmt.Scanf("%s", &userMailID)
-	users := storage.LoadUsers()
+
+	users := u.UserRepo.Users
 	var requiredUser *models.User
 	var found bool
-	for _, user := range users {
-		if user.Email == userMailID {
-			requiredUser = &user
-			PrintUser(user)
+
+	for i := range users {
+		if users[i].Email == userMailID {
+			requiredUser = &users[i]
+			u.PrintUser(users[i])
 			found = true
+			break
 		}
 	}
+
 	if !found {
-		fmt.Println("User not found, please enter correct ID")
-	} else {
-		if !requiredUser.IsBlocked {
-			fmt.Print("Are you sure you want to unblock the user: y/n")
-			requiredUser.IsBlocked = true
+		fmt.Println("User not found, please enter correct ID.")
+		return
+	}
+
+	if requiredUser.IsBlocked {
+		fmt.Println("Are you sure you want to UNBLOCK the user?")
+		fmt.Println("1. Yes")
+		fmt.Println("2. No")
+
+		choice, err := utils.TakeUserInput()
+		if err != nil || (choice != 1 && choice != 2) {
+			fmt.Println("Invalid choice. Aborting.")
+			return
+		}
+
+		if choice == 1 {
+			requiredUser.IsBlocked = false
+			fmt.Println("User unblocked.")
 		} else {
-			fmt.Printf("Are you sure you want to block the user: y/n")
-			var choice string
-			fmt.Scanf("%s", choice)
-			if choice == "y" {
-				requiredUser.IsBlocked = true
+			fmt.Println("Action canceled.")
+		}
+	} else {
+		fmt.Println("Are you sure you want to BLOCK the user?")
+		fmt.Println("1. Yes")
+		fmt.Println("2. No")
+
+		var choice int
+		for {
+			var err error
+			choice, err = utils.TakeUserInput()
+			if err != nil || (choice != 1 && choice != 2) {
+				fmt.Println("Invalid choice. Please enter 1 (Yes) or 2 (No).")
+				continue
 			}
+			break
+		}
+
+		if choice == 1 {
+			requiredUser.IsBlocked = true
+			fmt.Println("User blocked.")
+		} else {
+			fmt.Println("Action canceled.")
 		}
 	}
-	storage.SaveUsers(users)
+	u.UserRepo.SaveUsers(users)
 }
-func ViewBlockedUsers(ctx context.Context) {
-	users := storage.LoadUsers()
+
+func (u *UserService) ViewBlockedUsers(ctx context.Context) {
+	users := u.UserRepo.Users
 	for _, user := range users {
 		if user.IsBlocked {
-			PrintUser(user)
+			u.PrintUser(user)
 		}
 	}
 
 }
 
-func PrintUser(user models.User) {
-	fmt.Print("Username: ", user.Username)
-	fmt.Print("Email: ", user.Email)
-	fmt.Print("Phone Number: ", user.PhoneNumber)
+func (u *UserService) PrintUser(user models.User) {
+	fmt.Println("Username: ", user.Username)
+	fmt.Println("Email: ", user.Email)
+	fmt.Println("Phone Number: ", user.PhoneNumber)
 }

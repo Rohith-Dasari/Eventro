@@ -2,35 +2,43 @@ package controllers
 
 import (
 	"context"
-	"eventro/services/showservice"
-	"eventro/services/venueservice"
-	utils "eventro/utils/userinput"
+	showrepository "eventro2/repository/show_repository"
+	venuerepository "eventro2/repository/venue_repository"
+	"eventro2/services/showservice"
+	"eventro2/services/venueservice"
+	utils "eventro2/utils/userinput"
 	"fmt"
 )
 
 func ShowHostDashboard(ctx context.Context) {
-
 	fmt.Println("\n=== Host Dashboard ===")
-	// future: create event, view bookings, etc.
-	//add show, remove show,
-	//see host's shows booking info
-	//see host's venues
-	//add or remove venues
-	fmt.Println("1. Create a show 2. See Shows 3. Remove shows 4. Add a venue 5. See venues 6. Remove venue")
+	fmt.Println("1. Create a show")
+	fmt.Println("2. See Shows")
+	fmt.Println("3. Remove Shows")
+	fmt.Println("4. Add a Venue")
+	fmt.Println("5. See Venues")
+	fmt.Println("6. Remove Venue")
+
 	choice, _ := utils.TakeUserInput()
+	showRepo := showrepository.NewShowRepository()
+	venueRepo := venuerepository.NewVenueRepository()
+	showService := showservice.NewShowService(*showRepo, *venueRepo)
+	venueService := venueservice.NewVenueService(*venueRepo)
+
 	switch choice {
 	case 1:
-		showservice.CreateShow(ctx)
+		showService.CreateShow(ctx)
 	case 2:
-		showservice.BrowseHostShows(ctx)
+		showService.BrowseHostShows(ctx)
 	case 3:
-		showservice.RemoveHostShows(ctx)
+		showService.RemoveHostShow(ctx)
 	case 4:
-		venueservice.AddVenue(ctx)
+		venueService.AddVenue(ctx)
 	case 5:
-		venueservice.BrowseHostVenues(ctx)
+		venueService.BrowseHostVenues(ctx)
 	case 6:
-		venueservice.RemoveVenue(ctx)
+		venueService.RemoveVenue(ctx)
+	default:
+		fmt.Println("Invalid choice.")
 	}
-
 }

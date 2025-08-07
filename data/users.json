@@ -4,10 +4,10 @@
   "username": "rdasari",
   "email": "rohith@admin.com",
   "phone_number": "123456890",
-  "password": "$2a$10$AIr8u3pPN9E0ua7AepJ33eNR5R.Nmhsgsd/j.8O18RK0p/ub6Ug8y",
+  "password": "$2a$10$htuzf13.rtGtmvCySE8ereGV4NTAqwHRzYzQM.ID130Wz83koamwy",
   "role": "Admin",
   "is_blocked": false
- },
+},
  {
   "user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
   "username": "rdasari@gmail.com",

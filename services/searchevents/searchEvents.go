@@ -2,15 +2,26 @@ package searchevents
 
 import (
 	"bufio"
-	"eventro/config"
-	"eventro/models"
-	"eventro/storage"
+	"context"
+	"eventro2/config"
+	"eventro2/models"
+	eventrepository "eventro2/repository/event_repository"
 	"fmt"
 	"os"
 	"strings"
 )
 
-func Search() {
+type SearchService struct {
+	EventRepo eventrepository.EventRepository
+}
+
+func NewSearchService(repo eventrepository.EventRepository) *SearchService {
+	return &SearchService{
+		EventRepo: repo,
+	}
+}
+
+func (s *SearchService) Search(ctx context.Context) {
 	fmt.Println("Select how you want to search")
 	fmt.Println("1. Search by Event Name")
 	fmt.Println("2. Search by Category")
@@ -19,33 +30,32 @@ func Search() {
 	var choice int
 	fmt.Print(config.ChoiceMessage)
 	fmt.Scanf("%d\n", &choice)
+
 	switch choice {
 	case 1:
-		SearchByEventName()
+		s.SearchByEventName()
 	case 2:
-		SearchByCategory()
+		s.SearchByCategory()
 	case 3:
-		SearchByLocation()
+		s.SearchByLocation()
 	case 4:
 		return
+	default:
+		fmt.Println("Invalid choice.")
 	}
 }
 
-func SearchByEventName() {
-
-	fmt.Println("Enter the name of the event:")
-
+func (s *SearchService) SearchByEventName() {
 	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter the name of the event: ")
 	input, _ := reader.ReadString('\n')
 	query := strings.TrimSpace(input)
 
-	events := storage.LoadEvents()
-
 	var found bool
 	fmt.Println("Matching Events:")
-	for _, event := range events {
+	for _, event := range s.EventRepo.Events {
 		if strings.Contains(strings.ToLower(event.Name), strings.ToLower(query)) {
-			printEvent(event)
+			s.printEvent(event)
 			found = true
 		}
 	}
@@ -54,7 +64,7 @@ func SearchByEventName() {
 	}
 }
 
-func SearchByCategory() {
+func (s *SearchService) SearchByCategory() {
 	fmt.Println("Available Categories: movie, sports, concert, workshop, party")
 	fmt.Print("Enter category: ")
 
@@ -62,13 +72,11 @@ func SearchByCategory() {
 	input, _ := reader.ReadString('\n')
 	query := strings.ToLower(strings.TrimSpace(input))
 
-	events := storage.LoadEvents()
 	var found bool
-
 	fmt.Println("Events in selected category:")
-	for _, event := range events {
+	for _, event := range s.EventRepo.Events {
 		if strings.ToLower(string(event.Category)) == query {
-			printEvent(event)
+			s.printEvent(event)
 			found = true
 		}
 	}
@@ -77,44 +85,28 @@ func SearchByCategory() {
 	}
 }
 
-func SearchByLocation() {
-	fmt.Print("Enter city to search for events: ")
+func (s *SearchService) SearchByLocation() {
 	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter city to search for events: ")
 	input, _ := reader.ReadString('\n')
 	city := strings.ToLower(strings.TrimSpace(input))
-	events := storage.LoadEvents()
 
-	found := false
+	var found bool
 	fmt.Printf("\nEvents in %s:\n", city)
-	for _, event := range events {
+	for _, event := range s.EventRepo.Events {
 		if event.IsBlocked {
 			continue
 		}
 		if contains(event.Locations, city) {
-			printEvent(event)
+			s.printEvent(event)
 			found = true
 		}
 	}
-
 	if !found {
 		fmt.Println("No events found in this city.")
 	}
-
-	// venues := storage.LoadVenues()
-	// foundVenues := make([]string, len(venues)) //make map instead storing venue id and venue name
-	// i := 0
-	// //print venues
-	// for _, venue := range venues {
-	// 	if strings.ToLower(string(venue.City)) == query {
-	// 		foundVenues[i] = venue.Name
-	// 	}
-	// 	i++
-	// }
-	// //print venue name and shows associated with it
-
-	// //shows events whose shows are located in particular city
-	// //first venues in city, find shows who has that venue and display them.
 }
+
 func contains(cities []string, target string) bool {
 	for _, city := range cities {
 		if strings.EqualFold(city, target) {
@@ -122,10 +114,9 @@ func contains(cities []string, target string) bool {
 		}
 	}
 	return false
-
 }
 
-func printEvent(e models.Event) {
+func (s *SearchService) printEvent(e models.Event) {
 	fmt.Println("-------------")
 	fmt.Printf("ID: %s\n", e.ID)
 	fmt.Printf("Name: %s\n", e.Name)

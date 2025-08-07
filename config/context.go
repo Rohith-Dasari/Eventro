@@ -2,7 +2,7 @@ package config
 
 import (
 	"context"
-	"eventro/models"
+	"eventro2/models"
 )
 
 type contextKey string

@@ -3,12 +3,11 @@ package controllers
 import (
 	"bufio"
 	"context"
-	"eventro/config"
-	"eventro/models"
-	"eventro/services/authorisation"
-	"eventro/storage"
+	"eventro2/config"
+	"eventro2/models"
+	userrepository "eventro2/repository/user_repository"
+	"eventro2/services/authorisation"
 	"fmt"
-	"net"
 	"net/mail"
 	"os"
 	"strings"
@@ -18,8 +17,9 @@ import (
 )
 
 func LoginFlow(ctx context.Context) context.Context {
+	userRepo := userrepository.NewUserRepository()
+	authService := authorisation.NewAuthService(*userRepo)
 
-	users := storage.LoadUsers()
 	var user models.User
 
 	var email, password string
@@ -49,7 +49,7 @@ func LoginFlow(ctx context.Context) context.Context {
 		// }
 		// password = string(bytePassword)
 
-		user, err = authorisation.ValidateLogin(users, email, password)
+		user, err = authService.ValidateLogin(ctx, email, password)
 		ctx = context.WithValue(ctx, config.UserIDKey, user.UserID)
 		ctx = context.WithValue(ctx, config.UserRoleKey, user.Role)
 		ctx = context.WithValue(ctx, config.UserMailID, user.Email)
@@ -71,7 +71,10 @@ func LoginFlow(ctx context.Context) context.Context {
 }
 
 func SignupFlow(ctx context.Context) context.Context {
-	users := storage.LoadUsers()
+	userRepo := userrepository.NewUserRepository()
+	authService := authorisation.NewAuthService(*userRepo)
+
+	users := authService.UserRepo.Users
 
 	var username, email, phoneNumber, password string
 	fmt.Print("Enter Username: ")
@@ -84,7 +87,7 @@ func SignupFlow(ctx context.Context) context.Context {
 		return ctx
 	}
 
-	if storage.UserExists(users, email) {
+	if authService.UserExists(email) {
 		fmt.Println("Email is already registered. Try logging in.")
 		return ctx
 	}
@@ -98,7 +101,7 @@ func SignupFlow(ctx context.Context) context.Context {
 		return ctx
 	}
 	password = string(bytePassword)
-	hashedPassword, err := authorisation.HashPassword(password)
+	hashedPassword, err := authService.HashPassword(password)
 	if err != nil {
 		fmt.Println("Error hashing password:", err)
 		return ctx
@@ -115,7 +118,7 @@ func SignupFlow(ctx context.Context) context.Context {
 	}
 
 	users = append(users, newUser)
-	if err := storage.SaveUsers(users); err != nil {
+	if err := authService.UserRepo.SaveUsers(users); err != nil {
 		fmt.Println("Failed to save user:", err)
 		return ctx
 	}
@@ -132,14 +135,14 @@ func isValid(email string) bool {
 	if err != nil {
 		return false
 	}
-	parts := strings.Split(email, "@")
-	if len(parts) != 2 {
-		return false
-	}
-	domain := parts[1]
-	mxRecords, err := net.LookupMX(domain)
-	if err != nil || len(mxRecords) == 0 {
-		return false
-	}
+	// parts := strings.Split(email, "@")
+	// if len(parts) != 2 {
+	// 	return false
+	// }
+	// domain := parts[1]
+	// mxRecords, err := net.LookupMX(domain)
+	// if err != nil || len(mxRecords) == 0 {
+	// 	return false
+	// }
 	return true
 }

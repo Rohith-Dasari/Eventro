@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"eventro/config"
-	"eventro/controllers"
-	"eventro/models"
-	utils "eventro/utils/userinput"
+	"eventro2/config"
+	"eventro2/controllers"
+	"eventro2/models"
+	utils "eventro2/utils/userinput"
 	"fmt"
 	"os"
 )
