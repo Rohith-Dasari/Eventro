@@ -10,6 +10,7 @@ type contextKey string
 const (
 	UserIDKey   contextKey = "UserID"
 	UserRoleKey contextKey = "Role"
+	UserMailID  contextKey = "Email"
 )
 
 func GetUserID(ctx context.Context) string {

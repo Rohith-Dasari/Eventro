@@ -30,6 +30,7 @@ func ShowCustomerDashboard(ctx context.Context) {
 			searchevents.Search()
 			var eventID string
 			fmt.Println("Enter event id:")
+			reader = bufio.NewReader(os.Stdin)
 			eventID, _ = reader.ReadString('\n')
 			eventID = strings.TrimSpace(eventID)
 			shows := storage.LoadShows()
@@ -39,7 +40,7 @@ func ShowCustomerDashboard(ctx context.Context) {
 			showID, _ = reader.ReadString('\n')
 			showID = strings.TrimSpace(showID)
 			showservice.DisplayShow(showID, shows)
-
+			bookingservice.MakeBooking(config.GetUserID(ctx), showID)
 		case 2:
 			bookingservice.SeeBookingHistory()
 		case 3:

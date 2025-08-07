@@ -25,3 +25,4 @@ type Event struct {
 func (e *Event) AddHype() {
 	//think of a way to accumulate logic--may be search how bms does it
 }
+

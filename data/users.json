@@ -4,31 +4,17 @@
   "username": "rdasari",
   "email": "rohith@admin.com",
   "phone_number": "123456890",
-  "password": "admin@123",
-  "role": "Admin"
+  "password": "$2a$10$AIr8u3pPN9E0ua7AepJ33eNR5R.Nmhsgsd/j.8O18RK0p/ub6Ug8y",
+  "role": "Admin",
+  "is_blocked": false
  },
  {
-  "user_id": "2",
-  "username": "bob",
-  "email": "bob@host.com",
-  "phone_number": "2345678901",
-  "password": "bob@123",
-  "role": "Host"
- },
- {
-  "user_id": "3",
-  "username": "alice",
-  "email": "alice@anything.com",
-  "phone_number": "1234567890",
-  "password": "pass123",
-  "role": "Customer"
- },
- {
-  "user_id": "a631867f-0b8e-48ff-b52d-647e029896bd",
-  "username": "rdasari",
+  "user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+  "username": "rdasari@gmail.com",
   "email": "rdasari@gmail.com",
-  "phone_number": "1234560789",
-  "password": "$2a$10$TyFCvP6FE5UY5LeFT5YmAOQS1ystClhRxD7ioFkGKIhiBLi3lGEX.",
-  "role": "Customer"
+  "phone_number": "1234567890",
+  "password": "$2a$10$5YxPw1D9CP3DIGwHSddb8uYV8yUA2nCHG0BWST4lWXh9pD9boqcJe",
+  "role": "Customer",
+  "is_blocked": false
  }
 ]

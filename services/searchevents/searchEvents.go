@@ -11,6 +11,7 @@ import (
 )
 
 func Search() {
+	fmt.Println("Select how you want to search")
 	fmt.Println("1. Search by Event Name")
 	fmt.Println("2. Search by Category")
 	fmt.Println("3. Search by Location")
@@ -31,6 +32,7 @@ func Search() {
 }
 
 func SearchByEventName() {
+
 	fmt.Println("Enter the name of the event:")
 
 	reader := bufio.NewReader(os.Stdin)
@@ -79,31 +81,48 @@ func SearchByLocation() {
 	fmt.Print("Enter city to search for events: ")
 	reader := bufio.NewReader(os.Stdin)
 	input, _ := reader.ReadString('\n')
-	query := strings.ToLower(strings.TrimSpace(input))
-	venues := storage.LoadVenues()
-	foundVenues := make([]string, len(venues)) //make map instead storing venue id and venue name
-	i := 0
-	//print venues
-	for _, venue := range venues {
-		if strings.ToLower(string(venue.City)) == query {
-			foundVenues[i] = venue.Name
+	city := strings.ToLower(strings.TrimSpace(input))
+	events := storage.LoadEvents()
+
+	found := false
+	fmt.Printf("\nEvents in %s:\n", city)
+	for _, event := range events {
+		if event.IsBlocked {
+			continue
 		}
-		i++
+		if contains(event.Locations, city) {
+			printEvent(event)
+			found = true
+		}
 	}
-	//print venue name and shows associated with it
 
-	//shows events whose shows are located in particular city
-	//first venues in city, find shows who has that venue and display them.
+	if !found {
+		fmt.Println("No events found in this city.")
+	}
 
-	// reader := bufio.NewReader(os.Stdin)
-	// input, _ := reader.ReadString('\n')
-	// query := strings.ToLower(strings.TrimSpace(input))
-
-	// //map events, shows, venues and display shows in location with help of venue and display event name.
-
-	// events := storage.LoadEvents()
-	// shows := storage.LoadShows()
 	// venues := storage.LoadVenues()
+	// foundVenues := make([]string, len(venues)) //make map instead storing venue id and venue name
+	// i := 0
+	// //print venues
+	// for _, venue := range venues {
+	// 	if strings.ToLower(string(venue.City)) == query {
+	// 		foundVenues[i] = venue.Name
+	// 	}
+	// 	i++
+	// }
+	// //print venue name and shows associated with it
+
+	// //shows events whose shows are located in particular city
+	// //first venues in city, find shows who has that venue and display them.
+}
+func contains(cities []string, target string) bool {
+	for _, city := range cities {
+		if strings.EqualFold(city, target) {
+			return true
+		}
+	}
+	return false
+
 }
 
 func printEvent(e models.Event) {

@@ -19,7 +19,6 @@ func LoadUsers() []models.User {
 	if err := json.Unmarshal(data, &users); err != nil {
 		log.Fatalf("failed to marshal: %v", err)
 	}
-
 	return users
 }
 

@@ -6,7 +6,9 @@
     "hype_meter": 87,
     "artists": ["The Firebeats", "Echo Storm"],
     "duration": "3h",
-    "category": "concert"
+    "category": "concert",
+    "is_blocked": false,
+    "locations": ["Mumbai", "Delhi"]
   },
   {
     "id": "E002",
@@ -15,7 +17,9 @@
     "hype_meter": 95,
     "artists": [],
     "duration": "2.5h",
-    "category": "sports"
+    "category": "sports",
+    "is_blocked": false,
+    "locations": ["Kolkata", "Chennai"]
   },
   {
     "id": "E003",
@@ -24,7 +28,9 @@
     "hype_meter": 100,
     "artists": ["Utkarsh sir", "Aarushi ma'am"],
     "duration": "3h",
-    "category": "workshop"
+    "category": "workshop",
+    "is_blocked": false,
+    "locations": ["Bangalore"]
   },
   {
     "id": "E004",
@@ -33,7 +39,9 @@
     "hype_meter": 80,
     "artists": ["Lead Actor: David Corenswet", "Director: James Gunn"],
     "duration": "2h",
-    "category": "movie"
+    "category": "movie",
+    "is_blocked": false,
+    "locations": ["Pune", "Delhi"]
   },
   {
     "id": "E005",
@@ -42,6 +50,8 @@
     "hype_meter": 90,
     "artists": ["DJ Vibe", "LunaMix"],
     "duration": "4h",
-    "category": "party"
+    "category": "party",
+    "is_blocked": true,
+    "locations": ["Goa", "Hyderabad"]
   }
 ]

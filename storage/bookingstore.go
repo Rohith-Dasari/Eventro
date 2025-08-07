@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/json"
+	"eventro/config"
 	"eventro/models"
 	"log"
 	"os"
@@ -9,7 +10,7 @@ import (
 
 func LoadBookings() []models.Booking {
 	//read json
-	data, err := os.ReadFile("data/bookings.json")
+	data, err := os.ReadFile(config.BookingsFile)
 	if err != nil {
 		log.Fatalf("failed to read file %v", err)
 	}
@@ -20,4 +21,13 @@ func LoadBookings() []models.Booking {
 	}
 
 	return bookings
+}
+
+func SaveBookings(bookings []models.Booking) error {
+	data, err := json.MarshalIndent(bookings, "", "")
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(config.BookingsFile, data, 0644)
+	return err
 }

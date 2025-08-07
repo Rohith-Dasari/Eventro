@@ -8,6 +8,7 @@ type Show struct {
 	CreatedAt   string   `json:"created_at"`
 	IsBlocked   bool     `json:"is_blocked"`
 	Price       float64  `json:"price"`
+	ShowDate    string   `json:"show_date"`
 	ShowTime    string   `json:"show_time"`
 	BookedSeats []string `json:"booked_seats"`
 }

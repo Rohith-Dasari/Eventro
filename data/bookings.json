@@ -1,38 +1,63 @@
 [
-  {
-    "booking_id": 1,
-    "user_id": "101",
-    "show_id": "S001",
-    "time_booked": "2025-08-01T14:20:00",
-    "num_tickets": 2,
-    "total_booking_price": 1200.00,
-    "seats": ["A1", "A2"]
-  },
-  {
-    "booking_id": 2,
-    "user_id": "102",
-    "show_id": "S002",
-    "time_booked": "2025-08-02T16:00:00",
-    "num_tickets": 3,
-    "total_booking_price": 1800.00,
-    "seats": ["B5", "B6", "B7"]
-  },
-  {
-    "booking_id": 3,
-    "user_id": "101",
-    "show_id": "S003",
-    "time_booked": "2025-08-03T10:00:00",
-    "num_tickets": 1,
-    "total_booking_price": 500.00,
-    "seats": ["C3"]
-  },
-  {
-    "booking_id": 4,
-    "user_id": "103",
-    "show_id": "S005",
-    "time_booked": "2025-08-04T22:30:00",
-    "num_tickets": 4,
-    "total_booking_price": 2800.00,
-    "seats": ["D1", "D2", "D3", "D4"]
-  }
+{
+"booking_id": "1",
+"user_id": "101",
+"event_id": "",
+"time_booked": "2025-08-01T14:20:00",
+"num_tickets": 2,
+"total_booking_price": 1200,
+"seats": [
+"A1",
+"A2"
+]
+},
+{
+"booking_id": "2",
+"user_id": "102",
+"event_id": "",
+"time_booked": "2025-08-02T16:00:00",
+"num_tickets": 3,
+"total_booking_price": 1800,
+"seats": [
+"B5",
+"B6",
+"B7"
+]
+},
+{
+"booking_id": "3",
+"user_id": "101",
+"event_id": "",
+"time_booked": "2025-08-03T10:00:00",
+"num_tickets": 1,
+"total_booking_price": 500,
+"seats": [
+"C3"
+]
+},
+{
+"booking_id": "4",
+"user_id": "103",
+"event_id": "",
+"time_booked": "2025-08-04T22:30:00",
+"num_tickets": 4,
+"total_booking_price": 2800,
+"seats": [
+"D1",
+"D2",
+"D3",
+"D4"
+]
+},
+{
+"booking_id": "adff9ce1-71d1-4db1-921a-56770d276880",
+"user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+"event_id": "S004",
+"time_booked": "2025-08-07T13:37:57+05:30",
+"num_tickets": 1,
+"total_booking_price": 350,
+"seats": [
+"a1"
+]
+}
 ]

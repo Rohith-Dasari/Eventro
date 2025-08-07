@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"context"
 	"eventro/config"
-	"eventro/models"
+	"eventro/services/bookingservice"
 	"eventro/services/eventservice"
+	"eventro/services/priviligeservice"
+	"eventro/services/searchevents"
 	"eventro/services/showservice"
 	"eventro/services/userservice"
 	"eventro/storage"
@@ -21,7 +23,7 @@ func ShowAdminDashboard(ctx context.Context) {
 	//view show, block show/event, unblock show/event,-done
 	//book a show behalf of user
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("1. User Moderation 2. Show Moderation 3. Event Moderation 4. Add a new host 5. Booking Request/Book behalf of user")
+	fmt.Println("1. User Moderation 2. Show Moderation 3. Event Moderation 4. Add a new host 5. Add a new Event 6. Booking Request/Book behalf of user")
 	var choice int
 	fmt.Println(config.ChoiceMessage)
 	input, _ := reader.ReadString('\n')
@@ -67,17 +69,28 @@ func ShowAdminDashboard(ctx context.Context) {
 			eventservice.ViewBlockedEvents(ctx)
 		}
 	case 4:
-		fmt.Println("Enter user mail id whose privilige you want to escalate ")
-		var usermail string
-		fmt.Scanf("%s", &usermail)
-		users := storage.LoadUsers()
-		var requiredUser *models.User
-		for _, user := range users {
-			if user.Email == usermail {
-				requiredUser = &user
-			}
-		}
-		requiredUser.Role = models.Host
+		priviligeservice.EscalatePrivilige(ctx)
+	case 5:
+		event := eventservice.CreateNewEvent()
+		events := storage.LoadEvents()
+		events = append(events, event)
+		storage.SaveEvents(events)
+	case 6:
+		searchevents.Search()
+		var eventID string
+		fmt.Println("Enter event id:")
+		eventID, _ = reader.ReadString('\n')
+		eventID = strings.TrimSpace(eventID)
+		shows := storage.LoadShows()
+		showservice.BrowseShowsByEvent(eventID, shows)
+		var showID string
+		fmt.Println("enter the showID you want to pick")
+		showID, _ = reader.ReadString('\n')
+		showID = strings.TrimSpace(showID)
+		showservice.DisplayShow(showID, shows)
+		fmt.Println("enter the userID of user you want to pick")
+		userID, _ := reader.ReadString('\n')
+		userID = strings.TrimSpace(userID)
+		bookingservice.MakeBooking(userID, showID)
 	}
-
 }

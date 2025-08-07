@@ -1,22 +1,29 @@
 package showservice
 
 import (
+	"bufio"
 	"context"
 	"eventro/config"
 	"eventro/models"
 	"eventro/storage"
 	"fmt"
+	"os"
 	"strings"
 )
 
 func BrowseShowsByEvent(eventID string, shows []models.Show) {
-	//unmarshall shows file into slices of shows and display shows which has the eventID same as selected
+	//unmarshall shows file into slices of shows and display shows which has the eventID and date same as selected
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter the date you want to book for (YYYY-MM-DD): ")
+	inputDate, _ := reader.ReadString('\n')
+	inputDate = strings.TrimSpace(inputDate)
 	found := false
 	fmt.Printf("Available Shows for the Event:\n")
 	for _, show := range shows {
-		if show.EventID == eventID && !show.IsBlocked {
+		if show.EventID == eventID && show.ShowDate == inputDate && !show.IsBlocked {
 			printShow(show)
 			//create map of show and venue(name, city )
+			//
 			found = true
 		}
 	}
@@ -52,17 +59,16 @@ func DisplayShow(showID string, shows []models.Show) {
 		fmt.Println("Venue not found.")
 		return
 	}
-
 	fmt.Println("Show Details")
 	fmt.Printf("Show ID: %s\n", selectedShow.ID)
 	fmt.Printf("Venue: %s (%s, %s)\n", venue.Name, venue.City, venue.State)
 	fmt.Printf("Price per ticket: ₹%.2f\n", selectedShow.Price)
-
 	if venue.IsSeatLayoutRequired {
 		fmt.Println("([X] = Booked)")
 		displaySeatMap(selectedShow.BookedSeats)
 	} else {
 		fmt.Println("This venue does not have a seat layout.")
+		fmt.Println("How many tickets do you want to book")
 	}
 }
 
@@ -84,7 +90,7 @@ func displaySeatMap(booked []string) {
 	}
 
 	for i := 0; i < rows; i++ {
-		rowLabel := "A" + string(i)
+		rowLabel := string('A' + i)
 		fmt.Printf("%s  ", rowLabel)
 		for j := 1; j <= cols; j++ {
 			seat := fmt.Sprintf("%s%d", rowLabel, j)

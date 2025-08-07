@@ -5,14 +5,16 @@ import (
 	"eventro/config"
 	"eventro/controllers"
 	"eventro/models"
+	utils "eventro/utils/userinput"
 	"fmt"
+	"os"
 )
 
 func main() {
 	fmt.Println(config.WelcomeMessage)
 	ctx := context.Background()
 	ctx = startApp(ctx)
-	if config.CurrentUser == nil {
+	if config.GetUserID(ctx) == "" {
 		fmt.Println("Login or Signup failed. Exiting.")
 		return
 	}
@@ -20,18 +22,25 @@ func main() {
 }
 
 func startApp(ctx context.Context) context.Context {
+
+	fmt.Println(config.StartAppMessage)
 	for {
-		fmt.Println("1. Login\n2. Signup")
 		fmt.Print(config.ChoiceMessage)
-		var choice int
-		fmt.Scanf("%d", &choice)
+
+		choice, err := utils.TakeUserInput()
+		if err != nil {
+			continue
+		}
 		switch choice {
 		case 1:
 			return controllers.LoginFlow(ctx)
 		case 2:
 			return controllers.SignupFlow(ctx)
+		case 3:
+			fmt.Println(config.LogoutMessage)
+			os.Exit(0)
 		default:
-			fmt.Println("Please enter 1 or 2")
+			fmt.Println(config.DefaultChoiceMessage)
 		}
 	}
 }

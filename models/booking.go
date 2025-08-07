@@ -1,7 +1,7 @@
 package models
 
 type Booking struct {
-	BookingID         int      `json:"booking_id"`
+	BookingID         string   `json:"booking_id"`
 	UserID            string   `json:"user_id"`
 	ShowID            string   `json:"event_id"`
 	TimeBooked        string   `json:"time_booked"`
