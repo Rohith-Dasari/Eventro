@@ -1,20 +1,74 @@
 [
  {
-  "user_id": "1",
-  "username": "rdasari",
-  "email": "rohith@admin.com",
-  "phone_number": "123456890",
-  "password": "$2a$10$htuzf13.rtGtmvCySE8ereGV4NTAqwHRzYzQM.ID130Wz83koamwy",
-  "role": "Admin",
-  "is_blocked": false
+  "id": "V001",
+  "name": "Grand Theater Hall",
+  "host_id": "H001",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "is_seat_layout_required": true
  },
  {
-  "user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
-  "username": "rdasari@gmail.com",
-  "email": "rdasari@gmail.com",
-  "phone_number": "1234567890",
-  "password": "$2a$10$5YxPw1D9CP3DIGwHSddb8uYV8yUA2nCHG0BWST4lWXh9pD9boqcJe",
-  "role": "Customer",
-  "is_blocked": true
+  "id": "V002",
+  "name": "City Convention Center",
+  "host_id": "H002",
+  "city": "Delhi",
+  "state": "Delhi",
+  "is_seat_layout_required": false
+ },
+ {
+  "id": "V003",
+  "name": "Open Air Auditorium",
+  "host_id": "H001",
+  "city": "Bangalore",
+  "state": "Karnataka",
+  "is_seat_layout_required": true
+ },
+ {
+  "id": "V004",
+  "name": "Gulshan Mall",
+  "host_id": "H003",
+  "city": "Noida",
+  "state": "Uttar Pradesh",
+  "is_seat_layout_required": true
+ },
+ {
+  "id": "V005",
+  "name": "Modern Arts Arena",
+  "host_id": "H004",
+  "city": "Chennai",
+  "state": "Tamil Nadu",
+  "is_seat_layout_required": true
+ },
+ {
+  "id": "8525288c-34f5-47cf-b317-160f60c7cf60",
+  "name": "nataraj",
+  "host_id": "82b5ac01-9ea8-4b45-9d83-030934211ead",
+  "city": "vizag",
+  "state": "AP",
+  "is_seat_layout_required": true
+ },
+ {
+  "id": "75f0d551-b688-46ce-8984-59071eaf52c9",
+  "name": "pvr",
+  "host_id": "82b5ac01-9ea8-4b45-9d83-030934211ead",
+  "city": "noida",
+  "state": "up",
+  "is_seat_layout_required": true
+ },
+ {
+  "id": "0bc0329a-ce08-4f5f-8995-8acade703257",
+  "name": "11",
+  "host_id": "82b5ac01-9ea8-4b45-9d83-030934211ead",
+  "city": "11",
+  "state": "11",
+  "is_seat_layout_required": false
+ },
+ {
+  "id": "29323f93-f120-4b97-a374-079affa47531",
+  "name": "11",
+  "host_id": "82b5ac01-9ea8-4b45-9d83-030934211ead",
+  "city": "11",
+  "state": "1",
+  "is_seat_layout_required": false
  }
 ]

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"eventro2/config"
 	"eventro2/models"
+	"fmt"
 	"log"
 	"os"
 )
@@ -30,10 +31,15 @@ type BookingRepository struct {
 func (bs *BookingRepository) SaveBookings(bookings []models.Booking) error {
 	data, err := json.MarshalIndent(bookings, "", "")
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to save in bookings file: %w", err)
 	}
 	err = os.WriteFile(config.BookingsFile, data, 0644)
 	return err
+}
+
+func (br *BookingRepository) AddBooking(booking models.Booking) error {
+	br.Bookings = append(br.Bookings, booking)
+	return br.SaveBookings(br.Bookings)
 }
 
 func NewBoookingStore() *BookingRepository {

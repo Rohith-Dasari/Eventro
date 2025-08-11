@@ -10,8 +10,10 @@ import (
 	"fmt"
 	"net/mail"
 	"os"
+	"regexp"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/google/uuid"
 	"golang.org/x/term"
 )
@@ -35,38 +37,38 @@ func LoginFlow(ctx context.Context) context.Context {
 		email = strings.TrimSpace(input)
 
 		fmt.Print("Enter password: ")
-		input, err = reader.ReadString('\n')
-		if err != nil {
-			fmt.Println("Error reading input:", err)
-			return ctx
-		}
-		password = strings.TrimSpace(input)
-
-		// bytePassword, err := term.ReadPassword(int(os.Stdin.Fd()))
+		// input, err = reader.ReadString('\n')
 		// if err != nil {
-		// 	fmt.Println("\nError reading password:", err)
+		// 	fmt.Println("Error reading input:", err)
 		// 	return ctx
 		// }
-		// password = string(bytePassword)
+		//password = strings.TrimSpace(input)
+
+		bytePassword, err := term.ReadPassword(int(os.Stdin.Fd()))
+		if err != nil {
+			fmt.Println("\nError reading password:", err)
+			return ctx
+		}
+		password = string(bytePassword)
 
 		user, err = authService.ValidateLogin(ctx, email, password)
-		ctx = context.WithValue(ctx, config.UserIDKey, user.UserID)
-		ctx = context.WithValue(ctx, config.UserRoleKey, user.Role)
-		ctx = context.WithValue(ctx, config.UserMailID, user.Email)
+		if !user.IsBlocked {
+			ctx = context.WithValue(ctx, config.UserIDKey, user.UserID)
+			ctx = context.WithValue(ctx, config.UserRoleKey, user.Role)
+			ctx = context.WithValue(ctx, config.UserMailID, user.Email)
+		} else {
+			return ctx
+		}
 
 		if err != nil {
-			fmt.Println("Retry. Login failed:", err)
+			color.Red("\nLogin failed: %v. Retry", err)
 			continue
 		}
 		break
 	}
-	if user.IsBlocked {
-		fmt.Println("Account Blocked. Please contact Admin")
-		return ctx
-	}
 	config.CurrentUser = &user
 
-	fmt.Printf("Welcome back %s! You are logged in as: %s\n", user.Username, user.Role)
+	fmt.Printf(config.WelcomeBack, user.Username, user.Role)
 	return ctx
 }
 
@@ -74,36 +76,51 @@ func SignupFlow(ctx context.Context) context.Context {
 	userRepo := userrepository.NewUserRepository()
 	authService := authorisation.NewAuthService(*userRepo)
 
-	users := authService.UserRepo.Users
-
 	var username, email, phoneNumber, password string
 	fmt.Print("Enter Username: ")
 	fmt.Scan(&username)
-	fmt.Print("Enter Email: ")
-	fmt.Scan(&email)
+	for {
+		fmt.Print("Enter Email: ")
+		fmt.Scan(&email)
 
-	if !(isValid(email)) {
-		fmt.Println("Please enter a valid email id")
-		return ctx
+		if !(isValidEmail(email)) {
+			color.Red("Please enter a valid email id")
+			continue
+		}
+		break
 	}
 
 	if authService.UserExists(email) {
-		fmt.Println("Email is already registered. Try logging in.")
+		color.Red("Email is already registered. Try logging in.")
 		return ctx
 	}
 
-	fmt.Print("Enter Phone number: ")
-	fmt.Scan(&phoneNumber)
-	fmt.Print("Enter Password: ")
-	bytePassword, err := term.ReadPassword(int(os.Stdin.Fd()))
-	if err != nil {
-		fmt.Println("\nError reading password:", err)
-		return ctx
+	for {
+		fmt.Print("Enter Phone number: ")
+		fmt.Scan(&phoneNumber)
+		if !isValidPhoneNumber(phoneNumber) {
+			color.Red("Phone numbers should start with +91 followed by 10 numbers")
+			continue
+		}
+		break
 	}
-	password = string(bytePassword)
+	for {
+		fmt.Print("Enter Password: ")
+		bytePassword, err := term.ReadPassword(int(os.Stdin.Fd()))
+		if err != nil {
+			color.Red("\nError reading password:", err)
+			return ctx
+		}
+		password = string(bytePassword)
+		if !isValidPassword(password) {
+			color.Red("\nPassword should be 12 characters long with a one special character atleast")
+			continue
+		}
+		break
+	}
 	hashedPassword, err := authService.HashPassword(password)
 	if err != nil {
-		fmt.Println("Error hashing password:", err)
+		color.Red("\nError hashing password:", err)
 		return ctx
 	}
 
@@ -117,20 +134,21 @@ func SignupFlow(ctx context.Context) context.Context {
 		IsBlocked:   false,
 	}
 
-	users = append(users, newUser)
-	if err := authService.UserRepo.SaveUsers(users); err != nil {
-		fmt.Println("Failed to save user:", err)
+	if err := authService.UserRepo.AddUser(newUser); err != nil {
+		color.Red("\nFailed to add user:", err)
 		return ctx
 	}
+
 	ctx = context.WithValue(ctx, config.UserIDKey, newUser.UserID)
 	ctx = context.WithValue(ctx, config.UserRoleKey, newUser.Role)
 	ctx = context.WithValue(ctx, config.UserMailID, newUser.Email)
 
-	fmt.Printf("Registration successful! You are registered as a %s.\n", newUser.Role)
+	color.Green("\nRegistration successful! You are registered as a %s.\n", newUser.Role)
+
 	return ctx
 }
 
-func isValid(email string) bool {
+func isValidEmail(email string) bool {
 	_, err := mail.ParseAddress(email)
 	if err != nil {
 		return false
@@ -145,4 +163,15 @@ func isValid(email string) bool {
 	// 	return false
 	// }
 	return true
+}
+func isValidPassword(password string) bool {
+	if len(password) < 12 {
+		return false
+	}
+	specialCharRegex := regexp.MustCompile(`[!@#\$%\^&\*\(\)_\+\-=\[\]\{\};':"\\|,.<>\/?]`)
+	return specialCharRegex.MatchString(password)
+}
+func isValidPhoneNumber(number string) bool {
+	re := regexp.MustCompile(`^\d{10}$`)
+	return re.MatchString(number)
 }

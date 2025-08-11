@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"eventro2/config"
 	"eventro2/models"
+	"fmt"
 	"log"
 	"os"
 )
@@ -30,7 +31,7 @@ type EventRepository struct {
 func (*EventRepository) SaveEvents(events []models.Event) error {
 	data, err := json.MarshalIndent(events, "", "")
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to serialise %w", err)
 	}
 	err = os.WriteFile(config.EventsFile, data, 0644)
 	return err

@@ -7,13 +7,67 @@
   "password": "$2a$10$htuzf13.rtGtmvCySE8ereGV4NTAqwHRzYzQM.ID130Wz83koamwy",
   "role": "Admin",
   "is_blocked": false
-},
+ },
  {
   "user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
   "username": "rdasari@gmail.com",
   "email": "rdasari@gmail.com",
   "phone_number": "1234567890",
   "password": "$2a$10$5YxPw1D9CP3DIGwHSddb8uYV8yUA2nCHG0BWST4lWXh9pD9boqcJe",
+  "role": "Customer",
+  "is_blocked": true
+ },
+ {
+  "user_id": "82b5ac01-9ea8-4b45-9d83-030934211ead",
+  "username": "uday",
+  "email": "uday@gmail.com",
+  "phone_number": "1234567890",
+  "password": "$2a$10$aPby54a7xquD8IbzwFMAHu9STZ.0f7GqnzA0UrsHEAsi66KS/dV3C",
+  "role": "Host",
+  "is_blocked": false
+ },
+ {
+  "user_id": "f9b328ba-1ecc-427d-9939-2281aabb9e11",
+  "username": "ganesh",
+  "email": "ganesh@gmail.com",
+  "phone_number": "123456789",
+  "password": "$2a$10$ERvwa40BsIIKERvTBU32dO96oHE1n.rUUBiKmnFopfrGE0zkFs8Qq",
+  "role": "Host",
+  "is_blocked": false
+ },
+ {
+  "user_id": "e5d37ebb-9f65-4ef5-8814-f44e0fe70825",
+  "username": "rohan",
+  "email": "rohan@gmail.com",
+  "phone_number": "12",
+  "password": "$2a$10$X.p00dfHO2HTM2RMYYU6Mui65WXv67PKDEiGyFNl/rYZOVGBPWTu6",
+  "role": "Customer",
+  "is_blocked": true
+ },
+ {
+  "user_id": "68fa58a1-874d-426e-b64d-740740f3a65a",
+  "username": "varun",
+  "email": "varun@gmail.com",
+  "phone_number": "129",
+  "password": "$2a$10$G9cNANm5eYciw1fMKRx5GezY5YQzmiyJzossIS9X307w/zPv1NlEu",
+  "role": "Customer",
+  "is_blocked": false
+ },
+ {
+  "user_id": "2536c652-0b31-4896-ae64-09a2e64b0e50",
+  "username": "gog",
+  "email": "gog@gmail.com",
+  "phone_number": "7032852178",
+  "password": "$2a$10$68tNO7VkKhf.GdCsPfX6aOkJEnm/4O3FRx2cc.gEmkDYRErKN6tM.",
+  "role": "Customer",
+  "is_blocked": false
+ },
+ {
+  "user_id": "23815699-4d20-4944-9169-f30529de5a6e",
+  "username": "rameshrockz",
+  "email": "ramesh@gmail.com",
+  "phone_number": "1234567890",
+  "password": "$2a$10$q/WE3NoVp3ajOrSZnH3mHepRo.jevuPt3eQ5AueNH1Ii5fnUomuaO",
   "role": "Customer",
   "is_blocked": false
  }

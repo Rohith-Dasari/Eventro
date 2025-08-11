@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"eventro2/config"
 	"eventro2/models"
+	"fmt"
 	"log"
 	"os"
 )
@@ -41,11 +42,17 @@ func (*UserRepository) SaveUsers(users []models.User) error {
 	//use ident
 	data, err := json.MarshalIndent(users, "", " ")
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to serialise data: %w", err)
 	}
-	err = os.WriteFile(config.VenuesFile, data, 0644)
+	err = os.WriteFile(config.UsersFile, data, 0644)
 	return err
 }
+
+func (ur *UserRepository) AddUser(user models.User) error {
+	ur.Users = append(ur.Users, user)
+	return ur.SaveUsers(ur.Users)
+}
+
 func NewUserRepository() *UserRepository {
 	//read json
 	data, err := os.ReadFile("data/users.json")

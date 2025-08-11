@@ -21,3 +21,8 @@ func TakeUserInput() (int, error) {
 	}
 	return choice, nil
 }
+func ReadLine() string {
+	reader := bufio.NewReader(os.Stdin)
+	input, _ := reader.ReadString('\n')
+	return strings.TrimSpace(input)
+}

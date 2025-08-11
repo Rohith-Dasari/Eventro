@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"eventro2/config"
 	"eventro2/models"
-	"fmt"
+	"log"
 	"os"
 )
 
@@ -39,18 +39,16 @@ func (*VenueRepository) SaveVenues(venues []models.Venue) error {
 }
 
 func NewVenueRepository() *VenueRepository {
-	file, err := os.Open(config.VenuesFile)
-	if err != nil {
-		fmt.Println("Error opening venues file:", err)
-		return nil
-	}
-	defer file.Close()
 
+	//read json
+	data, err := os.ReadFile(config.VenuesFile)
+	if err != nil {
+		log.Fatalf("failed to read file %v", err)
+	}
+	//unmarshal into booking class
 	var venues []models.Venue
-	decoder := json.NewDecoder(file)
-	if err := decoder.Decode(&venues); err != nil {
-		fmt.Println("Error decoding venues:", err)
-		return nil
+	if err := json.Unmarshal(data, &venues); err != nil {
+		log.Fatalf("failed to marshal: %v", err)
 	}
 	return &VenueRepository{venues}
 }

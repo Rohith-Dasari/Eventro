@@ -6,7 +6,9 @@ import (
 	"eventro2/config"
 	"eventro2/models"
 	bookingrepository "eventro2/repository/booking_repository"
+	eventsrepository "eventro2/repository/event_repository"
 	showrepository "eventro2/repository/show_repository"
+	venuerepository "eventro2/repository/venue_repository"
 	utils "eventro2/utils/userinput"
 	"fmt"
 	"os"
@@ -14,6 +16,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/google/uuid"
 )
 
@@ -50,54 +53,85 @@ func (bs *BookingService) MakeBooking(ctx context.Context, userID string, showID
 		}
 	}
 	if requiredShow == nil {
-		fmt.Println("Error: Show not found")
+		color.Red("Error: Show not found.")
 		return
 	}
 
-	bookedTickets := requiredShow.BookedSeats
+	venueRepo := venuerepository.NewVenueRepository()
+	var requiredVenue models.Venue
+	for _, venue := range venueRepo.Venues {
+		if venue.ID == requiredShow.VenueID {
+			requiredVenue = venue
+			break
+		}
+	}
 
 	var numTickets int
 	for {
 		fmt.Println("How many tickets do you want to book?")
 		var err error
 		numTickets, err = utils.TakeUserInput()
-		if err == nil {
-			break
+		if err != nil {
+			color.Red("Invalid input. Please enter a valid number.")
+			continue
 		}
+		if numTickets <= 0 || numTickets > 10 {
+			color.Red("Number of tickets must be greater than zero.")
+			continue
+		}
+		if numTickets > 10 {
+			color.Red("A user can only book upto 10 tickets")
+			continue
+		}
+		break
 	}
 
 	userTickets := make([]string, numTickets)
+	totalPrice := numTickets * int(requiredShow.Price)
+
 	reader := bufio.NewReader(os.Stdin)
 
-	for i := 0; i < numTickets; {
-		fmt.Printf("Enter seat %d: ", i+1)
-		input, _ := reader.ReadString('\n')
-		userTicket := strings.TrimSpace(input)
+	if !requiredVenue.IsSeatLayoutRequired {
+		fmt.Printf("Total price: ₹%d\n", totalPrice)
+		fmt.Print("Confirm booking? (y/n): ")
+		choice := strings.ToLower(strings.TrimSpace(utils.ReadLine()))
+		if choice != "y" {
+			color.Red("Booking canceled.")
+			fmt.Println("But it is more fun to book :)")
+			return
+		}
+	} else {
+		bookedTickets := requiredShow.BookedSeats
 
-		if !bs.validateTicket(userTicket, bookedTickets) {
-			fmt.Println("Entered ticket is either invalid or already booked.")
-			continue
+		for i := 0; i < numTickets; {
+			fmt.Printf("Enter seat %d: ", i+1)
+			input, _ := reader.ReadString('\n')
+			userTicket := strings.ToUpper(strings.TrimSpace(input))
+
+			if !bs.validateTicket(userTicket, bookedTickets) {
+				color.Red("Entered ticket is either invalid or already booked.")
+				continue
+			}
+
+			userTickets[i] = userTicket
+			i++
 		}
 
-		userTickets[i] = userTicket
-		i++
+		fmt.Println("Your selected seats:", userTickets)
+		fmt.Printf("Total price: ₹%d\n", totalPrice)
+		fmt.Print("Confirm booking? (y/n): ")
+		choice, _ := reader.ReadString('\n')
+		if strings.ToLower(choice) != "y" {
+			color.Red("Booking canceled.")
+			fmt.Println("But it is more fun to book :)")
+			return
+		}
+
+		requiredShow.BookedSeats = append(requiredShow.BookedSeats, userTickets...)
+		bs.ShowRepo.SaveShows(shows)
+		bs.ShowRepo.Shows = shows
 	}
 
-	fmt.Println("Your selected seats:", userTickets)
-	totalPrice := numTickets * int(requiredShow.Price)
-	fmt.Printf("Total price: ₹%d\n", totalPrice)
-
-	fmt.Print("Confirm booking? (y/n): ")
-	choice, _ := reader.ReadString('\n')
-	if strings.TrimSpace(choice) != "y" {
-		fmt.Println("Booking canceled.")
-		return
-	}
-
-	requiredShow.BookedSeats = append(requiredShow.BookedSeats, userTickets...)
-	bs.ShowRepo.SaveShows(shows)
-
-	bookings := bs.BookingRepo.Bookings
 	newBooking := models.Booking{
 		BookingID:         uuid.New().String(),
 		UserID:            userID,
@@ -107,21 +141,52 @@ func (bs *BookingService) MakeBooking(ctx context.Context, userID string, showID
 		TotalBookingPrice: float64(totalPrice),
 		Seats:             userTickets,
 	}
-	bookings = append(bookings, newBooking)
-	bs.BookingRepo.SaveBookings(bookings)
+
+	bs.BookingRepo.Bookings = append(bs.BookingRepo.Bookings, newBooking)
+	bs.BookingRepo.SaveBookings(bs.BookingRepo.Bookings)
 
 	fmt.Println("🎉 Congratulations! Your booking is confirmed. Here's your ticket:")
 	bs.printBooking(newBooking)
 }
 
 func (bs *BookingService) printBooking(b models.Booking) {
-	fmt.Println("-------------")
-	fmt.Printf("Booking ID        : %s\n", b.BookingID)
-	fmt.Printf("Time Booked       : %s\n", b.TimeBooked)
-	fmt.Printf("Tickets Booked    : %d\n", b.NumTickets)
-	fmt.Printf("Total Price       : ₹%.2f\n", b.TotalBookingPrice)
-	fmt.Printf("Seats             : %v\n", b.Seats)
-	fmt.Println("-------------")
+	//i have booking, booking has show id, show id has event id and venue id so first required show needs to be caught
+
+	shows := bs.ShowRepo.Shows
+	var requiredShow models.Show
+	for _, show := range shows {
+		if show.ID == b.ShowID {
+			requiredShow = show
+		}
+	}
+	eventRepo := eventsrepository.NewEventRepository()
+	venuRepository := venuerepository.NewVenueRepository()
+
+	var requiredEvent models.Event
+	for _, event := range eventRepo.Events {
+		if event.ID == requiredShow.EventID {
+			requiredEvent = event
+			break
+		}
+	}
+
+	var requiredVenue models.Venue
+	for _, venue := range venuRepository.Venues {
+		if venue.ID == requiredShow.VenueID {
+			requiredVenue = venue
+			break
+		}
+	}
+	fmt.Println(config.Dash)
+	fmt.Printf("Booking ID    \t: %s\n", b.BookingID)
+	fmt.Printf("Event Name    \t: %s\n", requiredEvent.Name)
+	fmt.Printf("Venue Name    \t: %s\n", requiredVenue.Name)
+	fmt.Printf("Venue City    \t: %s\n", requiredVenue.City)
+	fmt.Printf("Time Booked   \t: %s\n", b.TimeBooked)
+	fmt.Printf("Tickets Booked\t: %d\n", b.NumTickets)
+	fmt.Printf("Total Price   \t: ₹%.2f\n", b.TotalBookingPrice)
+	fmt.Printf("Seats         \t: %v\n", b.Seats)
+	fmt.Println(config.Dash)
 }
 
 func (bs *BookingService) validateTicket(userTicket string, bookedTickets []string) bool {

@@ -13,16 +13,18 @@ import (
 func main() {
 	fmt.Println(config.WelcomeMessage)
 	ctx := context.Background()
-	ctx = startApp(ctx)
-	if config.GetUserID(ctx) == "" {
-		fmt.Println("Login or Signup failed. Exiting.")
-		return
+	for {
+		ctx = startApp(ctx)
+		if config.GetUserID(ctx) == "" {
+			fmt.Println(config.LoginErrorMessage)
+			continue
+		}
+		break
 	}
 	launchDashboard(ctx)
 }
 
 func startApp(ctx context.Context) context.Context {
-
 	fmt.Println(config.StartAppMessage)
 	for {
 		fmt.Print(config.ChoiceMessage)
@@ -55,6 +57,6 @@ func launchDashboard(ctx context.Context) {
 	case models.Customer:
 		controllers.ShowCustomerDashboard(ctx)
 	default:
-		fmt.Println("Access Denied")
+		fmt.Println(config.AccessMessage)
 	}
 }
