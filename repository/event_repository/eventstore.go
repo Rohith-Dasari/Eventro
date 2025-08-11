@@ -49,3 +49,17 @@ func NewEventRepository() *EventRepository {
 	}
 	return &EventRepository{events}
 }
+
+func (er *EventRepository) GetEvents() ([]models.Event, error) {
+	data, err := os.ReadFile(config.EventsFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read events file: %w", err)
+	}
+
+	var events []models.Event
+	if err := json.Unmarshal(data, &events); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal events: %w", err)
+	}
+
+	return events, nil
+}

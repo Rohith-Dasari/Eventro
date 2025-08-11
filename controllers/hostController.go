@@ -3,8 +3,6 @@ package controllers
 import (
 	"context"
 	"eventro2/config"
-	showrepository "eventro2/repository/show_repository"
-	venuerepository "eventro2/repository/venue_repository"
 	"eventro2/services/showservice"
 	"eventro2/services/venueservice"
 	utils "eventro2/utils/userinput"
@@ -14,7 +12,15 @@ import (
 	"github.com/fatih/color"
 )
 
-func ShowHostDashboard(ctx context.Context) {
+type HostController struct {
+	showservice.ShowService
+	venueservice.VenueService
+}
+
+func NewHostController(ss showservice.ShowService, v venueservice.VenueService) *HostController {
+	return &HostController{ss, v}
+}
+func (hc *HostController) ShowHostDashboard(ctx context.Context) {
 
 	for {
 		fmt.Println(config.HostDashboard)
@@ -28,19 +34,17 @@ func ShowHostDashboard(ctx context.Context) {
 
 		switch choice {
 		case 1:
-			venueManagement(ctx)
+			hc.venueManagement(ctx)
 		case 2:
-			showManagement(ctx)
+			hc.showManagement(ctx)
 		case 3:
-			fmt.Println("Logging out..")
+			fmt.Println(config.LogoutMessage)
 			os.Exit(0)
 		}
 	}
 }
-func showManagement(ctx context.Context) {
-	showRepo := showrepository.NewShowRepository()
-	venueRepo := venuerepository.NewVenueRepository()
-	showService := showservice.NewShowService(*showRepo, *venueRepo)
+
+func (hc *HostController) showManagement(ctx context.Context) {
 	for {
 		color.Blue("Manage your shows")
 		fmt.Println("1. See Shows")
@@ -51,19 +55,17 @@ func showManagement(ctx context.Context) {
 		choice, _ := utils.TakeUserInput()
 		switch choice {
 		case 1:
-			showService.BrowseHostShows(ctx)
+			hc.ShowService.BrowseHostShows(ctx)
 		case 2:
-			showService.CreateShow(ctx)
+			hc.ShowService.CreateShow(ctx)
 		case 3:
-			showService.RemoveHostShow(ctx)
+			hc.ShowService.RemoveHostShow(ctx)
 		case 4:
 			return
 		}
 	}
 }
-func venueManagement(ctx context.Context) {
-	venueRepo := venuerepository.NewVenueRepository()
-	venueService := venueservice.NewVenueService(*venueRepo)
+func (hc *HostController) venueManagement(ctx context.Context) {
 	for {
 		color.Blue("Mange your venues")
 		fmt.Println("1. See Venues")
@@ -74,11 +76,11 @@ func venueManagement(ctx context.Context) {
 		choice, _ := utils.TakeUserInput()
 		switch choice {
 		case 1:
-			venueService.BrowseHostVenues(ctx)
+			hc.VenueService.BrowseHostVenues(ctx)
 		case 2:
-			venueService.AddVenue(ctx)
+			hc.VenueService.AddVenue(ctx)
 		case 3:
-			venueService.RemoveVenue(ctx)
+			hc.VenueService.RemoveVenue(ctx)
 		case 4:
 			return
 		}

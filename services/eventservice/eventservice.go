@@ -153,10 +153,13 @@ func (e *EventService) CreateNewEvent() {
 	}
 	var numArtists int
 	for {
+		var err error
 		fmt.Print("Enter number of artists: ")
-		numArtists, err := utils.TakeUserInput()
+		numArtists, err = utils.TakeUserInput()
+		//fmt.Println(numArtists)
 		if err != nil {
-			color.Red("Please enter a integer")
+			color.Red("Please enter a valid integer.")
+			continue
 		}
 		if numArtists <= 0 {
 			color.Red("There must be at least one artist.")
@@ -164,6 +167,9 @@ func (e *EventService) CreateNewEvent() {
 		}
 		break
 	}
+	//fmt.Println(numArtists)
+	reader = bufio.NewReader(os.Stdin)
+
 	artists := make([]string, numArtists)
 	for i := 0; i < numArtists; i++ {
 		for {

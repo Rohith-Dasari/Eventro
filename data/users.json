@@ -15,7 +15,7 @@
   "phone_number": "1234567890",
   "password": "$2a$10$5YxPw1D9CP3DIGwHSddb8uYV8yUA2nCHG0BWST4lWXh9pD9boqcJe",
   "role": "Customer",
-  "is_blocked": true
+  "is_blocked": false
  },
  {
   "user_id": "82b5ac01-9ea8-4b45-9d83-030934211ead",
@@ -32,7 +32,7 @@
   "email": "ganesh@gmail.com",
   "phone_number": "123456789",
   "password": "$2a$10$ERvwa40BsIIKERvTBU32dO96oHE1n.rUUBiKmnFopfrGE0zkFs8Qq",
-  "role": "Host",
+  "role": "Customer",
   "is_blocked": false
  },
  {

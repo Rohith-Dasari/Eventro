@@ -28,14 +28,27 @@ type UserRepository struct {
 // 	return users
 // }
 
-// func UserExists(users []models.User, email string) bool {
-// 	for _, user := range users {
-// 		if user.Email == email {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
+func (ur *UserRepository) UserExists(users []models.User, email string) bool {
+	for _, user := range users {
+		if user.Email == email {
+			return true
+		}
+	}
+	return false
+}
+
+func (ur *UserRepository) GetUsers() ([]models.User, error) {
+	data, err := os.ReadFile(config.UsersFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read users file: %w", err)
+	}
+
+	var users []models.User
+	if err := json.Unmarshal(data, &users); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal users: %w", err)
+	}
+	return users, nil
+}
 
 func (*UserRepository) SaveUsers(users []models.User) error {
 	//how to marshal slice to json?

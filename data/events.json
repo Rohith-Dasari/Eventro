@@ -127,5 +127,41 @@
 "category": "concert",
 "is_blocked": false,
 "locations": null
+},
+{
+"id": "001f8b3f-8b41-4da7-9c1e-ce4cfede0d43",
+"name": "Saturday Night!",
+"description": "lets party this weekend!",
+"hype_meter": 0,
+"artists": [],
+"duration": "2h30m",
+"category": "movie",
+"is_blocked": false,
+"locations": null
+},
+{
+"id": "1e0b8a57-d260-4ee5-9475-cb808550c18a",
+"name": "Bruno Mars",
+"description": "india tour",
+"hype_meter": 0,
+"artists": [],
+"duration": "2h30m",
+"category": "concert",
+"is_blocked": false,
+"locations": null
+},
+{
+"id": "9c15c87e-f8dd-4e41-9294-f2d1b0d57390",
+"name": "Go Zero to Hero",
+"description": "Master Go lang in 5 hrs!",
+"hype_meter": 0,
+"artists": [
+"Aarushi ma'am",
+"Utkarsh sir"
+],
+"duration": "5h00m",
+"category": "workshop",
+"is_blocked": false,
+"locations": null
 }
 ]

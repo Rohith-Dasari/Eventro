@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"eventro2/config"
 	"eventro2/models"
+	"fmt"
 	"log"
 	"os"
 )
@@ -47,4 +48,17 @@ func NewShowRepository() *ShowRepository {
 	}
 	return &ShowRepository{shows}
 
+}
+func (sr *ShowRepository) GetShows() ([]models.Show, error) {
+	data, err := os.ReadFile(config.ShowsFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read shows file: %w", err)
+	}
+
+	var shows []models.Show
+	if err := json.Unmarshal(data, &shows); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal shows: %w", err)
+	}
+
+	return shows, nil
 }

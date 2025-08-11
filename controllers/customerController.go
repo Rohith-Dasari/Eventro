@@ -1,51 +1,45 @@
 package controllers
 
 import (
-	"bufio"
 	"context"
 	"eventro2/config"
-	bookingrepository "eventro2/repository/booking_repository"
-	eventsrepository "eventro2/repository/event_repository"
-	showrepository "eventro2/repository/show_repository"
 	"eventro2/services/bookingservice"
 	"eventro2/services/searchevents"
+	utils "eventro2/utils/userinput"
 	"fmt"
-	"os"
-	"strconv"
-	"strings"
 )
 
-func ShowCustomerDashboard(ctx context.Context) {
-	reader := bufio.NewReader(os.Stdin)
+type CustomerController struct {
+	searchevents.SearchService
+	bookingservice.BookingService
+}
 
-	showRepo := showrepository.NewShowRepository()
-	//venueRepo := venuerepository.NewVenueRepository()
-	eventRepo := eventsrepository.NewEventRepository()
-	bookingRepo := bookingrepository.NewBoookingStore()
+func NewCustomerController(se searchevents.SearchService, bs bookingservice.BookingService) *CustomerController {
+	return &CustomerController{se, bs}
+}
 
-	//showService := showservice.NewShowService(*showRepo, *venueRepo)
-	searchService := searchevents.NewSearchService(*eventRepo)
-	bookingService := bookingservice.NewBookingService(*bookingRepo, *showRepo)
-
+func (cc *CustomerController) ShowCustomerDashboard(ctx context.Context) {
 	for {
+		// showRepo := showrepository.NewShowRepository()
+		// eventRepo := eventsrepository.NewEventRepository()
+		// bookingRepo := bookingrepository.NewBoookingStore()
+		// searchService := searchevents.NewSearchService(*eventRepo)
+		// bookingService := bookingservice.NewBookingService(*bookingRepo, *showRepo)
+
 		fmt.Println(config.CustomerDashboardMessage)
 		fmt.Println(config.CustomerOptions)
-		var choice int
 		fmt.Println(config.ChoiceMessage)
-
-		input, _ := reader.ReadString('\n')
-		input = strings.TrimSpace(input)
-		choice, _ = strconv.Atoi(input)
+		choice, _ := utils.TakeUserInput()
 
 		switch choice {
 		case 1:
-			searchService.Search(ctx)
+			cc.SearchService.Search(ctx)
 
 		case 2:
-			bookingService.ViewBookingHistory(ctx)
+			cc.BookingService.ViewBookingHistory(ctx)
 
 		case 3:
-			fmt.Println("Logging out...")
+			fmt.Println(config.LogoutMessage)
 			return
 
 		default:

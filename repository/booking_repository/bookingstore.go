@@ -55,3 +55,16 @@ func NewBoookingStore() *BookingRepository {
 	}
 	return &BookingRepository{bookings}
 }
+func (br *BookingRepository) GetBookings() ([]models.Booking, error) {
+	data, err := os.ReadFile(config.BookingsFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read bookings file: %w", err)
+	}
+
+	var bookings []models.Booking
+	if err := json.Unmarshal(data, &bookings); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal bookings: %w", err)
+	}
+
+	return bookings, nil
+}

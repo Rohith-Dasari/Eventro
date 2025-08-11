@@ -4,13 +4,20 @@ import (
 	"encoding/json"
 	"eventro2/config"
 	"eventro2/models"
-	"log"
+	"fmt"
 	"os"
+	"sync"
 )
 
 type VenueRepository struct {
 	Venues []models.Venue
 }
+
+var (
+	venueRepoInstance *VenueRepository
+	venueRepoOnce     sync.Once
+	venueRepoMutex    sync.Mutex
+)
 
 // func LoadVenues() []models.Venue {
 // 	file, err := os.Open(config.VenuesFile)
@@ -29,6 +36,20 @@ type VenueRepository struct {
 // 	return venues
 // }
 
+func GetVenues() ([]models.Venue, error) {
+	data, err := os.ReadFile(config.VenuesFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read venues file: %w", err)
+	}
+
+	var venues []models.Venue
+	if err := json.Unmarshal(data, &venues); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal venues: %w", err)
+	}
+
+	return venues, nil
+}
+
 func (*VenueRepository) SaveVenues(venues []models.Venue) error {
 	data, err := json.MarshalIndent(venues, "", " ")
 	if err != nil {
@@ -39,16 +60,18 @@ func (*VenueRepository) SaveVenues(venues []models.Venue) error {
 }
 
 func NewVenueRepository() *VenueRepository {
+	venueRepoOnce.Do(func() {
+		venueRepoInstance = &VenueRepository{}
+	})
 
-	//read json
-	data, err := os.ReadFile(config.VenuesFile)
-	if err != nil {
-		log.Fatalf("failed to read file %v", err)
+	// Always refresh data from file
+	venueRepoMutex.Lock()
+	defer venueRepoMutex.Unlock()
+
+	venues, err := GetVenues()
+	if err == nil {
+		venueRepoInstance.Venues = venues
 	}
-	//unmarshal into booking class
-	var venues []models.Venue
-	if err := json.Unmarshal(data, &venues); err != nil {
-		log.Fatalf("failed to marshal: %v", err)
-	}
-	return &VenueRepository{venues}
+
+	return venueRepoInstance
 }

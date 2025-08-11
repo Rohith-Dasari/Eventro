@@ -188,5 +188,120 @@
 "",
 ""
 ]
+},
+{
+"booking_id": "7e92d982-dada-49be-a15e-23ce122c0dfa",
+"user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+"event_id": "S004",
+"time_booked": "2025-08-11T09:10:01+05:30",
+"num_tickets": 1,
+"total_booking_price": 350,
+"seats": [
+"A6"
+]
+},
+{
+"booking_id": "9d84e215-db39-475f-b97c-e724fd91ad4d",
+"user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+"event_id": "S004",
+"time_booked": "2025-08-11T09:16:35+05:30",
+"num_tickets": 1,
+"total_booking_price": 350,
+"seats": [
+"J7"
+]
+},
+{
+"booking_id": "1c0a6569-e518-455d-8072-6d531b599ead",
+"user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+"event_id": "S004",
+"time_booked": "2025-08-11T09:22:02+05:30",
+"num_tickets": 1,
+"total_booking_price": 350,
+"seats": [
+"J10"
+]
+},
+{
+"booking_id": "5cbab3fc-fdb3-4f5d-a12f-8d7d763ec00f",
+"user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+"event_id": "S004",
+"time_booked": "2025-08-11T09:32:00+05:30",
+"num_tickets": 1,
+"total_booking_price": 350,
+"seats": [
+"J9"
+]
+},
+{
+"booking_id": "e40b0c47-8da1-44f6-a45f-760acd8d184f",
+"user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+"event_id": "S004",
+"time_booked": "2025-08-11T09:34:57+05:30",
+"num_tickets": 1,
+"total_booking_price": 350,
+"seats": [
+"J1"
+]
+},
+{
+"booking_id": "b18d27be-389c-4969-80dc-45b0361dc55b",
+"user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+"event_id": "S004",
+"time_booked": "2025-08-11T09:37:46+05:30",
+"num_tickets": 1,
+"total_booking_price": 350,
+"seats": [
+"F1"
+]
+},
+{
+"booking_id": "3b5a7427-3869-4efc-8e29-858f7b08720d",
+"user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+"event_id": "S004",
+"time_booked": "2025-08-11T10:30:13+05:30",
+"num_tickets": 6,
+"total_booking_price": 2100,
+"seats": [
+"A10",
+"A9",
+"A8",
+"H8",
+"D8",
+"D9"
+]
+},
+{
+"booking_id": "62834f13-e50f-41af-9b7a-1c5e4821400b",
+"user_id": "f9b328ba-1ecc-427d-9939-2281aabb9e11",
+"event_id": "8ee5055a-f40b-45c8-abab-ea48e790641c",
+"time_booked": "2025-08-11T10:43:09+05:30",
+"num_tickets": 1,
+"total_booking_price": 299,
+"seats": [
+"A1"
+]
+},
+{
+"booking_id": "16366451-1547-449c-b57b-be7d5f01ed11",
+"user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+"event_id": "ff47cabf-c40f-4eec-933d-3e44d11730fc",
+"time_booked": "2025-08-11T21:31:54+05:30",
+"num_tickets": 1,
+"total_booking_price": 250,
+"seats": [
+""
+]
+},
+{
+"booking_id": "4e6078c9-985d-46f6-a2e0-b8be0a1a95c4",
+"user_id": "bc934c99-58b3-497f-9f97-2a110fb01930",
+"event_id": "ff47cabf-c40f-4eec-933d-3e44d11730fc",
+"time_booked": "2025-08-12T00:22:27+05:30",
+"num_tickets": 1,
+"total_booking_price": 250,
+"seats": [
+""
+]
 }
 ]

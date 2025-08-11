@@ -70,5 +70,13 @@
   "city": "11",
   "state": "1",
   "is_seat_layout_required": false
+ },
+ {
+  "id": "60dd199d-b399-4582-9b14-93c80eddb4da",
+  "name": "PVR",
+  "host_id": "82b5ac01-9ea8-4b45-9d83-030934211ead",
+  "city": "noida",
+  "state": "UP",
+  "is_seat_layout_required": true
  }
 ]

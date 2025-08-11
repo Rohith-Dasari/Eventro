@@ -28,18 +28,18 @@ func NewSearchService(repo eventrepository.EventRepository) *SearchService {
 }
 
 func (s *SearchService) Search(ctx context.Context) {
-	showRepo := showrepository.NewShowRepository()
-	venueRepo := venuerepository.NewVenueRepository()
-	showService := showservice.NewShowService(*showRepo, *venueRepo)
+
 	for {
+		showRepo := showrepository.NewShowRepository()
+		venueRepo := venuerepository.NewVenueRepository()
+		showService := showservice.NewShowService(*showRepo, *venueRepo)
 		fmt.Println(config.SearchEventsMessage)
 		fmt.Println("1. Search by Event Name")
 		fmt.Println("2. Search by Category")
 		fmt.Println("3. Search by Location")
 		fmt.Println("4. Back")
-		var choice int
-		fmt.Print(config.ChoiceMessage)
-		fmt.Scanf("%d\n", &choice)
+		fmt.Println(config.ChoiceMessage)
+		choice, _ := utils.TakeUserInput()
 
 		switch choice {
 		case 1:
@@ -85,12 +85,9 @@ func (s *SearchService) Search(ctx context.Context) {
 }
 
 func (s *SearchService) SearchByEventName() {
-
-	reader := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Print("Enter the name of the event: ")
-		input, _ := reader.ReadString('\n')
-		query := strings.TrimSpace(input)
+		query := utils.ReadLine()
 
 		var found bool
 		fmt.Println("Matching Events:")
@@ -118,12 +115,24 @@ func (s *SearchService) SearchByEventName() {
 
 func (s *SearchService) SearchByCategory() {
 	for {
-		fmt.Println("Available Categories: movie, sports, concert, workshop, party")
-		fmt.Print("Enter category: ")
-
-		reader := bufio.NewReader(os.Stdin)
-		input, _ := reader.ReadString('\n')
-		query := strings.ToLower(strings.TrimSpace(input))
+		fmt.Printf("Available Categories: \n1. %s \n2. %s \n3. %s \n4. %s \n5. %s", models.Movie, models.Sports, models.Concert, models.Workshop, models.Party)
+		fmt.Print(config.ChoiceMessage)
+		choice, _ := utils.TakeUserInput()
+		var query string
+		switch choice {
+		case 1:
+			query = string(models.Movie)
+		case 2:
+			query = string(models.Sports)
+		case 3:
+			query = string(models.Concert)
+		case 4:
+			query = string(models.Workshop)
+		case 5:
+			query = string(models.Party)
+		default:
+			fmt.Println(config.DefaultChoiceMessage)
+		}
 
 		var found bool
 		fmt.Println("Events in selected category:")

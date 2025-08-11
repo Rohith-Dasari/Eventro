@@ -33,9 +33,10 @@ func NewBookingService(bRepo bookingrepository.BookingRepository, sRepo showrepo
 }
 
 func (bs *BookingService) ViewBookingHistory(ctx context.Context) {
-	bookings := bs.BookingRepo.Bookings
+	// bookings := bs.BookingRepo.Bookings
+	bookings2 := bookingrepository.NewBoookingStore()
 	fmt.Println("Your Events:")
-	for _, booking := range bookings {
+	for _, booking := range bookings2.Bookings {
 		if booking.UserID == config.GetUserID(ctx) {
 			bs.printBooking(booking)
 		}
@@ -46,9 +47,11 @@ func (bs *BookingService) MakeBooking(ctx context.Context, userID string, showID
 	shows := bs.ShowRepo.Shows
 
 	var requiredShow *models.Show
+	var requiredIndex int
 	for i := range shows {
 		if shows[i].ID == showID {
 			requiredShow = &shows[i]
+			requiredIndex = i
 			break
 		}
 	}
@@ -93,9 +96,9 @@ func (bs *BookingService) MakeBooking(ctx context.Context, userID string, showID
 
 	if !requiredVenue.IsSeatLayoutRequired {
 		fmt.Printf("Total price: ₹%d\n", totalPrice)
-		fmt.Print("Confirm booking? (y/n): ")
-		choice := strings.ToLower(strings.TrimSpace(utils.ReadLine()))
-		if choice != "y" {
+		fmt.Println("Confirm booking? 1. Yes\n2. No: ")
+		choice, _ := utils.TakeUserInput()
+		if choice != 1 {
 			color.Red("Booking canceled.")
 			fmt.Println("But it is more fun to book :)")
 			return
@@ -119,17 +122,17 @@ func (bs *BookingService) MakeBooking(ctx context.Context, userID string, showID
 
 		fmt.Println("Your selected seats:", userTickets)
 		fmt.Printf("Total price: ₹%d\n", totalPrice)
-		fmt.Print("Confirm booking? (y/n): ")
-		choice, _ := reader.ReadString('\n')
-		if strings.ToLower(choice) != "y" {
+		fmt.Println("Confirm booking? \n1. Yes\n2. No: ")
+		choice, _ := utils.TakeUserInput()
+		if choice != 1 {
 			color.Red("Booking canceled.")
 			fmt.Println("But it is more fun to book :)")
 			return
 		}
+		bs.ShowRepo.Shows[requiredIndex].BookedSeats = append(bs.ShowRepo.Shows[requiredIndex].BookedSeats, userTickets...)
 
 		requiredShow.BookedSeats = append(requiredShow.BookedSeats, userTickets...)
-		bs.ShowRepo.SaveShows(shows)
-		bs.ShowRepo.Shows = shows
+		bs.ShowRepo.SaveShows(bs.ShowRepo.Shows)
 	}
 
 	newBooking := models.Booking{
@@ -145,7 +148,7 @@ func (bs *BookingService) MakeBooking(ctx context.Context, userID string, showID
 	bs.BookingRepo.Bookings = append(bs.BookingRepo.Bookings, newBooking)
 	bs.BookingRepo.SaveBookings(bs.BookingRepo.Bookings)
 
-	fmt.Println("🎉 Congratulations! Your booking is confirmed. Here's your ticket:")
+	color.Green("🎉 Congratulations! Your booking is confirmed. Here's your ticket:")
 	bs.printBooking(newBooking)
 }
 
