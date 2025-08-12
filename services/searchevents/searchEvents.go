@@ -18,10 +18,10 @@ import (
 )
 
 type SearchService struct {
-	EventRepo eventrepository.EventRepository
+	EventRepo eventrepository.EventStorageI
 }
 
-func NewSearchService(repo eventrepository.EventRepository) *SearchService {
+func NewSearchService(repo eventrepository.EventStorageI) *SearchService {
 	return &SearchService{
 		EventRepo: repo,
 	}
@@ -91,7 +91,8 @@ func (s *SearchService) SearchByEventName() {
 
 		var found bool
 		fmt.Println("Matching Events:")
-		for _, event := range s.EventRepo.Events {
+		events, _ := s.EventRepo.GetEvents()
+		for _, event := range events {
 			if strings.Contains(strings.ToLower(event.Name), strings.ToLower(query)) {
 				s.printEvent(event)
 				found = true
@@ -136,7 +137,8 @@ func (s *SearchService) SearchByCategory() {
 
 		var found bool
 		fmt.Println("Events in selected category:")
-		for _, event := range s.EventRepo.Events {
+		events, _ := s.EventRepo.GetEvents()
+		for _, event := range events {
 			if strings.ToLower(string(event.Category)) == query {
 				s.printEvent(event)
 				found = true
@@ -167,7 +169,8 @@ func (s *SearchService) SearchByLocation() {
 
 		var found bool
 		fmt.Printf("\nEvents in %s:\n", city)
-		for _, event := range s.EventRepo.Events {
+		events, _ := s.EventRepo.GetEvents()
+		for _, event := range events {
 			if event.IsBlocked {
 				continue
 			}
@@ -177,7 +180,7 @@ func (s *SearchService) SearchByLocation() {
 			}
 		}
 		if !found {
-			fmt.Println("No events found in this city.")
+			color.Red("No events found in this city.")
 			fmt.Println("1. Enter another city \n2. Back")
 			fmt.Println(config.ChoiceMessage)
 			choice, _ := utils.TakeUserInput()
@@ -203,14 +206,14 @@ func contains(cities []string, target string) bool {
 
 func (s *SearchService) printEvent(e models.Event) {
 	fmt.Println(config.Dash)
-	fmt.Printf("ID: %s\n", e.ID)
-	fmt.Printf("Name: %s\n", e.Name)
-	fmt.Printf("Description: %s\n", e.Description)
-	fmt.Printf("Hype Meter: %d\n", e.HypeMeter)
-	fmt.Printf("Duration: %s\n", e.Duration)
-	fmt.Printf("Category: %s\n", e.Category)
+	fmt.Printf("%-15s %s\n", "ID:", e.ID)
+	fmt.Printf("%-15s %s\n", "Name:", e.Name)
+	fmt.Printf("%-15s %s\n", "Description:", e.Description)
+	fmt.Printf("%-15s %d\n", "Hype Meter:", e.HypeMeter)
+	fmt.Printf("%-15s %s\n", "Duration:", e.Duration)
+	fmt.Printf("%-15s %s\n", "Category:", e.Category)
 	if len(e.Artists) > 0 {
-		fmt.Printf("Artists: %s\n", strings.Join(e.Artists, ", "))
+		fmt.Printf("%-15s %s\n", "Artists:", strings.Join(e.Artists, ", "))
 	}
 	fmt.Println(config.Dash)
 }

@@ -5,6 +5,7 @@ import (
 	"eventro2/config"
 	"eventro2/models"
 	"fmt"
+	"log"
 	"os"
 	"sync"
 )
@@ -36,7 +37,7 @@ var (
 // 	return venues
 // }
 
-func GetVenues() ([]models.Venue, error) {
+func (vr *VenueRepository) GetVenues() ([]models.Venue, error) {
 	data, err := os.ReadFile(config.VenuesFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read venues file: %w", err)
@@ -60,18 +61,17 @@ func (*VenueRepository) SaveVenues(venues []models.Venue) error {
 }
 
 func NewVenueRepository() *VenueRepository {
-	venueRepoOnce.Do(func() {
-		venueRepoInstance = &VenueRepository{}
-	})
-
-	// Always refresh data from file
-	venueRepoMutex.Lock()
-	defer venueRepoMutex.Unlock()
-
-	venues, err := GetVenues()
-	if err == nil {
-		venueRepoInstance.Venues = venues
+	//read json
+	data, err := os.ReadFile(config.VenuesFile)
+	if err != nil {
+		log.Fatalf("failed to read file %v", err)
 	}
 
-	return venueRepoInstance
+	//unmarshal into user class
+	var venues []models.Venue
+	if err := json.Unmarshal(data, &venues); err != nil {
+		log.Fatalf("failed to marshal: %v", err)
+	}
+
+	return &VenueRepository{venues}
 }

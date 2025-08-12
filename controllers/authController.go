@@ -20,7 +20,7 @@ import (
 
 func LoginFlow(ctx context.Context) context.Context {
 	userRepo := userrepository.NewUserRepository()
-	authService := authorisation.NewAuthService(*userRepo)
+	authService := authorisation.NewAuthService(userRepo)
 
 	var user models.User
 
@@ -74,7 +74,7 @@ func LoginFlow(ctx context.Context) context.Context {
 
 func SignupFlow(ctx context.Context) context.Context {
 	userRepo := userrepository.NewUserRepository()
-	authService := authorisation.NewAuthService(*userRepo)
+	authService := authorisation.NewAuthService(userRepo)
 
 	var username, email, phoneNumber, password string
 	fmt.Print("Enter Username: ")

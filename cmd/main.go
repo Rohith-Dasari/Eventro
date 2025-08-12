@@ -65,13 +65,13 @@ func launchDashboard(ctx context.Context) {
 	bookingRepo := bookingrepository.NewBoookingStore()
 	userRepo := userrepository.NewUserRepository()
 	venueRepo := venuerepository.NewVenueRepository()
-	searchService := searchevents.NewSearchService(*eventRepo)
+	searchService := searchevents.NewSearchService(eventRepo)
 	bookingService := bookingservice.NewBookingService(*bookingRepo, *showRepo)
 	showService := showservice.NewShowService(*showRepo, *venueRepo)
 	eventService := eventservice.NewEventService(*eventRepo)
-	priviligeService := privilegeservice.NewPrivilegeService(*userRepo)
-	userService := userservice.NewUserService(*userRepo)
-	venueService := venueservice.NewVenueService(*venueRepo)
+	priviligeService := privilegeservice.NewPrivilegeService(userRepo)
+	userService := userservice.NewUserService(userRepo)
+	venueService := venueservice.NewVenueService(venueRepo)
 
 	role := config.GetUserRole(ctx)
 	switch role {

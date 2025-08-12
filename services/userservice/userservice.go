@@ -12,10 +12,10 @@ import (
 )
 
 type UserService struct {
-	UserRepo userrepository.UserRepository
+	UserRepo userrepository.UserStorageI
 }
 
-func NewUserService(userRepo userrepository.UserRepository) *UserService {
+func NewUserService(userRepo userrepository.UserStorageI) *UserService {
 	return &UserService{UserRepo: userRepo}
 }
 
@@ -27,11 +27,12 @@ func (u *UserService) ModerateUser(ctx context.Context) {
 		var requiredUser *models.User
 		var found bool
 		var requiredIndex int
+		users, _ := u.UserRepo.GetUsers()
 
-		for i := range u.UserRepo.Users {
-			if u.UserRepo.Users[i].Email == userMailID {
-				requiredUser = &u.UserRepo.Users[i]
-				u.PrintUser(u.UserRepo.Users[i])
+		for i := range users {
+			if users[i].Email == userMailID {
+				requiredUser = &users[i]
+				u.PrintUser(users[i])
 				found = true
 				requiredIndex = i
 				break
@@ -68,8 +69,8 @@ func (u *UserService) ModerateUser(ctx context.Context) {
 			switch choice {
 			case 1:
 				requiredUser.IsBlocked = !requiredUser.IsBlocked
-				u.UserRepo.Users[requiredIndex].IsBlocked = false
-				u.UserRepo.SaveUsers(u.UserRepo.Users)
+				users[requiredIndex].IsBlocked = false
+				u.UserRepo.SaveUsers(users)
 				color.Green("User is successfully unblocked")
 				return
 			case 2:
@@ -88,8 +89,8 @@ func (u *UserService) ModerateUser(ctx context.Context) {
 			switch choice {
 			case 1:
 				requiredUser.IsBlocked = !requiredUser.IsBlocked
-				u.UserRepo.Users[requiredIndex].IsBlocked = true
-				u.UserRepo.SaveUsers(u.UserRepo.Users)
+				users[requiredIndex].IsBlocked = true
+				u.UserRepo.SaveUsers(users)
 				color.Green("User is successfully blocked")
 				return
 			case 2:
@@ -104,7 +105,7 @@ func (u *UserService) ModerateUser(ctx context.Context) {
 }
 
 func (u *UserService) ViewBlockedUsers(ctx context.Context) {
-	users := u.UserRepo.Users
+	users, _ := u.UserRepo.GetUsers()
 	found := false
 	color.Blue("Blocked Users:")
 	for _, user := range users {

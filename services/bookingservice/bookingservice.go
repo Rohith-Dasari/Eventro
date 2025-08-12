@@ -96,7 +96,7 @@ func (bs *BookingService) MakeBooking(ctx context.Context, userID string, showID
 
 	if !requiredVenue.IsSeatLayoutRequired {
 		fmt.Printf("Total price: ₹%d\n", totalPrice)
-		fmt.Println("Confirm booking? 1. Yes\n2. No: ")
+		fmt.Println("Confirm booking?\n1. Yes\n2. No: ")
 		choice, _ := utils.TakeUserInput()
 		if choice != 1 {
 			color.Red("Booking canceled.")

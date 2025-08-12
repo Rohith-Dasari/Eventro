@@ -1,6 +1,8 @@
 package showrepository
 
+import "eventro2/models"
+
 type ShowStorageI interface {
-	SaveShows()
-	GetShows()
+	SaveShows(shows []models.Show) error
+	GetShows() ([]models.Show, error)
 }

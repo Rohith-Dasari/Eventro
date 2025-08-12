@@ -11,17 +11,18 @@ import (
 )
 
 type AuthService struct {
-	UserRepo userrepository.UserRepository
+	UserRepo userrepository.UserStorageI
 }
 
-func NewAuthService(userRepo userrepository.UserRepository) *AuthService {
+func NewAuthService(userRepo userrepository.UserStorageI) *AuthService {
 	return &AuthService{
 		UserRepo: userRepo,
 	}
 }
 
 func (a *AuthService) ValidateLogin(ctx context.Context, email, password string) (models.User, error) {
-	for _, user := range a.UserRepo.Users {
+	users, _ := a.UserRepo.GetUsers()
+	for _, user := range users {
 		if user.Email == email {
 			err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 			if err != nil {
@@ -39,7 +40,8 @@ func (a *AuthService) HashPassword(password string) (string, error) {
 }
 
 func (a *AuthService) UserExists(email string) bool {
-	for _, user := range a.UserRepo.Users {
+	users, _ := a.UserRepo.GetUsers()
+	for _, user := range users {
 		if user.Email == email {
 			return true
 		}

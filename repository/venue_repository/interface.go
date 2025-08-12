@@ -1,6 +1,8 @@
 package venuerepository
 
+import "eventro2/models"
+
 type VenueStorageI interface {
-	SaveVenues()
-	GetVenues()
+	GetVenues() ([]models.Venue, error)
+	SaveVenues(venues []models.Venue) error
 }

@@ -15,10 +15,10 @@ import (
 )
 
 type VenueService struct {
-	VenueRepo venuerepository.VenueRepository
+	VenueRepo venuerepository.VenueStorageI
 }
 
-func NewVenueService(repo venuerepository.VenueRepository) *VenueService {
+func NewVenueService(repo venuerepository.VenueStorageI) *VenueService {
 	return &VenueService{VenueRepo: repo}
 }
 
@@ -29,7 +29,7 @@ func (vs *VenueService) AddVenue(ctx context.Context) {
 		fmt.Print("Enter Venue Name: ")
 		name = utils.ReadLine()
 		if name == "" {
-			fmt.Println("Venue name cannot be empty.")
+			color.Red("Venue name cannot be empty.")
 			continue
 		}
 		break
@@ -39,11 +39,11 @@ func (vs *VenueService) AddVenue(ctx context.Context) {
 		fmt.Print("Enter City: ")
 		city = utils.ReadLine()
 		if city == "" {
-			fmt.Println("City cannot be empty.")
+			color.Red("City cannot be empty.")
 			continue
 		}
 		if !isAlpha(city) {
-			fmt.Println("City can only contain letters and spaces.")
+			color.Red("City can only contain letters and spaces.")
 			continue
 		}
 		break
@@ -67,11 +67,9 @@ func (vs *VenueService) AddVenue(ctx context.Context) {
 		IsSeatLayoutRequired: isSeatLayoutRequired,
 	}
 
-	venues := vs.VenueRepo.Venues
+	venues, _ := vs.VenueRepo.GetVenues()
 	venues = append(venues, venue)
 	vs.VenueRepo.SaveVenues(venues)
-	vs.VenueRepo.Venues = append(vs.VenueRepo.Venues, venue)
-
 	fmt.Println("Venue created successfully:")
 	vs.PrintVenue(venue)
 }
@@ -84,7 +82,7 @@ func isAlpha(s string) bool {
 	return true
 }
 func (vs *VenueService) BrowseHostVenues(ctx context.Context) {
-	venues := vs.VenueRepo.Venues
+	venues, _ := vs.VenueRepo.GetVenues()
 	color.Blue("Your Venues")
 	for _, venue := range venues {
 		if venue.HostID == config.GetUserID(ctx) {
@@ -98,7 +96,7 @@ func (vs *VenueService) RemoveVenue(ctx context.Context) {
 		fmt.Print("Enter Venue ID to remove: ")
 		venueID := utils.ReadLine()
 
-		venues := vs.VenueRepo.Venues
+		venues, _ := vs.VenueRepo.GetVenues()
 
 		var requiredVenue models.Venue
 		var requiredIndex int
@@ -136,8 +134,8 @@ func (vs *VenueService) RemoveVenue(ctx context.Context) {
 				choice, _ := utils.TakeUserInput()
 				switch choice {
 				case 1:
-					vs.VenueRepo.Venues = append(vs.VenueRepo.Venues[:requiredIndex], vs.VenueRepo.Venues[requiredIndex+1:]...)
-					vs.VenueRepo.SaveVenues(vs.VenueRepo.Venues)
+					venues = append(venues[:requiredIndex], venues[requiredIndex+1:]...)
+					vs.VenueRepo.SaveVenues(venues)
 					fmt.Println("Venue removed successfully.")
 					return
 				case 2:

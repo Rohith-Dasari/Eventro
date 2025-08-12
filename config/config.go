@@ -42,3 +42,8 @@ var (
 	ShowModeration           = color.BlueString("Show Moderation")
 	EventModeration          = color.BlueString("Event Moderation")
 )
+
+const (
+	Rows    = 10
+	Columns = 10
+)

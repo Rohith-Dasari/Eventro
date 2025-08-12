@@ -460,18 +460,19 @@ func (s *ShowService) printShow(show models.Show) {
 		}
 	}
 	fmt.Println(config.Dash)
-	fmt.Printf("Show ID: %s\n", show.ID)
-	fmt.Printf("Show Date: %s\n", show.ShowDate)
-	fmt.Printf("Show Time: %s\n", show.ShowTime)
-	fmt.Printf("Venue Name: %s\n", requiredVenue.Name)
-	fmt.Printf("Venue City:%s\n", requiredVenue.City)
-	fmt.Printf("Price: ₹%.2f\n", show.Price)
+	fmt.Printf("%-15s %s\n", "Show ID:", show.ID)
+	fmt.Printf("%-15s %s\n", "Show Date:", show.ShowDate)
+	fmt.Printf("%-15s %s\n", "Show Time:", show.ShowTime)
+	fmt.Printf("%-15s %s\n", "Venue Name:", requiredVenue.Name)
+	fmt.Printf("%-15s %s\n", "Venue City:", requiredVenue.City)
+	fmt.Printf("%-15s ₹%.2f\n", "Price:", show.Price)
 	fmt.Println(config.Dash)
+
 }
 
 func (s *ShowService) displaySeatMap(booked []string) {
-	const rows = 10
-	const cols = 10
+	rows := config.Rows
+	cols := config.Columns
 
 	bookedMap := make(map[string]bool)
 	for _, seat := range booked {

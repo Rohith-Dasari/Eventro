@@ -1,7 +1,8 @@
 package eventsrepository
 
+import "eventro2/models"
+
 type EventStorageI interface {
-	//add methods
-	SaveEvents()
-	GetEvents()
+	SaveEvents(events []models.Event) error
+	GetEvents() ([]models.Event, error)
 }
