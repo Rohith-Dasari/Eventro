@@ -37,7 +37,7 @@ var (
 	UserModerationMenu       = "1. Block/Unblock User\n2. View Blocked Users\n3. Back"
 	ShowModerationMSG        = "1. Block/Unblock Show\n2. View Blocked Shows\n3. Back"
 	EventModerationMSG       = "1. Block/Unblock Event\n2. View Blocked Events\n3. Back"
-	AdminDashboardMSG        = "1. User Moderation\n2. Show Moderation\n3. Event Moderation\n4. Privilige Moderation\n5. Add a new Event\n6. Book behalf of user\n7. Logout"
+	AdminDashboardMSG        = "1. User Moderation\n2. Show Moderation\n3. Event Moderation\n4. Privilige Moderation\n5. Add a new Event\n6. Book behalf of user\n7. Add Artist\n8. Logout"
 	UserModeration           = "User Moderation"
 	ShowModeration           = color.BlueString("Show Moderation")
 	EventModeration          = color.BlueString("Event Moderation")

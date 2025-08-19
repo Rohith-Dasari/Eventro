@@ -9,11 +9,12 @@ const (
 )
 
 type User struct {
-	UserID      string `json:"user_id"`
-	Username    string `json:"username"`
-	Email       string `json:"email"`
-	PhoneNumber string `json:"phone_number"`
-	Password    string `json:"password"`
-	Role        Role   `json:"role"`
-	IsBlocked   bool   `json:"is_blocked"`
+	UserID      string    `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	Username    string    `gorm:"not null"`
+	Email       string    `gorm:"uniqueIndex;not null"`
+	PhoneNumber string    `gorm:"not null"`
+	Password    string    `gorm:"not null"`
+	Role        Role      `gorm:"type:text;not null"`
+	IsBlocked   bool      `gorm:"default:false"`
+	Bookings    []Booking `gorm:"foreignKey:UserID;references:UserID"`
 }

@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"eventro2/config"
+	"eventro2/services/artistservice"
 	"eventro2/services/eventservice"
 	privilegeservice "eventro2/services/priviligeservice"
 	"eventro2/services/searchevents"
@@ -21,10 +22,11 @@ type AdminController struct {
 	userservice.UserService
 	showservice.ShowService
 	searchevents.SearchService
+	artistservice.Artistservice
 }
 
-func NewAdminController(p privilegeservice.PrivilegeService, e eventservice.EventService, u userservice.UserService, ss showservice.ShowService, se searchevents.SearchService) *AdminController {
-	return &AdminController{p, e, u, ss, se}
+func NewAdminController(p privilegeservice.PrivilegeService, e eventservice.EventService, u userservice.UserService, ss showservice.ShowService, se searchevents.SearchService, as artistservice.Artistservice) *AdminController {
+	return &AdminController{p, e, u, ss, se, as}
 }
 
 func (ac *AdminController) ShowAdminDashboard(ctx context.Context) {
@@ -49,6 +51,8 @@ func (ac *AdminController) ShowAdminDashboard(ctx context.Context) {
 		case 6:
 			ac.bookBehalfofUser(ctx)
 		case 7:
+			ac.Artistservice.CreateArtist(ctx)
+		case 8:
 			fmt.Println(config.LogoutMessage)
 			os.Exit(0)
 		}
@@ -93,6 +97,7 @@ func (ac *AdminController) showModeration(ctx context.Context) {
 		}
 	}
 }
+
 func (ac *AdminController) eventModeration(ctx context.Context) {
 	for {
 		fmt.Println(config.EventModeration)

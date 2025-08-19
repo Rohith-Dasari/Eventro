@@ -17,73 +17,67 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/google/uuid"
 )
 
 type BookingService struct {
 	BookingRepo bookingrepository.BookingRepository
 	ShowRepo    showrepository.ShowRepository
+	venueRepo   venuerepository.VenueRepository
+	eventRepo   eventsrepository.EventRepository
 }
 
-func NewBookingService(bRepo bookingrepository.BookingRepository, sRepo showrepository.ShowRepository) *BookingService {
-	return &BookingService{
+func NewBookingService(bRepo bookingrepository.BookingRepository, sRepo showrepository.ShowRepository, vRepo venuerepository.VenueRepository, eRepo eventsrepository.EventRepository) BookingService {
+	return BookingService{
 		BookingRepo: bRepo,
 		ShowRepo:    sRepo,
+		venueRepo:   vRepo,
+		eventRepo:   eRepo,
 	}
 }
 
 func (bs *BookingService) ViewBookingHistory(ctx context.Context) {
-	// bookings := bs.BookingRepo.Bookings
-	bookings2 := bookingrepository.NewBoookingStore()
+	userID := config.GetUserID(ctx)
+
+	bookings, err := bs.BookingRepo.ListByUser(userID)
+	if err != nil {
+		fmt.Println("Error fetching bookings:", err)
+		return
+	}
+
+	if len(bookings) == 0 {
+		fmt.Println("No bookings found.")
+		return
+	}
+
 	fmt.Println("Your Events:")
-	for _, booking := range bookings2.Bookings {
-		if booking.UserID == config.GetUserID(ctx) {
-			bs.printBooking(booking)
-		}
+	for _, booking := range bookings {
+		bs.printBooking(booking)
 	}
 }
 
 func (bs *BookingService) MakeBooking(ctx context.Context, userID string, showID string) {
-	shows := bs.ShowRepo.Shows
-
-	var requiredShow *models.Show
-	var requiredIndex int
-	for i := range shows {
-		if shows[i].ID == showID {
-			requiredShow = &shows[i]
-			requiredIndex = i
-			break
-		}
-	}
-	if requiredShow == nil {
+	requiredShow, err := bs.ShowRepo.GetByID(showID)
+	if err != nil || requiredShow == nil {
 		color.Red("Error: Show not found.")
 		return
 	}
 
-	venueRepo := venuerepository.NewVenueRepository()
-	var requiredVenue models.Venue
-	for _, venue := range venueRepo.Venues {
-		if venue.ID == requiredShow.VenueID {
-			requiredVenue = venue
-			break
-		}
+	requiredVenue, err := bs.venueRepo.GetByID(requiredShow.VenueID)
+	if err != nil || requiredVenue == nil {
+		color.Red("Error: Venue not found.")
+		return
 	}
 
 	var numTickets int
 	for {
 		fmt.Println("How many tickets do you want to book?")
-		var err error
 		numTickets, err = utils.TakeUserInput()
 		if err != nil {
 			color.Red("Invalid input. Please enter a valid number.")
 			continue
 		}
 		if numTickets <= 0 || numTickets > 10 {
-			color.Red("Number of tickets must be greater than zero.")
-			continue
-		}
-		if numTickets > 10 {
-			color.Red("A user can only book upto 10 tickets")
+			color.Red("Number of tickets must be between 1 and 10.")
 			continue
 		}
 		break
@@ -129,66 +123,58 @@ func (bs *BookingService) MakeBooking(ctx context.Context, userID string, showID
 			fmt.Println("But it is more fun to book :)")
 			return
 		}
-		bs.ShowRepo.Shows[requiredIndex].BookedSeats = append(bs.ShowRepo.Shows[requiredIndex].BookedSeats, userTickets...)
 
 		requiredShow.BookedSeats = append(requiredShow.BookedSeats, userTickets...)
-		bs.ShowRepo.SaveShows(bs.ShowRepo.Shows)
+		if err := bs.ShowRepo.Update(requiredShow); err != nil {
+			color.Red("Error updating show seats:", err)
+			return
+		}
 	}
-
-	newBooking := models.Booking{
-		BookingID:         uuid.New().String(),
+	newBooking := &models.Booking{
 		UserID:            userID,
 		ShowID:            showID,
-		TimeBooked:        time.Now().Format(time.RFC3339),
 		NumTickets:        numTickets,
 		TotalBookingPrice: float64(totalPrice),
 		Seats:             userTickets,
 	}
 
-	bs.BookingRepo.Bookings = append(bs.BookingRepo.Bookings, newBooking)
-	bs.BookingRepo.SaveBookings(bs.BookingRepo.Bookings)
+	if err := bs.BookingRepo.Create(newBooking); err != nil {
+		color.Red("Error creating booking:", err)
+		return
+	}
 
 	color.Green("🎉 Congratulations! Your booking is confirmed. Here's your ticket:")
-	bs.printBooking(newBooking)
+	bs.printBooking(*newBooking)
 }
 
 func (bs *BookingService) printBooking(b models.Booking) {
-	//i have booking, booking has show id, show id has event id and venue id so first required show needs to be caught
-
-	shows := bs.ShowRepo.Shows
-	var requiredShow models.Show
-	for _, show := range shows {
-		if show.ID == b.ShowID {
-			requiredShow = show
-		}
-	}
-	eventRepo := eventsrepository.NewEventRepository()
-	venuRepository := venuerepository.NewVenueRepository()
-
-	var requiredEvent models.Event
-	for _, event := range eventRepo.Events {
-		if event.ID == requiredShow.EventID {
-			requiredEvent = event
-			break
-		}
+	requiredShow, err := bs.ShowRepo.GetByID(b.ShowID)
+	if err != nil || requiredShow == nil {
+		color.Red("Error: Show not found for booking.")
+		return
 	}
 
-	var requiredVenue models.Venue
-	for _, venue := range venuRepository.Venues {
-		if venue.ID == requiredShow.VenueID {
-			requiredVenue = venue
-			break
-		}
+	requiredEvent, err := bs.eventRepo.GetByID(requiredShow.EventID)
+	if err != nil || requiredEvent == nil {
+		color.Red("Error: Event not found for show.")
+		return
 	}
+
+	requiredVenue, err := bs.venueRepo.GetByID(requiredShow.VenueID)
+	if err != nil || requiredVenue == nil {
+		color.Red("Error: Venue not found for show.")
+		return
+	}
+
 	fmt.Println(config.Dash)
-	fmt.Printf("Booking ID    \t: %s\n", b.BookingID)
-	fmt.Printf("Event Name    \t: %s\n", requiredEvent.Name)
-	fmt.Printf("Venue Name    \t: %s\n", requiredVenue.Name)
-	fmt.Printf("Venue City    \t: %s\n", requiredVenue.City)
-	fmt.Printf("Time Booked   \t: %s\n", b.TimeBooked)
-	fmt.Printf("Tickets Booked\t: %d\n", b.NumTickets)
-	fmt.Printf("Total Price   \t: ₹%.2f\n", b.TotalBookingPrice)
-	fmt.Printf("Seats         \t: %v\n", b.Seats)
+	fmt.Printf("%-16s : %s\n", "Booking ID", b.BookingID)
+	fmt.Printf("%-16s : %s\n", "Event Name", requiredEvent.Name)
+	fmt.Printf("%-16s : %s\n", "Venue Name", requiredVenue.Name)
+	fmt.Printf("%-16s : %s\n", "Venue City", requiredVenue.City)
+	fmt.Printf("%-16s : %s\n", "Time Booked", b.TimeBooked.Format(time.RFC1123))
+	fmt.Printf("%-16s : %d\n", "Tickets Booked", b.NumTickets)
+	fmt.Printf("%-16s : ₹%.2f\n", "Total Price", b.TotalBookingPrice)
+	fmt.Printf("%-16s : %v\n", "Seats", b.Seats)
 	fmt.Println(config.Dash)
 }
 

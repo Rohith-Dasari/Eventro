@@ -2,9 +2,11 @@ package userrepository
 
 import "eventro2/models"
 
-type UserStorageI interface {
-	GetUsers() ([]models.User, error)
-	SaveUsers(users []models.User) error
-	AddUser(user models.User) error
-	UserExists(users []models.User, email string) bool
+type UserRepository interface {
+	Create(user *models.User) error
+	GetByID(id string) (*models.User, error)
+	GetByEmail(email string) (*models.User, error)
+	Update(user *models.User) error
+	Delete(id string) error
+	GetBlockedUsers() ([]models.User, error)
 }

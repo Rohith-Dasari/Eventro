@@ -22,8 +22,8 @@ type EventService struct {
 	EventRepo eventsrepository.EventRepository
 }
 
-func NewEventService(eventRepo eventsrepository.EventRepository) *EventService {
-	return &EventService{EventRepo: eventRepo}
+func NewEventService(eventRepo eventsrepository.EventRepository) EventService {
+	return EventService{EventRepo: eventRepo}
 }
 
 func (e *EventService) ModerateEvents(ctx context.Context) {
@@ -31,22 +31,12 @@ func (e *EventService) ModerateEvents(ctx context.Context) {
 		fmt.Println("Enter ID of the event to be moderated:")
 		eventID := utils.ReadLine()
 
-		events := e.EventRepo.Events
-		var requiredEvent *models.Event
-		var found bool
-		var requiredIndex int
-
-		for i := range events {
-			if events[i].ID == eventID {
-				requiredEvent = &events[i]
-				e.PrintEvent(*requiredEvent)
-				found = true
-				requiredIndex = i
-				break
-			}
+		requiredEvent, err := e.EventRepo.GetByID(eventID)
+		if err != nil {
+			fmt.Println("Error fetching event:", err)
+			return
 		}
-
-		if !found {
+		if requiredEvent == nil {
 			fmt.Println("Event not found. Please enter a correct ID.")
 			fmt.Println("1. Retry with another Event ID\n2. Back ")
 			fmt.Println(config.ChoiceMessage)
@@ -66,19 +56,25 @@ func (e *EventService) ModerateEvents(ctx context.Context) {
 			}
 		}
 
+		// Print current event details
+		e.PrintEvent(*requiredEvent)
+
 		if requiredEvent.IsBlocked {
 			fmt.Println("The event is currently BLOCKED")
 			fmt.Println("Are you sure you want to UNBLOCK the event?")
 			fmt.Println("1. Yes")
 			fmt.Println("2. No, try another ID")
 			fmt.Println("3. Back")
+
 			choice, _ := utils.TakeUserInput()
 			switch choice {
 			case 1:
-				requiredEvent.IsBlocked = !requiredEvent.IsBlocked
-				e.EventRepo.Events[requiredIndex].IsBlocked = false
-				e.EventRepo.SaveEvents(e.EventRepo.Events)
-				color.Green("Event is successfully unblocked")
+				requiredEvent.IsBlocked = false
+				if err := e.EventRepo.Update(requiredEvent); err != nil {
+					color.Red("Failed to unblock event: %v", err)
+				} else {
+					color.Green("Event is successfully unblocked")
+				}
 				return
 			case 2:
 				color.Red("Canceled")
@@ -87,18 +83,21 @@ func (e *EventService) ModerateEvents(ctx context.Context) {
 				return
 			}
 		} else {
-			fmt.Println("The Event is currently UNBLOCKED")
-			fmt.Println("Are you sure you want to BLOCK the Event?")
+			fmt.Println("The event is currently UNBLOCKED")
+			fmt.Println("Are you sure you want to BLOCK the event?")
 			fmt.Println("1. Yes")
 			fmt.Println("2. No, try another ID")
 			fmt.Println("3. Back")
+
 			choice, _ := utils.TakeUserInput()
 			switch choice {
 			case 1:
-				requiredEvent.IsBlocked = !requiredEvent.IsBlocked
-				e.EventRepo.Events[requiredIndex].IsBlocked = true
-				e.EventRepo.SaveEvents(events)
-				fmt.Println("Event is successfully blocked")
+				requiredEvent.IsBlocked = true
+				if err := e.EventRepo.Update(requiredEvent); err != nil {
+					color.Red("Failed to block event: %v", err)
+				} else {
+					fmt.Println("Event is successfully blocked")
+				}
 				return
 			case 2:
 				color.Red("Canceled")
@@ -111,7 +110,12 @@ func (e *EventService) ModerateEvents(ctx context.Context) {
 }
 
 func (e *EventService) ViewBlockedEvents(ctx context.Context) {
-	events := e.EventRepo.Events
+	events, err := e.EventRepo.List()
+	if err != nil {
+		color.Red("Error fetching events: %v", err)
+		return
+	}
+
 	found := false
 	for _, event := range events {
 		if event.IsBlocked {
@@ -125,6 +129,8 @@ func (e *EventService) ViewBlockedEvents(ctx context.Context) {
 }
 func (e *EventService) CreateNewEvent() {
 	reader := bufio.NewReader(os.Stdin)
+
+	// Name
 	var name string
 	for {
 		fmt.Print("Enter event name: ")
@@ -136,6 +142,8 @@ func (e *EventService) CreateNewEvent() {
 		}
 		break
 	}
+
+	// Description
 	var description string
 	for {
 		fmt.Print("Enter event description: ")
@@ -151,12 +159,13 @@ func (e *EventService) CreateNewEvent() {
 		}
 		break
 	}
+
+	// Number of artists
 	var numArtists int
 	for {
 		var err error
 		fmt.Print("Enter number of artists: ")
 		numArtists, err = utils.TakeUserInput()
-		//fmt.Println(numArtists)
 		if err != nil {
 			color.Red("Please enter a valid integer.")
 			continue
@@ -167,23 +176,23 @@ func (e *EventService) CreateNewEvent() {
 		}
 		break
 	}
-	//fmt.Println(numArtists)
-	reader = bufio.NewReader(os.Stdin)
 
+	// Artists
 	artists := make([]string, numArtists)
 	for i := 0; i < numArtists; i++ {
 		for {
 			fmt.Printf("Enter artist %d: ", i+1)
-			artist, _ := reader.ReadString('\n')
-			artist = strings.TrimSpace(artist)
-			if artist == "" {
-				color.Red("Artist name cannot be empty.")
+			ID := utils.ReadLine()
+			if ID == "" {
+				color.Red("Artist ID cannot be empty.")
 				continue
 			}
-			artists[i] = artist
+			artists[i] = ID
 			break
 		}
 	}
+
+	// Duration
 	var duration string
 	for {
 		fmt.Print("Enter event duration (e.g., 2h30m): ")
@@ -200,6 +209,8 @@ func (e *EventService) CreateNewEvent() {
 		}
 		break
 	}
+
+	// Category
 	var category models.EventCategory
 	for {
 		fmt.Println("Select category:")
@@ -230,20 +241,29 @@ func (e *EventService) CreateNewEvent() {
 		break
 	}
 
+	EventID := uuid.New().String()
+
+	//populate eventartist table with eventID and artist id stored in array
+	for i := range artists {
+		eventartist := models.EventArtist{EventID: EventID, ArtistID: artists[i]}
+		e.EventRepo.AddEventArtist(&eventartist)
+	}
+
+	// Build event
 	event := models.Event{
-		ID:          uuid.New().String(),
+		ID:          EventID,
 		Name:        name,
 		Description: description,
-		Artists:     artists,
 		Duration:    duration,
 		Category:    category,
 		IsBlocked:   false,
 	}
-	e.EventRepo.Events = append(e.EventRepo.Events, event)
-	err := e.EventRepo.SaveEvents(e.EventRepo.Events)
-	if err != nil {
-		log.Printf("Error saving events: %v", err)
+
+	if err := e.EventRepo.Create(&event); err != nil {
+		log.Printf("Error saving event: %v", err)
+		return
 	}
+
 	e.PrintEvent(event)
 	color.Green("Event added successfully")
 }
@@ -256,8 +276,16 @@ func (e *EventService) PrintEvent(event models.Event) {
 	fmt.Printf("Hype Meter: %d\n", event.HypeMeter)
 	fmt.Printf("Duration: %s\n", event.Duration)
 	fmt.Printf("Category: %s\n", event.Category)
-	if len(event.Artists) > 0 {
-		fmt.Printf("Artists: %s\n", strings.Join(event.Artists, ", "))
+
+	artists, err := e.EventRepo.GetArtistsByEventID(event.ID)
+	if err != nil {
+		fmt.Println("Error fetching artists:", err)
+		return
 	}
+	fmt.Println("Artists:")
+	for _, artist := range artists {
+		fmt.Printf(" - %s\n", artist.Name)
+	}
+
 	fmt.Println(config.Dash)
 }

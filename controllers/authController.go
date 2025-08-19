@@ -5,7 +5,6 @@ import (
 	"context"
 	"eventro2/config"
 	"eventro2/models"
-	userrepository "eventro2/repository/user_repository"
 	"eventro2/services/authorisation"
 	"fmt"
 	"net/mail"
@@ -18,15 +17,19 @@ import (
 	"golang.org/x/term"
 )
 
-func LoginFlow(ctx context.Context) context.Context {
-	userRepo := userrepository.NewUserRepository()
-	authService := authorisation.NewAuthService(userRepo)
+type AuthController struct {
+	authService authorisation.AuthService
+}
 
+func NewAuthController(authService authorisation.AuthService) *AuthController {
+	return &AuthController{authService: authService}
+}
+
+func (ac *AuthController) LoginFlow(ctx context.Context) context.Context {
 	var user models.User
-
 	var email, password string
-	for {
 
+	for {
 		fmt.Print("Enter email: ")
 		reader := bufio.NewReader(os.Stdin)
 		input, err := reader.ReadString('\n')
@@ -37,13 +40,6 @@ func LoginFlow(ctx context.Context) context.Context {
 		email = strings.TrimSpace(input)
 
 		fmt.Print("Enter password: ")
-		// input, err = reader.ReadString('\n')
-		// if err != nil {
-		// 	fmt.Println("Error reading input:", err)
-		// 	return ctx
-		// }
-		//password = strings.TrimSpace(input)
-
 		bytePassword, err := term.ReadPassword(int(os.Stdin.Fd()))
 		if err != nil {
 			fmt.Println("\nError reading password:", err)
@@ -51,30 +47,30 @@ func LoginFlow(ctx context.Context) context.Context {
 		}
 		password = string(bytePassword)
 
-		user, err = authService.ValidateLogin(ctx, email, password)
-		if !user.IsBlocked {
-			ctx = context.WithValue(ctx, config.UserIDKey, user.UserID)
-			ctx = context.WithValue(ctx, config.UserRoleKey, user.Role)
-			ctx = context.WithValue(ctx, config.UserMailID, user.Email)
-		} else {
+		user, err = ac.authService.ValidateLogin(ctx, email, password)
+		if err != nil {
+			color.Red("\nLogin failed: %v. Retry\n", err)
+			continue // loop again
+		}
+
+		if user.IsBlocked {
+			color.Red("\nYour account has been blocked. Contact support.\n")
 			return ctx
 		}
 
-		if err != nil {
-			color.Red("\nLogin failed: %v. Retry", err)
-			continue
-		}
+		ctx = context.WithValue(ctx, config.UserIDKey, user.UserID)
+		ctx = context.WithValue(ctx, config.UserRoleKey, user.Role)
+		ctx = context.WithValue(ctx, config.UserMailID, user.Email)
+
 		break
 	}
-	config.CurrentUser = &user
 
+	config.CurrentUser = &user
 	fmt.Printf(config.WelcomeBack, user.Username, user.Role)
 	return ctx
 }
 
-func SignupFlow(ctx context.Context) context.Context {
-	userRepo := userrepository.NewUserRepository()
-	authService := authorisation.NewAuthService(userRepo)
+func (ac *AuthController) SignupFlow(ctx context.Context) context.Context {
 
 	var username, email, phoneNumber, password string
 	fmt.Print("Enter Username: ")
@@ -90,7 +86,8 @@ func SignupFlow(ctx context.Context) context.Context {
 		break
 	}
 
-	if authService.UserExists(email) {
+	existingUser, err := ac.authService.UserRepo.GetByEmail(email)
+	if err == nil && existingUser != nil {
 		color.Red("Email is already registered. Try logging in.")
 		return ctx
 	}
@@ -99,7 +96,7 @@ func SignupFlow(ctx context.Context) context.Context {
 		fmt.Print("Enter Phone number: ")
 		fmt.Scan(&phoneNumber)
 		if !isValidPhoneNumber(phoneNumber) {
-			color.Red("Phone numbers should start with +91 followed by 10 numbers")
+			color.Red("Phone numbers should be of 10 digits")
 			continue
 		}
 		break
@@ -118,7 +115,7 @@ func SignupFlow(ctx context.Context) context.Context {
 		}
 		break
 	}
-	hashedPassword, err := authService.HashPassword(password)
+	hashedPassword, err := ac.authService.HashPassword(password)
 	if err != nil {
 		color.Red("\nError hashing password:", err)
 		return ctx
@@ -134,11 +131,10 @@ func SignupFlow(ctx context.Context) context.Context {
 		IsBlocked:   false,
 	}
 
-	if err := authService.UserRepo.AddUser(newUser); err != nil {
-		color.Red("\nFailed to add user:", err)
+	if err := ac.authService.UserRepo.Create(&newUser); err != nil {
+		color.Red("\nFailed to add user: %v", err)
 		return ctx
 	}
-
 	ctx = context.WithValue(ctx, config.UserIDKey, newUser.UserID)
 	ctx = context.WithValue(ctx, config.UserRoleKey, newUser.Role)
 	ctx = context.WithValue(ctx, config.UserMailID, newUser.Email)

@@ -1,65 +1,82 @@
-package eventsrepository
+package eventrepository
 
 import (
-	"encoding/json"
-	"eventro2/config"
 	"eventro2/models"
-	"fmt"
-	"log"
-	"os"
+	"strings"
+
+	"gorm.io/gorm"
 )
 
-type EventRepository struct {
-	Events []models.Event
+type EventRepositoryPG struct {
+	db *gorm.DB
 }
 
-// func LoadEvents() []models.Event {
-// 	//read json
-// 	data, err := os.ReadFile("data/events.json")
-// 	if err != nil {
-// 		log.Fatalf("failed to read file %v", err)
-// 	}
-// 	//unmarshal into user class
-// 	var events []models.Event
-// 	if err := json.Unmarshal(data, &events); err != nil {
-// 		log.Fatalf("failed to marshal: %v", err)
-// 	}
-
-// 	return events
-// }
-
-func (*EventRepository) SaveEvents(events []models.Event) error {
-	data, err := json.MarshalIndent(events, "", "")
-	if err != nil {
-		return fmt.Errorf("failed to serialise %w", err)
-	}
-	err = os.WriteFile(config.EventsFile, data, 0644)
-	return err
+func NewEventRepositoryPG(db *gorm.DB) *EventRepositoryPG {
+	return &EventRepositoryPG{db: db}
 }
-func NewEventRepository() *EventRepository {
-	//read json
-	data, err := os.ReadFile("data/events.json")
-	if err != nil {
-		log.Fatalf("failed to read file %v", err)
+
+func (r *EventRepositoryPG) Create(event *models.Event) error {
+	return r.db.Create(event).Error
+}
+
+func (r *EventRepositoryPG) GetByID(id string) (*models.Event, error) {
+	var event models.Event
+	if err := r.db.First(&event, "id = ?", id).Error; err != nil {
+		return nil, err
 	}
-	//unmarshal into user class
+	return &event, nil
+}
+
+func (r *EventRepositoryPG) List() ([]models.Event, error) {
 	var events []models.Event
-	if err := json.Unmarshal(data, &events); err != nil {
-		log.Fatalf("failed to marshal: %v", err)
+	if err := r.db.Find(&events).Error; err != nil {
+		return nil, err
 	}
-	return &EventRepository{events}
+	return events, nil
 }
 
-func (er *EventRepository) GetEvents() ([]models.Event, error) {
-	data, err := os.ReadFile(config.EventsFile)
+// Update event
+func (r *EventRepositoryPG) Update(event *models.Event) error {
+	return r.db.Model(&models.Event{}).Where("id = ?", event.ID).Update("is_blocked", event.IsBlocked).Error
+}
+
+// Delete event
+func (r *EventRepositoryPG) Delete(id string) error {
+	return r.db.Delete(&models.Event{}, "id = ?", id).Error
+}
+
+func (r *EventRepositoryPG) AddEventArtist(ea *models.EventArtist) error {
+	return r.db.Create(ea).Error
+}
+
+func (r *EventRepositoryPG) GetArtistsByEventID(eventID string) ([]models.Artist, error) {
+	var artists []models.Artist
+	err := r.db.
+		Table("artists").
+		Select("artists.*").
+		Joins("JOIN event_artists ea ON ea.artist_id = artists.id").
+		Where("ea.event_id = ?", eventID).
+		Find(&artists).Error
+
 	if err != nil {
-		return nil, fmt.Errorf("failed to read events file: %w", err)
+		return nil, err
 	}
+	return artists, nil
+}
 
+func (r *EventRepositoryPG) GetEventsByCity(city string) ([]models.Event, error) {
 	var events []models.Event
-	if err := json.Unmarshal(data, &events); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal events: %w", err)
-	}
 
+	err := r.db.
+		Table("events e").
+		Select("DISTINCT e.*").
+		Joins("JOIN shows s ON s.event_id = e.id").
+		Joins("JOIN venues v ON s.venue_id = v.id").
+		Where("LOWER(v.city) = ?", strings.ToLower(city)).
+		Find(&events).Error
+
+	if err != nil {
+		return nil, err
+	}
 	return events, nil
 }

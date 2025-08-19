@@ -1,70 +1,59 @@
 package bookingrepository
 
 import (
-	"encoding/json"
-	"eventro2/config"
 	"eventro2/models"
-	"fmt"
-	"log"
-	"os"
+
+	"gorm.io/gorm"
 )
 
-type BookingRepository struct {
-	Bookings []models.Booking
+type BookingRepositoryPG struct {
+	db *gorm.DB
 }
 
-// func (bs *BookingRepository) LoadBookings() []models.Booking {
-// 	//read json
-// 	data, err := os.ReadFile(config.BookingsFile)
-// 	if err != nil {
-// 		log.Fatalf("failed to read file %v", err)
-// 	}
-// 	//unmarshal into booking class
-// 	var bookings []models.Booking
-// 	if err := json.Unmarshal(data, &bookings); err != nil {
-// 		log.Fatalf("failed to marshal: %v", err)
-// 	}
+func NewBookingRepositoryPG(db *gorm.DB) *BookingRepositoryPG {
+	return &BookingRepositoryPG{db: db}
+}
 
-// 	return bookings
-// }
+func (r *BookingRepositoryPG) Create(booking *models.Booking) error {
+	return r.db.Create(booking).Error
+}
 
-func (bs *BookingRepository) SaveBookings(bookings []models.Booking) error {
-	data, err := json.MarshalIndent(bookings, "", "")
-	if err != nil {
-		return fmt.Errorf("failed to save in bookings file: %w", err)
+func (r *BookingRepositoryPG) GetByID(id string) (*models.Booking, error) {
+	var booking models.Booking
+	if err := r.db.First(&booking, "booking_id = ?", id).Error; err != nil {
+		return nil, err
 	}
-	err = os.WriteFile(config.BookingsFile, data, 0644)
-	return err
+	return &booking, nil
 }
 
-func (br *BookingRepository) AddBooking(booking models.Booking) error {
-	br.Bookings = append(br.Bookings, booking)
-	return br.SaveBookings(br.Bookings)
-}
-
-func NewBoookingStore() *BookingRepository {
-	//read json
-	data, err := os.ReadFile(config.BookingsFile)
-	if err != nil {
-		log.Fatalf("failed to read file %v", err)
-	}
-	//unmarshal into booking class
+func (r *BookingRepositoryPG) List() ([]models.Booking, error) {
 	var bookings []models.Booking
-	if err := json.Unmarshal(data, &bookings); err != nil {
-		log.Fatalf("failed to marshal: %v", err)
+	if err := r.db.Find(&bookings).Error; err != nil {
+		return nil, err
 	}
-	return &BookingRepository{bookings}
-}
-func (br *BookingRepository) GetBookings() ([]models.Booking, error) {
-	data, err := os.ReadFile(config.BookingsFile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read bookings file: %w", err)
-	}
-
-	var bookings []models.Booking
-	if err := json.Unmarshal(data, &bookings); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal bookings: %w", err)
-	}
-
 	return bookings, nil
+}
+
+func (r *BookingRepositoryPG) ListByUser(userID string) ([]models.Booking, error) {
+	var bookings []models.Booking
+	if err := r.db.Where("user_id = ?", userID).Find(&bookings).Error; err != nil {
+		return nil, err
+	}
+	return bookings, nil
+}
+
+func (r *BookingRepositoryPG) ListByShow(showID string) ([]models.Booking, error) {
+	var bookings []models.Booking
+	if err := r.db.Where("show_id = ?", showID).Find(&bookings).Error; err != nil {
+		return nil, err
+	}
+	return bookings, nil
+}
+
+func (r *BookingRepositoryPG) Update(booking *models.Booking) error {
+	return r.db.Save(booking).Error
+}
+
+func (r *BookingRepositoryPG) Delete(id string) error {
+	return r.db.Delete(&models.Booking{}, "booking_id = ?", id).Error
 }

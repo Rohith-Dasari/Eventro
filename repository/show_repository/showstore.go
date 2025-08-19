@@ -1,64 +1,55 @@
 package showrepository
 
 import (
-	"encoding/json"
-	"eventro2/config"
 	"eventro2/models"
-	"fmt"
-	"log"
-	"os"
+
+	"gorm.io/gorm"
 )
 
-type ShowRepository struct {
-	Shows []models.Show
+type ShowRepositoryPG struct {
+	db *gorm.DB
 }
 
-// func LoadShows() []models.Show {
-// 	//read json
-// 	data, err := os.ReadFile(config.ShowsFile)
-// 	if err != nil {
-// 		log.Fatalf("failed to read file %v", err)
-// 	}
-// 	//unmarshal into shows class
-// 	var shows []models.Show
-// 	if err := json.Unmarshal(data, &shows); err != nil {
-// 		log.Fatalf("failed to marshal: %v", err)
-// 	}
-// 	return shows
-// }
-
-func (*ShowRepository) SaveShows(shows []models.Show) error {
-	data, err := json.MarshalIndent(shows, "", "")
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(config.ShowsFile, data, 0644)
-	return err
+func NewShowRepositoryPG(db *gorm.DB) *ShowRepositoryPG {
+	return &ShowRepositoryPG{db: db}
 }
-func NewShowRepository() *ShowRepository {
-	//read json
-	data, err := os.ReadFile(config.ShowsFile)
-	if err != nil {
-		log.Fatalf("failed to read file %v", err)
+
+// Create a new show
+func (r *ShowRepositoryPG) Create(show *models.Show) error {
+	return r.db.Create(show).Error
+}
+
+// Get show by ID
+func (r *ShowRepositoryPG) GetByID(id string) (*models.Show, error) {
+	var show models.Show
+	if err := r.db.First(&show, "id = ?", id).Error; err != nil {
+		return nil, err
 	}
-	//unmarshal into shows class
+	return &show, nil
+}
+
+// List all shows
+func (r *ShowRepositoryPG) List() ([]models.Show, error) {
 	var shows []models.Show
-	if err := json.Unmarshal(data, &shows); err != nil {
-		log.Fatalf("failed to marshal: %v", err)
+	if err := r.db.Find(&shows).Error; err != nil {
+		return nil, err
 	}
-	return &ShowRepository{shows}
-
-}
-func (sr *ShowRepository) GetShows() ([]models.Show, error) {
-	data, err := os.ReadFile(config.ShowsFile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read shows file: %w", err)
-	}
-
-	var shows []models.Show
-	if err := json.Unmarshal(data, &shows); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal shows: %w", err)
-	}
-
 	return shows, nil
+}
+
+// List shows for a given Event
+func (r *ShowRepositoryPG) ListByEvent(eventID string) ([]models.Show, error) {
+	var shows []models.Show
+	if err := r.db.Where("event_id = ?", eventID).Find(&shows).Error; err != nil {
+		return nil, err
+	}
+	return shows, nil
+}
+
+func (r *ShowRepositoryPG) Update(show *models.Show) error {
+	return r.db.Save(show).Error
+}
+
+func (r *ShowRepositoryPG) Delete(id string) error {
+	return r.db.Delete(&models.Show{}, "id = ?", id).Error
 }
