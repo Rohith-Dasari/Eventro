@@ -143,7 +143,6 @@ func (e *EventService) CreateNewEvent() {
 		break
 	}
 
-	// Description
 	var description string
 	for {
 		fmt.Print("Enter event description: ")
@@ -192,7 +191,6 @@ func (e *EventService) CreateNewEvent() {
 		}
 	}
 
-	// Duration
 	var duration string
 	for {
 		fmt.Print("Enter event duration (e.g., 2h30m): ")
@@ -210,7 +208,6 @@ func (e *EventService) CreateNewEvent() {
 		break
 	}
 
-	// Category
 	var category models.EventCategory
 	for {
 		fmt.Println("Select category:")
@@ -270,21 +267,21 @@ func (e *EventService) CreateNewEvent() {
 
 func (e *EventService) PrintEvent(event models.Event) {
 	fmt.Println(config.Dash)
-	fmt.Printf("ID: %s\n", event.ID)
-	fmt.Printf("Name: %s\n", event.Name)
-	fmt.Printf("Description: %s\n", event.Description)
-	fmt.Printf("Hype Meter: %d\n", event.HypeMeter)
-	fmt.Printf("Duration: %s\n", event.Duration)
-	fmt.Printf("Category: %s\n", event.Category)
+	fmt.Printf("ID          : %s\n", event.ID)
+	fmt.Printf("Name        : %s\n", event.Name)
+	fmt.Printf("Description : %s\n", event.Description)
+	fmt.Printf("Hype Meter  : %d\n", event.HypeMeter)
+	fmt.Printf("Duration    : %s\n", event.Duration)
+	fmt.Printf("Category    : %s\n", event.Category)
 
 	artists, err := e.EventRepo.GetArtistsByEventID(event.ID)
 	if err != nil {
 		fmt.Println("Error fetching artists:", err)
 		return
 	}
-	fmt.Println("Artists:")
+	fmt.Println("Artists     :")
 	for _, artist := range artists {
-		fmt.Printf(" - %s\n", artist.Name)
+		fmt.Printf("%s\t,", artist.Name)
 	}
 
 	fmt.Println(config.Dash)
