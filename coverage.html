@@ -1,0 +1,4196 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>app: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">eventro2/app/app.go (71.7%)</option>
+				
+				<option value="file1">eventro2/handlers/artist_handler.go (100.0%)</option>
+				
+				<option value="file2">eventro2/handlers/auth_handler.go (80.0%)</option>
+				
+				<option value="file3">eventro2/handlers/booking_handler.go (84.4%)</option>
+				
+				<option value="file4">eventro2/handlers/event_handler.go (89.9%)</option>
+				
+				<option value="file5">eventro2/handlers/show_handler.go (85.3%)</option>
+				
+				<option value="file6">eventro2/handlers/user_handler.go (96.0%)</option>
+				
+				<option value="file7">eventro2/handlers/venue_handler.go (94.9%)</option>
+				
+				<option value="file8">eventro2/main.go (0.0%)</option>
+				
+				<option value="file9">eventro2/middleware/middleware.go (100.0%)</option>
+				
+				<option value="file10">eventro2/mocks/artist_service_mock.go (0.0%)</option>
+				
+				<option value="file11">eventro2/mocks/auth_service_mock.go (0.0%)</option>
+				
+				<option value="file12">eventro2/mocks/booking_repository_mock.go (0.0%)</option>
+				
+				<option value="file13">eventro2/mocks/booking_service_mock.go (0.0%)</option>
+				
+				<option value="file14">eventro2/mocks/event_repository_mock.go (0.0%)</option>
+				
+				<option value="file15">eventro2/mocks/event_service_mock.go (0.0%)</option>
+				
+				<option value="file16">eventro2/mocks/show_repository_mock.go (0.0%)</option>
+				
+				<option value="file17">eventro2/mocks/show_service_mock.go (0.0%)</option>
+				
+				<option value="file18">eventro2/mocks/user_repository_mock.go (0.0%)</option>
+				
+				<option value="file19">eventro2/mocks/user_service_mock.go (0.0%)</option>
+				
+				<option value="file20">eventro2/mocks/venue_repository_mock.go (0.0%)</option>
+				
+				<option value="file21">eventro2/mocks/venue_service_mock.go (0.0%)</option>
+				
+				<option value="file22">eventro2/repository/artists_repository/artiststore.go (100.0%)</option>
+				
+				<option value="file23">eventro2/repository/booking_repository/bookingstore.go (100.0%)</option>
+				
+				<option value="file24">eventro2/repository/event_repository/eventstore.go (100.0%)</option>
+				
+				<option value="file25">eventro2/repository/show_repository/showstore.go (93.1%)</option>
+				
+				<option value="file26">eventro2/repository/user_repository/userstorepg.go (90.0%)</option>
+				
+				<option value="file27">eventro2/repository/venue_repository/venuestore.go (90.9%)</option>
+				
+				<option value="file28">eventro2/services/artistservice/artistservice.go (100.0%)</option>
+				
+				<option value="file29">eventro2/services/authorisation/authservice.go (96.9%)</option>
+				
+				<option value="file30">eventro2/services/authorisation/jwt.go (84.6%)</option>
+				
+				<option value="file31">eventro2/services/bookingservice/bookingservice.go (87.2%)</option>
+				
+				<option value="file32">eventro2/services/eventservice/eventservice.go (94.4%)</option>
+				
+				<option value="file33">eventro2/services/showservice/showService.go (97.5%)</option>
+				
+				<option value="file34">eventro2/services/userservice/userservice.go (100.0%)</option>
+				
+				<option value="file35">eventro2/services/venueservice/venueservice.go (93.0%)</option>
+				
+				<option value="file36">eventro2/utils/responses/response.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package app
+
+import (
+        "eventro2/handlers"
+        "eventro2/middleware"
+        "eventro2/models"
+        artistrepository "eventro2/repository/artists_repository"
+        bookingrepository "eventro2/repository/booking_repository"
+        eventrepository "eventro2/repository/event_repository"
+        showrepository "eventro2/repository/show_repository"
+        userrepository "eventro2/repository/user_repository"
+        venuerepository "eventro2/repository/venue_repository"
+        "eventro2/services/artistservice"
+        "eventro2/services/authorisation"
+        "eventro2/services/bookingservice"
+        "eventro2/services/eventservice"
+        "eventro2/services/showservice"
+        "eventro2/services/userservice"
+        "eventro2/services/venueservice"
+        "log"
+        "net/http"
+        "os"
+
+        "github.com/joho/godotenv"
+        "gorm.io/driver/postgres"
+        "gorm.io/gorm"
+)
+
+func InitDB() *gorm.DB <span class="cov0" title="0">{
+        // Load environment variables
+        if err := godotenv.Load(); err != nil </span><span class="cov0" title="0">{
+                log.Println("Warning: .env file not found, proceeding with environment variables")
+        }</span>
+
+        // Get DB URL
+        <span class="cov0" title="0">dsn := os.Getenv("DATABASE_URL")
+        if dsn == "" </span><span class="cov0" title="0">{
+                log.Panic("DATABASE_URL is not set")
+        }</span>
+
+        // Connect to DB
+        <span class="cov0" title="0">db, err := gorm.Open(postgres.Open(dsn), &amp;gorm.Config{})
+        if err != nil </span><span class="cov0" title="0">{
+                log.Panic("Failed to connect to database:", err)
+        }</span>
+
+        // AutoMigrate
+        <span class="cov0" title="0">err = db.AutoMigrate(
+                &amp;models.User{},
+                &amp;models.Booking{},
+                &amp;models.Venue{},
+                &amp;models.Event{},
+                &amp;models.Show{},
+                &amp;models.Artist{},
+                &amp;models.EventArtist{},
+        )
+        if err != nil </span><span class="cov0" title="0">{
+                log.Panic("Migration failed:", err)
+        }</span>
+
+        <span class="cov0" title="0">return db</span>
+}
+
+func SetupServer(DB *gorm.DB) *http.ServeMux <span class="cov8" title="1">{
+        // repos
+        showRepo := showrepository.NewShowRepositoryPG(DB)
+        eventRepo := eventrepository.NewEventRepositoryPG(DB)
+        bookingRepo := bookingrepository.NewBookingRepositoryPG(DB)
+        userRepo := userrepository.NewUserRepositoryPG(DB)
+        venueRepo := venuerepository.NewVenueRepositoryPG(DB)
+        artistRepo := artistrepository.NewArtistRepositoryPG(DB)
+
+        // services
+        bookingService := bookingservice.NewBookingService(bookingRepo, showRepo, venueRepo, eventRepo)
+        showService := showservice.NewShowService(showRepo, venueRepo, bookingRepo, eventRepo)
+        eventService := eventservice.NewEventService(eventRepo)
+        userService := userservice.NewUserService(userRepo)
+        venueService := venueservice.NewVenueService(venueRepo)
+        artistService := artistservice.NewArtistService(artistRepo)
+        authService := authorisation.NewAuthService(userRepo)
+
+        //handlers
+        authHandler := &amp;handlers.AuthHandler{
+                AuthService: authService,
+        }
+        artistHandler := &amp;handlers.ArtistHandler{
+                ArtistService: &amp;artistService,
+        }
+        eventHandler := &amp;handlers.EventHandler{
+                EventService: &amp;eventService,
+        }
+        showHandler := &amp;handlers.ShowHandler{
+                ShowService: &amp;showService,
+        }
+        venueHandler := &amp;handlers.VenueHandler{
+                VenueService: &amp;venueService,
+        }
+        bookingHandler := &amp;handlers.BookingHandler{
+                BookingService: &amp;bookingService,
+        }
+        userHandler := &amp;handlers.UserHandler{
+                UserService: &amp;userService,
+        }
+
+        //setup mux
+        mux := http.NewServeMux()
+
+        //auth
+        mux.HandleFunc("/api/v1/login", authHandler.Login)
+        mux.HandleFunc("/api/v1/signup", authHandler.Signup)
+
+        //artists
+        mux.Handle("GET /api/v1/artists", middleware.JWTAuth(http.HandlerFunc(artistHandler.BrowseArtists)))              // GET
+        mux.Handle("POST /api/v1/artists", middleware.JWTAuth(http.HandlerFunc(artistHandler.CreateArtist)))              // POST
+        mux.Handle("DELETE /api/v1/artists/{artistID}", middleware.JWTAuth(http.HandlerFunc(artistHandler.DeleteArtist))) // DELETE
+
+        //events
+        mux.Handle("GET /api/v1/events", middleware.JWTAuth(http.HandlerFunc(eventHandler.BrowseEvents)))             //browse
+        mux.Handle("POST /api/v1/events", middleware.JWTAuth(http.HandlerFunc(eventHandler.CreateEvent)))             //create
+        mux.Handle("PATCH /api/v1/events/{eventID}", middleware.JWTAuth(http.HandlerFunc(eventHandler.UpdateEvent)))  //patch
+        mux.Handle("DELETE /api/v1/events/{eventID}", middleware.JWTAuth(http.HandlerFunc(eventHandler.DeleteEvent))) //delete
+
+        //shows
+        mux.Handle("GET /api/v1/shows", middleware.JWTAuth(http.HandlerFunc(showHandler.BrowseShows)))            // browse
+        mux.Handle("POST /api/v1/shows", middleware.JWTAuth(http.HandlerFunc(showHandler.CreateShow)))            //create
+        mux.Handle("PATCH /api/v1/shows/{showID}", middleware.JWTAuth(http.HandlerFunc(showHandler.UpdateShow)))  // PATCH
+        mux.Handle("DELETE /api/v1/shows/{showID}", middleware.JWTAuth(http.HandlerFunc(showHandler.DeleteShow))) // DELETE
+
+        //venues
+        mux.Handle("POST /api/v1/venues", middleware.JWTAuth(http.HandlerFunc(venueHandler.CreateVenue)))
+        mux.Handle("GET /api/v1/venues", middleware.JWTAuth(http.HandlerFunc(venueHandler.BrowseVenues)))
+        mux.Handle("DELETE /api/v1/venues/{venueID}", middleware.JWTAuth(http.HandlerFunc(venueHandler.DeleteVenue)))
+        mux.Handle("PATCH /api/v1/venues/{venueID}", middleware.JWTAuth(http.HandlerFunc(venueHandler.UpdateVenue)))
+
+        //users
+        mux.Handle("/api/v1/users", middleware.JWTAuth(http.HandlerFunc(userHandler.BrowseUsers)))
+        mux.Handle("/api/v1/users/", middleware.JWTAuth(http.HandlerFunc(userHandler.UpdateUser)))
+
+        //bookings
+        mux.Handle("POST /api/v1/bookings", middleware.JWTAuth(http.HandlerFunc(bookingHandler.CreateBooking)))
+        mux.Handle("GET /api/v1/bookings", middleware.JWTAuth(http.HandlerFunc(bookingHandler.BrowseBookings)))
+
+        return mux
+
+}</span>
+
+func Start() <span class="cov0" title="0">{
+        DB := InitDB()
+        mux := SetupServer(DB)
+
+        // Start server
+        log.Println("Starting server on :8080")
+        if err := http.ListenAndServe(":8080", mux); err != nil </span><span class="cov0" title="0">{
+                log.Fatal("failed to start server:", err)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package handlers
+
+import (
+        "encoding/json"
+        "eventro2/middleware"
+        "eventro2/services/artistservice"
+        "net/http"
+)
+
+type CreateArtistRequest struct {
+        Name string `json:"name"`
+        Bio  string `json:"bio"`
+}
+
+type CreateArtistResponse struct {
+        ID   string `json:"id"`
+        Name string `json:"name"`
+        Bio  string `json:"bio"`
+}
+
+type ArtistHandler struct {
+        ArtistService artistservice.ArtistServiceI
+}
+
+func (h *ArtistHandler) CreateArtist(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPost </span><span class="cov8" title="1">{
+                http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+                return
+        }</span>
+
+        // Admin authorization check
+        <span class="cov8" title="1">role, err := middleware.GetUserRole(r.Context())
+        if err != nil || role != "Admin" </span><span class="cov8" title="1">{
+                http.Error(w, "Forbidden: admin only", http.StatusForbidden)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req CreateArtistRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Invalid request body", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">if req.Name == "" </span><span class="cov8" title="1">{
+                http.Error(w, "Artist name is required", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">artist, err := h.ArtistService.CreateArtist(r.Context(), req.Name, req.Bio)
+        if err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Failed to create artist", http.StatusInternalServerError)
+                return
+        }</span>
+
+        <span class="cov8" title="1">res := CreateArtistResponse{
+                ID:   artist.ID,
+                Name: artist.Name,
+                Bio:  artist.Bio,
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusCreated)
+        json.NewEncoder(w).Encode(res)</span>
+}
+
+func (h *ArtistHandler) DeleteArtist(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodDelete </span><span class="cov8" title="1">{
+                http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+                return
+        }</span>
+        <span class="cov8" title="1">role, err := middleware.GetUserRole(r.Context())
+        if err != nil || role != "Admin" </span><span class="cov8" title="1">{
+                http.Error(w, "Forbidden: admin only", http.StatusForbidden)
+                return
+        }</span>
+        <span class="cov8" title="1">id := r.PathValue("artistID")
+        if id == "" </span><span class="cov8" title="1">{
+                http.Error(w, "Artist ID required", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">err = h.ArtistService.DeleteArtist(r.Context(), id)
+        if err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Failed to delete artist", http.StatusInternalServerError)
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.WriteHeader(http.StatusNoContent)</span>
+}
+
+func (h *ArtistHandler) BrowseArtists(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodGet </span><span class="cov8" title="1">{
+                http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+                return
+        }</span>
+
+        <span class="cov8" title="1">name := r.URL.Query().Get("name")
+        artistID := r.URL.Query().Get("artistID")
+        if name != "" </span><span class="cov8" title="1">{
+
+                artists, err := h.ArtistService.GetArtists(r.Context(), name)
+                if err != nil </span><span class="cov8" title="1">{
+                        http.Error(w, "Failed to fetch artists", http.StatusInternalServerError)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusOK)
+                json.NewEncoder(w).Encode(artists)</span>
+        } else<span class="cov8" title="1"> {
+                artist, err := h.ArtistService.GetArtistByID(r.Context(), artistID)
+                if err != nil </span><span class="cov8" title="1">{
+                        http.Error(w, "Failed to fetch artist", http.StatusInternalServerError)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusOK)
+                json.NewEncoder(w).Encode(artist)</span>
+        }
+
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package handlers
+
+import (
+        "encoding/json"
+        "eventro2/services/authorisation"
+        "eventro2/utils/responses"
+        "net/http"
+)
+
+type AuthHandler struct {
+        AuthService authorisation.AuthServiceInterface
+}
+
+type LoginRequest struct {
+        Email    string `json:"email"`
+        Password string `json:"password"`
+}
+
+type LoginResponse struct {
+        Token string `json:"token"`
+}
+type User struct {
+        ID       string `json:"id"`
+        Username string `json:"username"`
+        Role     string `json:"role"`
+}
+
+type SignupRequest struct {
+        Username    string `json:"username"`
+        Email       string `json:"email"`
+        PhoneNumber string `json:"phone_number"`
+        Password    string `json:"password"`
+}
+
+type SignupResponse struct {
+        Token string `json:"token"`
+}
+
+func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPost </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req LoginRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">user, err := h.AuthService.ValidateLogin(r.Context(), req.Email, req.Password)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">token, err := authorisation.GenerateJWT(user.UserID, user.Email, string(user.Role))
+        if err != nil </span><span class="cov0" title="0">{
+                responses.InternalServerError(w, "Failed to generate token")
+                return
+        }</span>
+
+        <span class="cov8" title="1">res := LoginResponse{
+                Token: token,
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        if err := json.NewEncoder(w).Encode(res); err != nil </span><span class="cov0" title="0">{
+                responses.InternalServerError(w, "Failed to encode response")
+        }</span>
+}
+
+func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPost </span><span class="cov0" title="0">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req SignupRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">user, err := h.AuthService.Signup(r.Context(), req.Username, req.Email, req.PhoneNumber, req.Password)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">token, err := authorisation.GenerateJWT(user.UserID, user.Email, string(user.Role))
+        if err != nil </span><span class="cov0" title="0">{
+                responses.InternalServerError(w, "Failed to generate token")
+                return
+        }</span>
+
+        <span class="cov8" title="1">res := SignupResponse{
+                Token: token,
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        if err := json.NewEncoder(w).Encode(res); err != nil </span><span class="cov0" title="0">{
+                responses.InternalServerError(w, "Failed to encode response")
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package handlers
+
+import (
+        "encoding/json"
+        "eventro2/middleware"
+        "eventro2/services/bookingservice"
+        "eventro2/utils/responses"
+        "net/http"
+)
+
+// browse bookign, create booking,
+type BookingHandler struct {
+        BookingService bookingservice.BookingServiceInterface
+}
+
+type CreateBookingRequest struct {
+        UserID string   `json:"user_id,omitempty"`
+        ShowID string   `json:"show_id"`
+        Seats  []string `json:"seats"`
+}
+
+func (h *BookingHandler) CreateBooking(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPost </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+        // Only Customer and Admin can create bookings
+        <span class="cov8" title="1">role, err := middleware.GetUserRole(r.Context())
+        if err != nil || (role != "Customer" &amp;&amp; role != "Admin") </span><span class="cov8" title="1">{
+                responses.Forbidden(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">authUserID, err := middleware.GetUserID(r.Context())
+        if err != nil || authUserID == "" </span><span class="cov0" title="0">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req CreateBookingRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov0" title="0">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">if req.ShowID == "" || len(req.Seats) == 0 </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+        <span class="cov8" title="1">userID := authUserID
+        if role == "admin" &amp;&amp; req.UserID != "" </span><span class="cov0" title="0">{
+                userID = req.UserID
+        }</span>
+
+        <span class="cov8" title="1">booking, err := h.BookingService.AddBooking(r.Context(), userID, req.ShowID, req.Seats)
+        if err != nil </span><span class="cov0" title="0">{
+                responses.CustomError(w, http.StatusBadRequest, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusCreated)
+        json.NewEncoder(w).Encode(booking)</span>
+}
+
+func (h *BookingHandler) BrowseBookings(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodGet </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">authUserID, _ := middleware.GetUserID(r.Context())
+        role, _ := middleware.GetUserRole(r.Context())
+
+        query := r.URL.Query()
+        bookingID := query.Get("bookingId")
+        userID := query.Get("userId")
+        showID := query.Get("showId")
+
+        if role != "admin" </span><span class="cov8" title="1">{
+                userID = authUserID
+        }</span>
+
+        <span class="cov8" title="1">bookings, err := h.BookingService.BrowseBookings(r.Context(), bookingID, userID, showID)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.InternalServerError(w, "Failed to fetch bookings")
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(bookings)</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package handlers
+
+import (
+        "encoding/json"
+        "eventro2/middleware"
+        "eventro2/models"
+        "eventro2/services/eventservice"
+        "eventro2/utils/responses"
+        "net/http"
+)
+
+type EventHandler struct {
+        EventService eventservice.EventServiceI
+}
+
+type CreateEventRequest struct {
+        Name        string   `json:"name"`
+        Description string   `json:"description"`
+        Duration    string   `json:"duration"`
+        Category    string   `json:"category"`
+        Artists     []string `json:"artists"`
+}
+
+func (h *EventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPost </span><span class="cov0" title="0">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        // Admin authorization check
+        <span class="cov8" title="1">role, err := middleware.GetUserRole(r.Context())
+        if err != nil || role != "Admin" </span><span class="cov8" title="1">{
+                responses.Forbidden(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req CreateEventRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov0" title="0">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">event, err := h.EventService.CreateNewEvent(
+                r.Context(),
+                req.Name,
+                req.Description,
+                req.Duration,
+                models.EventCategory(req.Category),
+                req.Artists,
+        )
+        if err != nil </span><span class="cov8" title="1">{
+                responses.InternalServerError(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusCreated)
+        json.NewEncoder(w).Encode(event)</span>
+}
+
+func (h *EventHandler) BrowseEvents(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodGet </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">query := r.URL.Query()
+        isBlockedParam := query.Get("isBlocked")
+
+        var isBlocked *bool
+        if isBlockedParam != "" </span><span class="cov0" title="0">{
+                val := isBlockedParam == "true"
+                isBlocked = &amp;val
+        }</span>
+
+        <span class="cov8" title="1">filter := models.EventFilter{
+                EventID:    query.Get("eventID"),
+                Name:       query.Get("eventname"),
+                Category:   query.Get("category"),
+                Location:   query.Get("location"),
+                IsBlocked:  isBlocked,
+                ArtistName: query.Get("artistName"),
+        }
+
+        events, err := h.EventService.BrowseEvents(r.Context(), filter)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.InternalServerError(w, "Failed to fetch events")
+                return
+        }</span>
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        if err := json.NewEncoder(w).Encode(events); err != nil </span><span class="cov0" title="0">{
+                http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+        }</span>
+
+}
+
+func (h *EventHandler) DeleteEvent(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodDelete </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">role, err := middleware.GetUserRole(r.Context())
+        if err != nil || role != "Admin" </span><span class="cov8" title="1">{
+                responses.Forbidden(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">eventID := r.PathValue("eventID")
+        if eventID == "" </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">err = h.EventService.DeleteEvent(r.Context(), eventID)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.InternalServerError(w, "Failed to delete event")
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.WriteHeader(http.StatusNoContent)</span>
+}
+
+func (h *EventHandler) UpdateEvent(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPatch </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">eventID := r.PathValue("eventID")
+        if eventID == "" </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var updateData models.EventUpdate
+        if err := json.NewDecoder(r.Body).Decode(&amp;updateData); err != nil </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">updatedEvent, err := h.EventService.UpdateEvent(r.Context(), eventID, updateData)
+        if err != nil </span><span class="cov8" title="1">{
+                http.Error(w, err.Error(), http.StatusInternalServerError)
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(updatedEvent)</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package handlers
+
+import (
+        "encoding/json"
+        "eventro2/middleware"
+        "eventro2/models"
+        "eventro2/services/showservice"
+        "eventro2/utils/responses"
+        "net/http"
+        "time"
+)
+
+type ShowHandler struct {
+        ShowService showservice.ShowServiceInterface
+}
+
+type CreateShowRequest struct {
+        EventID  string  `json:"event_id"`
+        VenueID  string  `json:"venue_id"`
+        Price    float64 `json:"price"`
+        ShowDate string  `json:"show_date"`
+        ShowTime string  `json:"show_time"`
+}
+
+type UpdateShowRequest struct {
+        Price     *float64 `json:"price,omitempty"`
+        ShowDate  *string  `json:"show_date,omitempty"`
+        ShowTime  *string  `json:"show_time,omitempty"`
+        IsBlocked *bool    `json:"is_blocked,omitempty"`
+}
+
+func (h *ShowHandler) CreateShow(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPost </span><span class="cov0" title="0">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        // get host id
+        <span class="cov8" title="1">userID, err := middleware.GetUserID(r.Context())
+        if err != nil || userID == "" </span><span class="cov0" title="0">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+        //get role and if not host say unauthorised
+        <span class="cov8" title="1">userRole, err := middleware.GetUserRole(r.Context())
+        if err != nil || userRole != "Host" </span><span class="cov8" title="1">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req CreateShowRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov0" title="0">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        // Parse ShowDate
+        <span class="cov8" title="1">parsedDate, err := time.Parse("2006-01-02", req.ShowDate)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.CustomError(w, http.StatusBadRequest, "Invalid date format, expected YYYY-MM-DD")
+                return
+        }</span>
+
+        <span class="cov8" title="1">show, err := h.ShowService.CreateShow(
+                r.Context(),
+                req.EventID,
+                req.VenueID,
+                userID,
+                req.Price,
+                parsedDate,
+                req.ShowTime,
+        )
+        if err != nil </span><span class="cov8" title="1">{
+                responses.CustomError(w, http.StatusInternalServerError, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusCreated)
+        json.NewEncoder(w).Encode(show)</span>
+}
+
+func (h *ShowHandler) UpdateShow(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPatch </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">showID := r.PathValue("showID")
+
+        userID, err := middleware.GetUserID(r.Context())
+        if err != nil || userID == "" </span><span class="cov0" title="0">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req UpdateShowRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov0" title="0">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var parsedDate *time.Time
+        if req.ShowDate != nil </span><span class="cov8" title="1">{
+                t, err := time.Parse("2006-01-02", *req.ShowDate)
+                if err != nil </span><span class="cov8" title="1">{
+                        responses.CustomError(w, http.StatusBadRequest, "Invalid date format, expected YYYY-MM-DD")
+                        return
+                }</span>
+                <span class="cov0" title="0">parsedDate = &amp;t</span>
+        }
+
+        <span class="cov8" title="1">update := models.UpdateShowData{
+                Price:     req.Price,
+                ShowDate:  parsedDate,
+                ShowTime:  req.ShowTime,
+                IsBlocked: req.IsBlocked,
+        }
+
+        updatedShow, err := h.ShowService.UpdateShow(r.Context(), showID, userID, update)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.CustomError(w, http.StatusInternalServerError, "Failed to update show: "+err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(updatedShow)</span>
+}
+
+func (h *ShowHandler) BrowseShows(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodGet </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">query := r.URL.Query()
+
+        filter := models.ShowFilter{
+                ShowID:  query.Get("showId"),
+                EventID: query.Get("eventId"),
+                HostID:  query.Get("hostId"),
+                VenueID: query.Get("venueId"),
+        }
+
+        shows, err := h.ShowService.BrowseShows(r.Context(), filter)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.CustomError(w, http.StatusInternalServerError, "Failed to fetch shows: "+err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(shows)</span>
+}
+
+func (h *ShowHandler) DeleteShow(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodDelete </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+        <span class="cov8" title="1">showID := r.PathValue("showID")
+        if showID == "" </span><span class="cov8" title="1">{
+                responses.CustomError(w, http.StatusBadRequest, "Show ID required")
+                return
+        }</span>
+
+        <span class="cov8" title="1">err := h.ShowService.DeleteShow(r.Context(), showID)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.CustomError(w, http.StatusInternalServerError, "Failed to delete show: "+err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.WriteHeader(http.StatusNoContent)</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package handlers
+
+import (
+        "encoding/json"
+        "eventro2/middleware"
+        "eventro2/models"
+        "eventro2/services/userservice"
+        "net/http"
+        "strings"
+)
+
+type UserHandler struct {
+        UserService userservice.UserServiceI
+}
+
+func (h *UserHandler) BrowseUsers(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodGet </span><span class="cov8" title="1">{
+                http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+                return
+        }</span>
+        <span class="cov8" title="1">userRole, err := middleware.GetUserRole(r.Context())
+        userRole = strings.ToLower(userRole)
+        if err != nil || userRole != "admin" </span><span class="cov8" title="1">{
+                http.Error(w, "Forbidden: admin only", http.StatusForbidden)
+                return
+        }</span>
+
+        <span class="cov8" title="1">query := r.URL.Query()
+        blockedParam := query.Get("blocked")
+        userID := query.Get("userId")
+
+        var blocked *bool
+        if blockedParam != "" </span><span class="cov0" title="0">{
+                val := blockedParam == "true"
+                blocked = &amp;val
+        }</span>
+
+        <span class="cov8" title="1">if userID == "" </span><span class="cov8" title="1">{
+                users, err := h.UserService.BrowseUsers(r.Context(), userID, blocked)
+                if err != nil </span><span class="cov8" title="1">{
+                        http.Error(w, "Failed to fetch users: "+err.Error(), http.StatusInternalServerError)
+                        return
+                }</span>
+                <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+                json.NewEncoder(w).Encode(users)</span>
+        } else<span class="cov8" title="1"> {
+                user, err := h.UserService.GetUserByID(r.Context(), userID)
+                if err != nil </span><span class="cov8" title="1">{
+                        http.Error(w, "Failed to fetch user: "+err.Error(), http.StatusInternalServerError)
+                        return
+                }</span>
+                <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+                json.NewEncoder(w).Encode(user)</span>
+        }
+
+}
+
+func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPatch </span><span class="cov8" title="1">{
+                http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+                return
+        }</span>
+
+        // Ensure user is admin
+        <span class="cov8" title="1">userRole, err := middleware.GetUserRole(r.Context())
+        userRole = strings.ToLower(userRole)
+        if err != nil || userRole != "admin" </span><span class="cov8" title="1">{
+                http.Error(w, "Forbidden: admin only", http.StatusForbidden)
+                return
+        }</span>
+
+        // Extract userId from URL
+        <span class="cov8" title="1">userID := strings.TrimPrefix(r.URL.Path, "/users/")
+        if userID == "" </span><span class="cov8" title="1">{
+                http.Error(w, "Missing user ID", http.StatusBadRequest)
+                return
+        }</span>
+
+        // Parse request body
+        <span class="cov8" title="1">var req models.UpdateUserRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Invalid request body", http.StatusBadRequest)
+                return
+        }</span>
+
+        // Update user
+        <span class="cov8" title="1">updatedUser, err := h.UserService.UpdateUser(r.Context(), userID, req)
+        if err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Failed to update user: "+err.Error(), http.StatusInternalServerError)
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(updatedUser)</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package handlers
+
+import (
+        "encoding/json"
+        "eventro2/middleware"
+        "eventro2/models"
+        "eventro2/services/venueservice"
+        "eventro2/utils/responses"
+        "net/http"
+        "strings"
+)
+
+type VenueHandler struct {
+        VenueService venueservice.VenueServiceInterface
+}
+
+type CreateVenueRequest struct {
+        Name                 string `json:"name"`
+        City                 string `json:"city"`
+        State                string `json:"state"`
+        IsSeatLayoutRequired bool   `json:"is_seat_layout_required"`
+}
+
+type UpdateVenueRequest struct {
+        Name                 *string `json:"name,omitempty"`
+        City                 *string `json:"city,omitempty"`
+        State                *string `json:"state,omitempty"`
+        IsSeatLayoutRequired *bool   `json:"is_seat_layout_required,omitempty"`
+        IsBlocked            *bool   `json:"is_blocked,omitempty"`
+}
+
+func (h *VenueHandler) CreateVenue(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPost </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+        <span class="cov8" title="1">role, err := middleware.GetUserRole(r.Context())
+        if err != nil || role != "Host" </span><span class="cov8" title="1">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+        <span class="cov8" title="1">hostID, err := middleware.GetUserID(r.Context())
+        if err != nil || hostID == "" </span><span class="cov8" title="1">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req CreateVenueRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">venue, err := h.VenueService.CreateVenue(
+                r.Context(),
+                hostID,
+                req.Name,
+                req.City,
+                req.State,
+                req.IsSeatLayoutRequired,
+        )
+        if err != nil </span><span class="cov8" title="1">{
+                responses.InternalServerError(w, "Failed to create venue: "+err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusCreated)
+        json.NewEncoder(w).Encode(venue)</span>
+}
+func (h *VenueHandler) UpdateVenue(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPatch </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+        <span class="cov8" title="1">venueID := r.PathValue("venueID")
+        if venueID == "" </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">userID, err := middleware.GetUserID(r.Context())
+        if err != nil || userID == "" </span><span class="cov0" title="0">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">userRole, err := middleware.GetUserRole(r.Context())
+        if err != nil || userRole != "Host" </span><span class="cov8" title="1">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req UpdateVenueRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">update := models.UpdateVenueData{
+                Name:                 req.Name,
+                City:                 req.City,
+                State:                req.State,
+                IsSeatLayoutRequired: req.IsSeatLayoutRequired,
+                IsBlocked:            req.IsBlocked,
+        }
+
+        updatedVenue, err := h.VenueService.UpdateVenue(r.Context(), venueID, userID, userRole, update)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.Forbidden(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(updatedVenue)</span>
+}
+
+func (h *VenueHandler) DeleteVenue(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodDelete </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">venueID := r.PathValue("venueID")
+        if venueID == "" </span><span class="cov8" title="1">{
+                responses.InvalidRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">userID, err := middleware.GetUserID(r.Context())
+        if err != nil || userID == "" </span><span class="cov0" title="0">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">userRole, err := middleware.GetUserRole(r.Context())
+        userRole = strings.ToLower(userRole)
+        if err != nil || (userRole != "host" &amp;&amp; userRole != "admin") </span><span class="cov8" title="1">{
+                responses.UnauthorisedRequest(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">if err := h.VenueService.DeleteVenue(r.Context(), venueID, userID, userRole); err != nil </span><span class="cov8" title="1">{
+                responses.Forbidden(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.WriteHeader(http.StatusNoContent)</span>
+}
+
+func (h *VenueHandler) BrowseVenues(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodGet </span><span class="cov8" title="1">{
+                responses.MethodNotAllowed(w)
+                return
+        }</span>
+
+        <span class="cov8" title="1">query := r.URL.Query()
+        filter := models.VenueFilter{
+                City:      query.Get("city"),
+                HostID:    query.Get("hostId"),
+                VenueID:   query.Get("venueId"),
+                IsBlocked: query.Get("isBlocked") == "true",
+        }
+
+        venues, err := h.VenueService.BrowseVenues(r.Context(), filter)
+        if err != nil </span><span class="cov8" title="1">{
+                responses.InternalServerError(w, "Failed to fetch venues: "+err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(venues)</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package main
+
+import "eventro2/app"
+
+func main() <span class="cov0" title="0">{
+        app.Start()
+
+}</span>
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package middleware
+
+import (
+        "context"
+        "errors"
+        "eventro2/services/authorisation"
+        "net/http"
+        "strings"
+)
+
+type contextKey string
+
+const (
+        ContextUserIDKey    contextKey = "userID"
+        ContextUserEmailKey contextKey = "userEmail"
+        ContextUserRoleKey  contextKey = "userRole"
+)
+
+func JWTAuth(next http.Handler) http.Handler <span class="cov8" title="1">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                authHeader := r.Header.Get("Authorization")
+                if authHeader == "" </span><span class="cov8" title="1">{
+                        http.Error(w, "Authorization header missing", http.StatusUnauthorized)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">parts := strings.SplitN(authHeader, " ", 2)
+                if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" </span><span class="cov8" title="1">{
+                        http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">tokenString := parts[1]
+
+                claims, err := authorisation.ValidateJWT(tokenString)
+                if err != nil </span><span class="cov8" title="1">{
+                        http.Error(w, "Invalid or expired token", http.StatusUnauthorized)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">ctx := context.WithValue(r.Context(), ContextUserIDKey, claims.UserID)
+                ctx = context.WithValue(ctx, ContextUserEmailKey, claims.Email)
+                ctx = context.WithValue(ctx, ContextUserRoleKey, claims.Role)
+
+                next.ServeHTTP(w, r.WithContext(ctx))</span>
+        })
+}
+
+func GetUserID(ctx context.Context) (string, error) <span class="cov8" title="1">{
+        userID, ok := ctx.Value(ContextUserIDKey).(string)
+        if !ok </span><span class="cov8" title="1">{
+                return "", errors.New("userID not found in context")
+        }</span>
+        <span class="cov8" title="1">return userID, nil</span>
+}
+
+func GetUserEmail(ctx context.Context) (string, error) <span class="cov8" title="1">{
+        email, ok := ctx.Value(ContextUserEmailKey).(string)
+        if !ok </span><span class="cov8" title="1">{
+                return "", errors.New("userEmail not found in context")
+        }</span>
+        <span class="cov8" title="1">return email, nil</span>
+}
+
+func GetUserRole(ctx context.Context) (string, error) <span class="cov8" title="1">{
+        role, ok := ctx.Value(ContextUserRoleKey).(string)
+        if !ok </span><span class="cov8" title="1">{
+                return "", errors.New("userRole not found in context")
+        }</span>
+        <span class="cov8" title="1">return role, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/artist_service_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        context "context"
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockArtistServiceI is a mock of ArtistServiceI interface.
+type MockArtistServiceI struct {
+        ctrl     *gomock.Controller
+        recorder *MockArtistServiceIMockRecorder
+        isgomock struct{}
+}
+
+// MockArtistServiceIMockRecorder is the mock recorder for MockArtistServiceI.
+type MockArtistServiceIMockRecorder struct {
+        mock *MockArtistServiceI
+}
+
+// NewMockArtistServiceI creates a new mock instance.
+func NewMockArtistServiceI(ctrl *gomock.Controller) *MockArtistServiceI <span class="cov0" title="0">{
+        mock := &amp;MockArtistServiceI{ctrl: ctrl}
+        mock.recorder = &amp;MockArtistServiceIMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockArtistServiceI) EXPECT() *MockArtistServiceIMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// CreateArtist mocks base method.
+func (m *MockArtistServiceI) CreateArtist(ctx context.Context, name, bio string) (models.Artist, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "CreateArtist", ctx, name, bio)
+        ret0, _ := ret[0].(models.Artist)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// CreateArtist indicates an expected call of CreateArtist.
+func (mr *MockArtistServiceIMockRecorder) CreateArtist(ctx, name, bio any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateArtist", reflect.TypeOf((*MockArtistServiceI)(nil).CreateArtist), ctx, name, bio)
+}</span>
+
+// DeleteArtist mocks base method.
+func (m *MockArtistServiceI) DeleteArtist(ctx context.Context, id string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "DeleteArtist", ctx, id)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// DeleteArtist indicates an expected call of DeleteArtist.
+func (mr *MockArtistServiceIMockRecorder) DeleteArtist(ctx, id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteArtist", reflect.TypeOf((*MockArtistServiceI)(nil).DeleteArtist), ctx, id)
+}</span>
+
+// GetArtistByID mocks base method.
+func (m *MockArtistServiceI) GetArtistByID(ctx context.Context, id string) (*models.Artist, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetArtistByID", ctx, id)
+        ret0, _ := ret[0].(*models.Artist)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetArtistByID indicates an expected call of GetArtistByID.
+func (mr *MockArtistServiceIMockRecorder) GetArtistByID(ctx, id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetArtistByID", reflect.TypeOf((*MockArtistServiceI)(nil).GetArtistByID), ctx, id)
+}</span>
+
+// GetArtists mocks base method.
+func (m *MockArtistServiceI) GetArtists(ctx context.Context, name string) ([]models.Artist, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetArtists", ctx, name)
+        ret0, _ := ret[0].([]models.Artist)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetArtists indicates an expected call of GetArtists.
+func (mr *MockArtistServiceIMockRecorder) GetArtists(ctx, name any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetArtists", reflect.TypeOf((*MockArtistServiceI)(nil).GetArtists), ctx, name)
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/auth_service_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        context "context"
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockAuthServiceInterface is a mock of AuthServiceInterface interface.
+type MockAuthServiceInterface struct {
+        ctrl     *gomock.Controller
+        recorder *MockAuthServiceInterfaceMockRecorder
+        isgomock struct{}
+}
+
+// MockAuthServiceInterfaceMockRecorder is the mock recorder for MockAuthServiceInterface.
+type MockAuthServiceInterfaceMockRecorder struct {
+        mock *MockAuthServiceInterface
+}
+
+// NewMockAuthServiceInterface creates a new mock instance.
+func NewMockAuthServiceInterface(ctrl *gomock.Controller) *MockAuthServiceInterface <span class="cov0" title="0">{
+        mock := &amp;MockAuthServiceInterface{ctrl: ctrl}
+        mock.recorder = &amp;MockAuthServiceInterfaceMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockAuthServiceInterface) EXPECT() *MockAuthServiceInterfaceMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// Signup mocks base method.
+func (m *MockAuthServiceInterface) Signup(ctx context.Context, username, email, phoneNumber, password string) (models.User, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Signup", ctx, username, email, phoneNumber, password)
+        ret0, _ := ret[0].(models.User)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// Signup indicates an expected call of Signup.
+func (mr *MockAuthServiceInterfaceMockRecorder) Signup(ctx, username, email, phoneNumber, password any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Signup", reflect.TypeOf((*MockAuthServiceInterface)(nil).Signup), ctx, username, email, phoneNumber, password)
+}</span>
+
+// ValidateLogin mocks base method.
+func (m *MockAuthServiceInterface) ValidateLogin(ctx context.Context, email, password string) (models.User, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "ValidateLogin", ctx, email, password)
+        ret0, _ := ret[0].(models.User)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// ValidateLogin indicates an expected call of ValidateLogin.
+func (mr *MockAuthServiceInterfaceMockRecorder) ValidateLogin(ctx, email, password any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateLogin", reflect.TypeOf((*MockAuthServiceInterface)(nil).ValidateLogin), ctx, email, password)
+}</span>
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/booking_repository_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockBookingRepository is a mock of BookingRepository interface.
+type MockBookingRepository struct {
+        ctrl     *gomock.Controller
+        recorder *MockBookingRepositoryMockRecorder
+        isgomock struct{}
+}
+
+// MockBookingRepositoryMockRecorder is the mock recorder for MockBookingRepository.
+type MockBookingRepositoryMockRecorder struct {
+        mock *MockBookingRepository
+}
+
+// NewMockBookingRepository creates a new mock instance.
+func NewMockBookingRepository(ctrl *gomock.Controller) *MockBookingRepository <span class="cov0" title="0">{
+        mock := &amp;MockBookingRepository{ctrl: ctrl}
+        mock.recorder = &amp;MockBookingRepositoryMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockBookingRepository) EXPECT() *MockBookingRepositoryMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// Create mocks base method.
+func (m *MockBookingRepository) Create(booking *models.Booking) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Create", booking)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Create indicates an expected call of Create.
+func (mr *MockBookingRepositoryMockRecorder) Create(booking any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockBookingRepository)(nil).Create), booking)
+}</span>
+
+// Delete mocks base method.
+func (m *MockBookingRepository) Delete(id string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Delete", id)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Delete indicates an expected call of Delete.
+func (mr *MockBookingRepositoryMockRecorder) Delete(id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockBookingRepository)(nil).Delete), id)
+}</span>
+
+// Find mocks base method.
+func (m *MockBookingRepository) Find(bookingID, userID, showID string) ([]models.Booking, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Find", bookingID, userID, showID)
+        ret0, _ := ret[0].([]models.Booking)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// Find indicates an expected call of Find.
+func (mr *MockBookingRepositoryMockRecorder) Find(bookingID, userID, showID any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockBookingRepository)(nil).Find), bookingID, userID, showID)
+}</span>
+
+// GetByID mocks base method.
+func (m *MockBookingRepository) GetByID(id string) (*models.Booking, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetByID", id)
+        ret0, _ := ret[0].(*models.Booking)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockBookingRepositoryMockRecorder) GetByID(id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockBookingRepository)(nil).GetByID), id)
+}</span>
+
+// List mocks base method.
+func (m *MockBookingRepository) List() ([]models.Booking, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "List")
+        ret0, _ := ret[0].([]models.Booking)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// List indicates an expected call of List.
+func (mr *MockBookingRepositoryMockRecorder) List() *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockBookingRepository)(nil).List))
+}</span>
+
+// ListByShow mocks base method.
+func (m *MockBookingRepository) ListByShow(showID string) ([]models.Booking, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "ListByShow", showID)
+        ret0, _ := ret[0].([]models.Booking)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// ListByShow indicates an expected call of ListByShow.
+func (mr *MockBookingRepositoryMockRecorder) ListByShow(showID any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByShow", reflect.TypeOf((*MockBookingRepository)(nil).ListByShow), showID)
+}</span>
+
+// ListByUser mocks base method.
+func (m *MockBookingRepository) ListByUser(userID string) ([]models.Booking, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "ListByUser", userID)
+        ret0, _ := ret[0].([]models.Booking)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// ListByUser indicates an expected call of ListByUser.
+func (mr *MockBookingRepositoryMockRecorder) ListByUser(userID any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByUser", reflect.TypeOf((*MockBookingRepository)(nil).ListByUser), userID)
+}</span>
+
+// Update mocks base method.
+func (m *MockBookingRepository) Update(booking *models.Booking) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Update", booking)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Update indicates an expected call of Update.
+func (mr *MockBookingRepositoryMockRecorder) Update(booking any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockBookingRepository)(nil).Update), booking)
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/booking_service_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        context "context"
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockBookingServiceInterface is a mock of BookingServiceInterface interface.
+type MockBookingServiceInterface struct {
+        ctrl     *gomock.Controller
+        recorder *MockBookingServiceInterfaceMockRecorder
+        isgomock struct{}
+}
+
+// MockBookingServiceInterfaceMockRecorder is the mock recorder for MockBookingServiceInterface.
+type MockBookingServiceInterfaceMockRecorder struct {
+        mock *MockBookingServiceInterface
+}
+
+// NewMockBookingServiceInterface creates a new mock instance.
+func NewMockBookingServiceInterface(ctrl *gomock.Controller) *MockBookingServiceInterface <span class="cov0" title="0">{
+        mock := &amp;MockBookingServiceInterface{ctrl: ctrl}
+        mock.recorder = &amp;MockBookingServiceInterfaceMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockBookingServiceInterface) EXPECT() *MockBookingServiceInterfaceMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// AddBooking mocks base method.
+func (m *MockBookingServiceInterface) AddBooking(ctx context.Context, userID, showID string, seats []string) (*models.BookingResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "AddBooking", ctx, userID, showID, seats)
+        ret0, _ := ret[0].(*models.BookingResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// AddBooking indicates an expected call of AddBooking.
+func (mr *MockBookingServiceInterfaceMockRecorder) AddBooking(ctx, userID, showID, seats any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddBooking", reflect.TypeOf((*MockBookingServiceInterface)(nil).AddBooking), ctx, userID, showID, seats)
+}</span>
+
+// BrowseBookings mocks base method.
+func (m *MockBookingServiceInterface) BrowseBookings(ctx context.Context, bookingID, userID, showID string) ([]models.BookingResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "BrowseBookings", ctx, bookingID, userID, showID)
+        ret0, _ := ret[0].([]models.BookingResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// BrowseBookings indicates an expected call of BrowseBookings.
+func (mr *MockBookingServiceInterfaceMockRecorder) BrowseBookings(ctx, bookingID, userID, showID any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BrowseBookings", reflect.TypeOf((*MockBookingServiceInterface)(nil).BrowseBookings), ctx, bookingID, userID, showID)
+}</span>
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/event_repository_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockEventRepository is a mock of EventRepository interface.
+type MockEventRepository struct {
+        ctrl     *gomock.Controller
+        recorder *MockEventRepositoryMockRecorder
+        isgomock struct{}
+}
+
+// MockEventRepositoryMockRecorder is the mock recorder for MockEventRepository.
+type MockEventRepositoryMockRecorder struct {
+        mock *MockEventRepository
+}
+
+// NewMockEventRepository creates a new mock instance.
+func NewMockEventRepository(ctrl *gomock.Controller) *MockEventRepository <span class="cov0" title="0">{
+        mock := &amp;MockEventRepository{ctrl: ctrl}
+        mock.recorder = &amp;MockEventRepositoryMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockEventRepository) EXPECT() *MockEventRepositoryMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// AddEventArtist mocks base method.
+func (m *MockEventRepository) AddEventArtist(ea *models.EventArtist) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "AddEventArtist", ea)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// AddEventArtist indicates an expected call of AddEventArtist.
+func (mr *MockEventRepositoryMockRecorder) AddEventArtist(ea any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddEventArtist", reflect.TypeOf((*MockEventRepository)(nil).AddEventArtist), ea)
+}</span>
+
+// Create mocks base method.
+func (m *MockEventRepository) Create(event *models.Event) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Create", event)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Create indicates an expected call of Create.
+func (mr *MockEventRepositoryMockRecorder) Create(event any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockEventRepository)(nil).Create), event)
+}</span>
+
+// Delete mocks base method.
+func (m *MockEventRepository) Delete(id string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Delete", id)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Delete indicates an expected call of Delete.
+func (mr *MockEventRepositoryMockRecorder) Delete(id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockEventRepository)(nil).Delete), id)
+}</span>
+
+// GetArtistsByEventID mocks base method.
+func (m *MockEventRepository) GetArtistsByEventID(eventID string) ([]models.Artist, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetArtistsByEventID", eventID)
+        ret0, _ := ret[0].([]models.Artist)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetArtistsByEventID indicates an expected call of GetArtistsByEventID.
+func (mr *MockEventRepositoryMockRecorder) GetArtistsByEventID(eventID any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetArtistsByEventID", reflect.TypeOf((*MockEventRepository)(nil).GetArtistsByEventID), eventID)
+}</span>
+
+// GetByID mocks base method.
+func (m *MockEventRepository) GetByID(id string) (*models.Event, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetByID", id)
+        ret0, _ := ret[0].(*models.Event)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockEventRepositoryMockRecorder) GetByID(id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockEventRepository)(nil).GetByID), id)
+}</span>
+
+// GetEventsByCity mocks base method.
+func (m *MockEventRepository) GetEventsByCity(city string) ([]models.Event, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetEventsByCity", city)
+        ret0, _ := ret[0].([]models.Event)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetEventsByCity indicates an expected call of GetEventsByCity.
+func (mr *MockEventRepositoryMockRecorder) GetEventsByCity(city any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEventsByCity", reflect.TypeOf((*MockEventRepository)(nil).GetEventsByCity), city)
+}</span>
+
+// GetFilteredEvents mocks base method.
+func (m *MockEventRepository) GetFilteredEvents(filter models.EventFilter) ([]models.Event, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetFilteredEvents", filter)
+        ret0, _ := ret[0].([]models.Event)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetFilteredEvents indicates an expected call of GetFilteredEvents.
+func (mr *MockEventRepositoryMockRecorder) GetFilteredEvents(filter any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilteredEvents", reflect.TypeOf((*MockEventRepository)(nil).GetFilteredEvents), filter)
+}</span>
+
+// List mocks base method.
+func (m *MockEventRepository) List() ([]models.Event, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "List")
+        ret0, _ := ret[0].([]models.Event)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// List indicates an expected call of List.
+func (mr *MockEventRepositoryMockRecorder) List() *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockEventRepository)(nil).List))
+}</span>
+
+// Update mocks base method.
+func (m *MockEventRepository) Update(event *models.Event) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Update", event)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Update indicates an expected call of Update.
+func (mr *MockEventRepositoryMockRecorder) Update(event any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockEventRepository)(nil).Update), event)
+}</span>
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/event_service_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        context "context"
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockEventServiceI is a mock of EventServiceI interface.
+type MockEventServiceI struct {
+        ctrl     *gomock.Controller
+        recorder *MockEventServiceIMockRecorder
+        isgomock struct{}
+}
+
+// MockEventServiceIMockRecorder is the mock recorder for MockEventServiceI.
+type MockEventServiceIMockRecorder struct {
+        mock *MockEventServiceI
+}
+
+// NewMockEventServiceI creates a new mock instance.
+func NewMockEventServiceI(ctrl *gomock.Controller) *MockEventServiceI <span class="cov0" title="0">{
+        mock := &amp;MockEventServiceI{ctrl: ctrl}
+        mock.recorder = &amp;MockEventServiceIMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockEventServiceI) EXPECT() *MockEventServiceIMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// BrowseEvents mocks base method.
+func (m *MockEventServiceI) BrowseEvents(ctx context.Context, filter models.EventFilter) ([]models.EventResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "BrowseEvents", ctx, filter)
+        ret0, _ := ret[0].([]models.EventResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// BrowseEvents indicates an expected call of BrowseEvents.
+func (mr *MockEventServiceIMockRecorder) BrowseEvents(ctx, filter any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BrowseEvents", reflect.TypeOf((*MockEventServiceI)(nil).BrowseEvents), ctx, filter)
+}</span>
+
+// CreateNewEvent mocks base method.
+func (m *MockEventServiceI) CreateNewEvent(ctx context.Context, name, description, duration string, category models.EventCategory, artistIDs []string) (models.EventResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "CreateNewEvent", ctx, name, description, duration, category, artistIDs)
+        ret0, _ := ret[0].(models.EventResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// CreateNewEvent indicates an expected call of CreateNewEvent.
+func (mr *MockEventServiceIMockRecorder) CreateNewEvent(ctx, name, description, duration, category, artistIDs any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewEvent", reflect.TypeOf((*MockEventServiceI)(nil).CreateNewEvent), ctx, name, description, duration, category, artistIDs)
+}</span>
+
+// DeleteEvent mocks base method.
+func (m *MockEventServiceI) DeleteEvent(ctx context.Context, eventID string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "DeleteEvent", ctx, eventID)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// DeleteEvent indicates an expected call of DeleteEvent.
+func (mr *MockEventServiceIMockRecorder) DeleteEvent(ctx, eventID any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteEvent", reflect.TypeOf((*MockEventServiceI)(nil).DeleteEvent), ctx, eventID)
+}</span>
+
+// UpdateEvent mocks base method.
+func (m *MockEventServiceI) UpdateEvent(ctx context.Context, eventID string, updateData models.EventUpdate) (models.EventResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "UpdateEvent", ctx, eventID, updateData)
+        ret0, _ := ret[0].(models.EventResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// UpdateEvent indicates an expected call of UpdateEvent.
+func (mr *MockEventServiceIMockRecorder) UpdateEvent(ctx, eventID, updateData any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEvent", reflect.TypeOf((*MockEventServiceI)(nil).UpdateEvent), ctx, eventID, updateData)
+}</span>
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/show_repository_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockShowRepository is a mock of ShowRepository interface.
+type MockShowRepository struct {
+        ctrl     *gomock.Controller
+        recorder *MockShowRepositoryMockRecorder
+        isgomock struct{}
+}
+
+// MockShowRepositoryMockRecorder is the mock recorder for MockShowRepository.
+type MockShowRepositoryMockRecorder struct {
+        mock *MockShowRepository
+}
+
+// NewMockShowRepository creates a new mock instance.
+func NewMockShowRepository(ctrl *gomock.Controller) *MockShowRepository <span class="cov0" title="0">{
+        mock := &amp;MockShowRepository{ctrl: ctrl}
+        mock.recorder = &amp;MockShowRepositoryMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockShowRepository) EXPECT() *MockShowRepositoryMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// Create mocks base method.
+func (m *MockShowRepository) Create(show *models.Show) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Create", show)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Create indicates an expected call of Create.
+func (mr *MockShowRepositoryMockRecorder) Create(show any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockShowRepository)(nil).Create), show)
+}</span>
+
+// Delete mocks base method.
+func (m *MockShowRepository) Delete(id string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Delete", id)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Delete indicates an expected call of Delete.
+func (mr *MockShowRepositoryMockRecorder) Delete(id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockShowRepository)(nil).Delete), id)
+}</span>
+
+// Find mocks base method.
+func (m *MockShowRepository) Find(filter models.ShowFilter) ([]models.Show, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Find", filter)
+        ret0, _ := ret[0].([]models.Show)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// Find indicates an expected call of Find.
+func (mr *MockShowRepositoryMockRecorder) Find(filter any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockShowRepository)(nil).Find), filter)
+}</span>
+
+// GetByID mocks base method.
+func (m *MockShowRepository) GetByID(id string) (*models.Show, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetByID", id)
+        ret0, _ := ret[0].(*models.Show)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockShowRepositoryMockRecorder) GetByID(id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockShowRepository)(nil).GetByID), id)
+}</span>
+
+// List mocks base method.
+func (m *MockShowRepository) List() ([]models.Show, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "List")
+        ret0, _ := ret[0].([]models.Show)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// List indicates an expected call of List.
+func (mr *MockShowRepositoryMockRecorder) List() *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockShowRepository)(nil).List))
+}</span>
+
+// ListByEvent mocks base method.
+func (m *MockShowRepository) ListByEvent(eventID string) ([]models.Show, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "ListByEvent", eventID)
+        ret0, _ := ret[0].([]models.Show)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// ListByEvent indicates an expected call of ListByEvent.
+func (mr *MockShowRepositoryMockRecorder) ListByEvent(eventID any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByEvent", reflect.TypeOf((*MockShowRepository)(nil).ListByEvent), eventID)
+}</span>
+
+// Update mocks base method.
+func (m *MockShowRepository) Update(show *models.Show) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Update", show)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Update indicates an expected call of Update.
+func (mr *MockShowRepositoryMockRecorder) Update(show any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockShowRepository)(nil).Update), show)
+}</span>
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/show_service_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        context "context"
+        models "eventro2/models"
+        reflect "reflect"
+        time "time"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockShowServiceInterface is a mock of ShowServiceInterface interface.
+type MockShowServiceInterface struct {
+        ctrl     *gomock.Controller
+        recorder *MockShowServiceInterfaceMockRecorder
+        isgomock struct{}
+}
+
+// MockShowServiceInterfaceMockRecorder is the mock recorder for MockShowServiceInterface.
+type MockShowServiceInterfaceMockRecorder struct {
+        mock *MockShowServiceInterface
+}
+
+// NewMockShowServiceInterface creates a new mock instance.
+func NewMockShowServiceInterface(ctrl *gomock.Controller) *MockShowServiceInterface <span class="cov0" title="0">{
+        mock := &amp;MockShowServiceInterface{ctrl: ctrl}
+        mock.recorder = &amp;MockShowServiceInterfaceMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockShowServiceInterface) EXPECT() *MockShowServiceInterfaceMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// BrowseShows mocks base method.
+func (m *MockShowServiceInterface) BrowseShows(ctx context.Context, filter models.ShowFilter) ([]models.ShowResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "BrowseShows", ctx, filter)
+        ret0, _ := ret[0].([]models.ShowResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// BrowseShows indicates an expected call of BrowseShows.
+func (mr *MockShowServiceInterfaceMockRecorder) BrowseShows(ctx, filter any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BrowseShows", reflect.TypeOf((*MockShowServiceInterface)(nil).BrowseShows), ctx, filter)
+}</span>
+
+// CreateShow mocks base method.
+func (m *MockShowServiceInterface) CreateShow(ctx context.Context, eventID, venueID, hostID string, price float64, showDate time.Time, showTime string) (models.ShowResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "CreateShow", ctx, eventID, venueID, hostID, price, showDate, showTime)
+        ret0, _ := ret[0].(models.ShowResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// CreateShow indicates an expected call of CreateShow.
+func (mr *MockShowServiceInterfaceMockRecorder) CreateShow(ctx, eventID, venueID, hostID, price, showDate, showTime any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShow", reflect.TypeOf((*MockShowServiceInterface)(nil).CreateShow), ctx, eventID, venueID, hostID, price, showDate, showTime)
+}</span>
+
+// DeleteShow mocks base method.
+func (m *MockShowServiceInterface) DeleteShow(ctx context.Context, showID string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "DeleteShow", ctx, showID)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// DeleteShow indicates an expected call of DeleteShow.
+func (mr *MockShowServiceInterfaceMockRecorder) DeleteShow(ctx, showID any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteShow", reflect.TypeOf((*MockShowServiceInterface)(nil).DeleteShow), ctx, showID)
+}</span>
+
+// UpdateShow mocks base method.
+func (m *MockShowServiceInterface) UpdateShow(ctx context.Context, showID, userID string, update models.UpdateShowData) (models.ShowResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "UpdateShow", ctx, showID, userID, update)
+        ret0, _ := ret[0].(models.ShowResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// UpdateShow indicates an expected call of UpdateShow.
+func (mr *MockShowServiceInterfaceMockRecorder) UpdateShow(ctx, showID, userID, update any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShow", reflect.TypeOf((*MockShowServiceInterface)(nil).UpdateShow), ctx, showID, userID, update)
+}</span>
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/user_repository_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockUserRepository is a mock of UserRepository interface.
+type MockUserRepository struct {
+        ctrl     *gomock.Controller
+        recorder *MockUserRepositoryMockRecorder
+        isgomock struct{}
+}
+
+// MockUserRepositoryMockRecorder is the mock recorder for MockUserRepository.
+type MockUserRepositoryMockRecorder struct {
+        mock *MockUserRepository
+}
+
+// NewMockUserRepository creates a new mock instance.
+func NewMockUserRepository(ctrl *gomock.Controller) *MockUserRepository <span class="cov0" title="0">{
+        mock := &amp;MockUserRepository{ctrl: ctrl}
+        mock.recorder = &amp;MockUserRepositoryMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// Create mocks base method.
+func (m *MockUserRepository) Create(user *models.User) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Create", user)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Create indicates an expected call of Create.
+func (mr *MockUserRepositoryMockRecorder) Create(user any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepository)(nil).Create), user)
+}</span>
+
+// Delete mocks base method.
+func (m *MockUserRepository) Delete(id string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Delete", id)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Delete indicates an expected call of Delete.
+func (mr *MockUserRepositoryMockRecorder) Delete(id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockUserRepository)(nil).Delete), id)
+}</span>
+
+// GetBlockedUsers mocks base method.
+func (m *MockUserRepository) GetBlockedUsers() ([]models.User, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetBlockedUsers")
+        ret0, _ := ret[0].([]models.User)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetBlockedUsers indicates an expected call of GetBlockedUsers.
+func (mr *MockUserRepositoryMockRecorder) GetBlockedUsers() *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBlockedUsers", reflect.TypeOf((*MockUserRepository)(nil).GetBlockedUsers))
+}</span>
+
+// GetByEmail mocks base method.
+func (m *MockUserRepository) GetByEmail(email string) (*models.User, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetByEmail", email)
+        ret0, _ := ret[0].(*models.User)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetByEmail indicates an expected call of GetByEmail.
+func (mr *MockUserRepositoryMockRecorder) GetByEmail(email any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUserRepository)(nil).GetByEmail), email)
+}</span>
+
+// GetByID mocks base method.
+func (m *MockUserRepository) GetByID(id string) (*models.User, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetByID", id)
+        ret0, _ := ret[0].(*models.User)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockUserRepositoryMockRecorder) GetByID(id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockUserRepository)(nil).GetByID), id)
+}</span>
+
+// GetUsers mocks base method.
+func (m *MockUserRepository) GetUsers() ([]models.User, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetUsers")
+        ret0, _ := ret[0].([]models.User)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetUsers indicates an expected call of GetUsers.
+func (mr *MockUserRepositoryMockRecorder) GetUsers() *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockUserRepository)(nil).GetUsers))
+}</span>
+
+// Update mocks base method.
+func (m *MockUserRepository) Update(user *models.User) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Update", user)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Update indicates an expected call of Update.
+func (mr *MockUserRepositoryMockRecorder) Update(user any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockUserRepository)(nil).Update), user)
+}</span>
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/user_service_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        context "context"
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockUserServiceI is a mock of UserServiceI interface.
+type MockUserServiceI struct {
+        ctrl     *gomock.Controller
+        recorder *MockUserServiceIMockRecorder
+        isgomock struct{}
+}
+
+// MockUserServiceIMockRecorder is the mock recorder for MockUserServiceI.
+type MockUserServiceIMockRecorder struct {
+        mock *MockUserServiceI
+}
+
+// NewMockUserServiceI creates a new mock instance.
+func NewMockUserServiceI(ctrl *gomock.Controller) *MockUserServiceI <span class="cov0" title="0">{
+        mock := &amp;MockUserServiceI{ctrl: ctrl}
+        mock.recorder = &amp;MockUserServiceIMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUserServiceI) EXPECT() *MockUserServiceIMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// BrowseUsers mocks base method.
+func (m *MockUserServiceI) BrowseUsers(ctx context.Context, userID string, blocked *bool) ([]models.User, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "BrowseUsers", ctx, userID, blocked)
+        ret0, _ := ret[0].([]models.User)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// BrowseUsers indicates an expected call of BrowseUsers.
+func (mr *MockUserServiceIMockRecorder) BrowseUsers(ctx, userID, blocked any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BrowseUsers", reflect.TypeOf((*MockUserServiceI)(nil).BrowseUsers), ctx, userID, blocked)
+}</span>
+
+// GetUserByID mocks base method.
+func (m *MockUserServiceI) GetUserByID(ctx context.Context, userID string) (*models.User, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetUserByID", ctx, userID)
+        ret0, _ := ret[0].(*models.User)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetUserByID indicates an expected call of GetUserByID.
+func (mr *MockUserServiceIMockRecorder) GetUserByID(ctx, userID any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockUserServiceI)(nil).GetUserByID), ctx, userID)
+}</span>
+
+// UpdateUser mocks base method.
+func (m *MockUserServiceI) UpdateUser(ctx context.Context, userID string, req models.UpdateUserRequest) (models.User, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "UpdateUser", ctx, userID, req)
+        ret0, _ := ret[0].(models.User)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// UpdateUser indicates an expected call of UpdateUser.
+func (mr *MockUserServiceIMockRecorder) UpdateUser(ctx, userID, req any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockUserServiceI)(nil).UpdateUser), ctx, userID, req)
+}</span>
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/venue_repository_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockVenueRepository is a mock of VenueRepository interface.
+type MockVenueRepository struct {
+        ctrl     *gomock.Controller
+        recorder *MockVenueRepositoryMockRecorder
+        isgomock struct{}
+}
+
+// MockVenueRepositoryMockRecorder is the mock recorder for MockVenueRepository.
+type MockVenueRepositoryMockRecorder struct {
+        mock *MockVenueRepository
+}
+
+// NewMockVenueRepository creates a new mock instance.
+func NewMockVenueRepository(ctrl *gomock.Controller) *MockVenueRepository <span class="cov0" title="0">{
+        mock := &amp;MockVenueRepository{ctrl: ctrl}
+        mock.recorder = &amp;MockVenueRepositoryMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockVenueRepository) EXPECT() *MockVenueRepositoryMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// Create mocks base method.
+func (m *MockVenueRepository) Create(venue *models.Venue) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Create", venue)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Create indicates an expected call of Create.
+func (mr *MockVenueRepositoryMockRecorder) Create(venue any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockVenueRepository)(nil).Create), venue)
+}</span>
+
+// Delete mocks base method.
+func (m *MockVenueRepository) Delete(id string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Delete", id)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Delete indicates an expected call of Delete.
+func (mr *MockVenueRepositoryMockRecorder) Delete(id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockVenueRepository)(nil).Delete), id)
+}</span>
+
+// Find mocks base method.
+func (m *MockVenueRepository) Find(filter models.VenueFilter) ([]models.Venue, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Find", filter)
+        ret0, _ := ret[0].([]models.Venue)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// Find indicates an expected call of Find.
+func (mr *MockVenueRepositoryMockRecorder) Find(filter any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockVenueRepository)(nil).Find), filter)
+}</span>
+
+// GetByID mocks base method.
+func (m *MockVenueRepository) GetByID(id string) (*models.Venue, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetByID", id)
+        ret0, _ := ret[0].(*models.Venue)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockVenueRepositoryMockRecorder) GetByID(id any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockVenueRepository)(nil).GetByID), id)
+}</span>
+
+// List mocks base method.
+func (m *MockVenueRepository) List() ([]models.Venue, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "List")
+        ret0, _ := ret[0].([]models.Venue)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// List indicates an expected call of List.
+func (mr *MockVenueRepositoryMockRecorder) List() *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockVenueRepository)(nil).List))
+}</span>
+
+// ListByCity mocks base method.
+func (m *MockVenueRepository) ListByCity(city string) ([]models.Venue, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "ListByCity", city)
+        ret0, _ := ret[0].([]models.Venue)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// ListByCity indicates an expected call of ListByCity.
+func (mr *MockVenueRepositoryMockRecorder) ListByCity(city any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByCity", reflect.TypeOf((*MockVenueRepository)(nil).ListByCity), city)
+}</span>
+
+// ListByHost mocks base method.
+func (m *MockVenueRepository) ListByHost(hostID string) ([]models.Venue, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "ListByHost", hostID)
+        ret0, _ := ret[0].([]models.Venue)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// ListByHost indicates an expected call of ListByHost.
+func (mr *MockVenueRepositoryMockRecorder) ListByHost(hostID any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByHost", reflect.TypeOf((*MockVenueRepository)(nil).ListByHost), hostID)
+}</span>
+
+// Update mocks base method.
+func (m *MockVenueRepository) Update(venue *models.Venue) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Update", venue)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Update indicates an expected call of Update.
+func (mr *MockVenueRepositoryMockRecorder) Update(venue any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockVenueRepository)(nil).Update), venue)
+}</span>
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: interface.go
+//
+// Generated by this command:
+//
+//        mockgen -destination=../../mocks/venue_service_mock.go -package=mocks -source=interface.go
+//
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        context "context"
+        models "eventro2/models"
+        reflect "reflect"
+
+        gomock "go.uber.org/mock/gomock"
+)
+
+// MockVenueServiceInterface is a mock of VenueServiceInterface interface.
+type MockVenueServiceInterface struct {
+        ctrl     *gomock.Controller
+        recorder *MockVenueServiceInterfaceMockRecorder
+        isgomock struct{}
+}
+
+// MockVenueServiceInterfaceMockRecorder is the mock recorder for MockVenueServiceInterface.
+type MockVenueServiceInterfaceMockRecorder struct {
+        mock *MockVenueServiceInterface
+}
+
+// NewMockVenueServiceInterface creates a new mock instance.
+func NewMockVenueServiceInterface(ctrl *gomock.Controller) *MockVenueServiceInterface <span class="cov0" title="0">{
+        mock := &amp;MockVenueServiceInterface{ctrl: ctrl}
+        mock.recorder = &amp;MockVenueServiceInterfaceMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockVenueServiceInterface) EXPECT() *MockVenueServiceInterfaceMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// BrowseVenues mocks base method.
+func (m *MockVenueServiceInterface) BrowseVenues(ctx context.Context, filter models.VenueFilter) ([]models.VenueResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "BrowseVenues", ctx, filter)
+        ret0, _ := ret[0].([]models.VenueResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// BrowseVenues indicates an expected call of BrowseVenues.
+func (mr *MockVenueServiceInterfaceMockRecorder) BrowseVenues(ctx, filter any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BrowseVenues", reflect.TypeOf((*MockVenueServiceInterface)(nil).BrowseVenues), ctx, filter)
+}</span>
+
+// CreateVenue mocks base method.
+func (m *MockVenueServiceInterface) CreateVenue(ctx context.Context, hostID, name, city, state string, isSeatLayoutRequired bool) (models.VenueResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "CreateVenue", ctx, hostID, name, city, state, isSeatLayoutRequired)
+        ret0, _ := ret[0].(models.VenueResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// CreateVenue indicates an expected call of CreateVenue.
+func (mr *MockVenueServiceInterfaceMockRecorder) CreateVenue(ctx, hostID, name, city, state, isSeatLayoutRequired any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateVenue", reflect.TypeOf((*MockVenueServiceInterface)(nil).CreateVenue), ctx, hostID, name, city, state, isSeatLayoutRequired)
+}</span>
+
+// DeleteVenue mocks base method.
+func (m *MockVenueServiceInterface) DeleteVenue(ctx context.Context, venueID, userID, userRole string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "DeleteVenue", ctx, venueID, userID, userRole)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// DeleteVenue indicates an expected call of DeleteVenue.
+func (mr *MockVenueServiceInterfaceMockRecorder) DeleteVenue(ctx, venueID, userID, userRole any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteVenue", reflect.TypeOf((*MockVenueServiceInterface)(nil).DeleteVenue), ctx, venueID, userID, userRole)
+}</span>
+
+// UpdateVenue mocks base method.
+func (m *MockVenueServiceInterface) UpdateVenue(ctx context.Context, venueID, userID, userRole string, update models.UpdateVenueData) (models.VenueResponse, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "UpdateVenue", ctx, venueID, userID, userRole, update)
+        ret0, _ := ret[0].(models.VenueResponse)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// UpdateVenue indicates an expected call of UpdateVenue.
+func (mr *MockVenueServiceInterfaceMockRecorder) UpdateVenue(ctx, venueID, userID, userRole, update any) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateVenue", reflect.TypeOf((*MockVenueServiceInterface)(nil).UpdateVenue), ctx, venueID, userID, userRole, update)
+}</span>
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package artistrepository
+
+import (
+        "eventro2/models"
+        "strings"
+
+        "gorm.io/gorm"
+)
+
+type ArtistRepositoryPG struct {
+        db *gorm.DB
+}
+
+func NewArtistRepositoryPG(db *gorm.DB) *ArtistRepositoryPG <span class="cov8" title="1">{
+        return &amp;ArtistRepositoryPG{db: db}
+}</span>
+
+func (r *ArtistRepositoryPG) Create(artist *models.Artist) error <span class="cov8" title="1">{
+        return r.db.Create(artist).Error
+}</span>
+
+func (r *ArtistRepositoryPG) GetByID(id string) (*models.Artist, error) <span class="cov8" title="1">{
+        var artist models.Artist
+        if err := r.db.First(&amp;artist, "id = ?", id).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;artist, nil</span>
+}
+
+func (r *ArtistRepositoryPG) List() ([]models.Artist, error) <span class="cov8" title="1">{
+        var artists []models.Artist
+        if err := r.db.Find(&amp;artists).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return artists, nil</span>
+}
+
+// get by event id
+func (r *ArtistRepositoryPG) ListByEvent(eventID string) ([]models.Artist, error) <span class="cov8" title="1">{
+        var artists []models.Artist
+        if err := r.db.Joins("JOIN event_artists ea ON ea.artist_id = artists.id").
+                Where("ea.event_id = ?", eventID).
+                Find(&amp;artists).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return artists, nil</span>
+}
+
+// update artist-need to be implemented in admin
+func (r *ArtistRepositoryPG) Update(artist *models.Artist) error <span class="cov8" title="1">{
+        return r.db.Save(artist).Error
+}</span>
+
+// delete-admin artist moderation
+func (r *ArtistRepositoryPG) Delete(id string) error <span class="cov8" title="1">{
+        return r.db.Delete(&amp;models.Artist{}, "id = ?", id).Error
+}</span>
+
+func (r *ArtistRepositoryPG) GetEventsByArtistID(artistID string) ([]models.Event, error) <span class="cov8" title="1">{
+        var events []models.Event
+
+        err := r.db.
+                Joins("JOIN event_artists ea ON ea.event_id = events.id").
+                Where("ea.artist_id = ?", artistID).
+                Find(&amp;events).Error
+
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return events, nil</span>
+}
+
+func (r *ArtistRepositoryPG) SearchByName(name string) ([]models.Artist, error) <span class="cov8" title="1">{
+        var artists []models.Artist
+        likePattern := "%" + strings.ToLower(name) + "%"
+        err := r.db.
+                Where("LOWER(name) LIKE ?", likePattern).
+                Find(&amp;artists).Error
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return artists, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file23" style="display: none">package bookingrepository
+
+import (
+        "eventro2/models"
+
+        "gorm.io/gorm"
+)
+
+type BookingRepositoryPG struct {
+        db *gorm.DB
+}
+
+func NewBookingRepositoryPG(db *gorm.DB) *BookingRepositoryPG <span class="cov8" title="1">{
+        return &amp;BookingRepositoryPG{db: db}
+}</span>
+
+func (r *BookingRepositoryPG) Create(booking *models.Booking) error <span class="cov8" title="1">{
+        return r.db.Create(booking).Error
+}</span>
+
+func (r *BookingRepositoryPG) GetByID(id string) (*models.Booking, error) <span class="cov8" title="1">{
+        var booking models.Booking
+        if err := r.db.First(&amp;booking, "booking_id = ?", id).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;booking, nil</span>
+}
+
+func (r *BookingRepositoryPG) List() ([]models.Booking, error) <span class="cov8" title="1">{
+        var bookings []models.Booking
+        if err := r.db.Find(&amp;bookings).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return bookings, nil</span>
+}
+
+func (r *BookingRepositoryPG) ListByUser(userID string) ([]models.Booking, error) <span class="cov8" title="1">{
+        var bookings []models.Booking
+        if err := r.db.Where("user_id = ?", userID).Find(&amp;bookings).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return bookings, nil</span>
+}
+
+func (r *BookingRepositoryPG) ListByShow(showID string) ([]models.Booking, error) <span class="cov8" title="1">{
+        var bookings []models.Booking
+        if err := r.db.Where("show_id = ?", showID).Find(&amp;bookings).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return bookings, nil</span>
+}
+
+func (r *BookingRepositoryPG) Update(booking *models.Booking) error <span class="cov8" title="1">{
+        return r.db.Save(booking).Error
+}</span>
+
+func (r *BookingRepositoryPG) Delete(id string) error <span class="cov8" title="1">{
+        return r.db.Delete(&amp;models.Booking{}, "booking_id = ?", id).Error
+}</span>
+func (r *BookingRepositoryPG) Find(bookingID, userID, showID string) ([]models.Booking, error) <span class="cov8" title="1">{
+        var bookings []models.Booking
+        query := r.db.Model(&amp;models.Booking{})
+
+        if bookingID != "" </span><span class="cov8" title="1">{
+                query = query.Where("booking_id = ?", bookingID)
+        }</span>
+        <span class="cov8" title="1">if userID != "" </span><span class="cov8" title="1">{
+                query = query.Where("user_id = ?", userID)
+        }</span>
+        <span class="cov8" title="1">if showID != "" </span><span class="cov8" title="1">{
+                query = query.Where("show_id = ?", showID)
+        }</span>
+
+        <span class="cov8" title="1">if err := query.Find(&amp;bookings).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return bookings, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file24" style="display: none">package eventrepository
+
+import (
+        "eventro2/models"
+        "strings"
+
+        "gorm.io/gorm"
+)
+
+type EventRepositoryPG struct {
+        db *gorm.DB
+}
+
+func NewEventRepositoryPG(db *gorm.DB) *EventRepositoryPG <span class="cov8" title="1">{
+        return &amp;EventRepositoryPG{db: db}
+}</span>
+
+func (r *EventRepositoryPG) Create(event *models.Event) error <span class="cov8" title="1">{
+        return r.db.Create(event).Error
+}</span>
+
+func (r *EventRepositoryPG) GetByID(id string) (*models.Event, error) <span class="cov8" title="1">{
+        var event models.Event
+        if err := r.db.First(&amp;event, "id = ?", id).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;event, nil</span>
+}
+
+func (r *EventRepositoryPG) List() ([]models.Event, error) <span class="cov8" title="1">{
+        var events []models.Event
+        if err := r.db.Find(&amp;events).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return events, nil</span>
+}
+
+// Update event
+func (r *EventRepositoryPG) Update(event *models.Event) error <span class="cov8" title="1">{
+        return r.db.Model(&amp;models.Event{}).Where("id = ?", event.ID).Update("is_blocked", event.IsBlocked).Error
+}</span>
+
+// Delete event
+func (r *EventRepositoryPG) Delete(id string) error <span class="cov8" title="1">{
+        return r.db.Delete(&amp;models.Event{}, "id = ?", id).Error
+}</span>
+
+func (r *EventRepositoryPG) AddEventArtist(ea *models.EventArtist) error <span class="cov8" title="1">{
+        return r.db.Create(ea).Error
+}</span>
+
+func (r *EventRepositoryPG) GetArtistsByEventID(eventID string) ([]models.Artist, error) <span class="cov8" title="1">{
+        var artists []models.Artist
+        err := r.db.
+                Table("artists").
+                Select("artists.*").
+                Joins("JOIN event_artists ea ON ea.artist_id = artists.id").
+                Where("ea.event_id = ?", eventID).
+                Find(&amp;artists).Error
+
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return artists, nil</span>
+}
+
+func (r *EventRepositoryPG) GetEventsByCity(city string) ([]models.Event, error) <span class="cov8" title="1">{
+        var events []models.Event
+
+        err := r.db.
+                Table("events e").
+                Select("DISTINCT e.*").
+                Joins("JOIN shows s ON s.event_id = e.id").
+                Joins("JOIN venues v ON s.venue_id = v.id").
+                Where("LOWER(v.city) = ?", strings.ToLower(city)).
+                Find(&amp;events).Error
+
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return events, nil</span>
+}
+func (r *EventRepositoryPG) GetFilteredEvents(filter models.EventFilter) ([]models.Event, error) <span class="cov8" title="1">{
+        var events []models.Event
+        query := r.db.Model(&amp;models.Event{}).Distinct()
+
+        if filter.Name != "" </span><span class="cov8" title="1">{
+                query = query.Where("LOWER(name) LIKE ?", "%"+strings.ToLower(filter.Name)+"%")
+        }</span>
+        <span class="cov8" title="1">if filter.Category != "" </span><span class="cov8" title="1">{
+                query = query.Where("category = ?", filter.Category)
+        }</span>
+        <span class="cov8" title="1">if filter.Location != "" </span><span class="cov8" title="1">{
+                query = query.Joins("JOIN shows s ON s.event_id = events.id").
+                        Joins("JOIN venues v ON s.venue_id = v.id").
+                        Where("LOWER(v.city) = ?", strings.ToLower(filter.Location))
+        }</span>
+        <span class="cov8" title="1">if filter.IsBlocked != nil </span><span class="cov8" title="1">{
+                query = query.Where("is_blocked = ?", *filter.IsBlocked)
+        }</span>
+        <span class="cov8" title="1">if filter.ArtistName != "" </span><span class="cov8" title="1">{
+                query = query.Joins("JOIN event_artists ea ON ea.event_id = events.id").
+                        Joins("JOIN artists a ON ea.artist_id = a.id").
+                        Where("LOWER(a.name) LIKE ?", "%"+strings.ToLower(filter.ArtistName)+"%")
+        }</span>
+        <span class="cov8" title="1">if filter.EventID != "" </span><span class="cov8" title="1">{
+                query = query.Where("id = ?", filter.EventID)
+        }</span>
+
+        <span class="cov8" title="1">if err := query.Find(&amp;events).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return events, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file25" style="display: none">package showrepository
+
+import (
+        "eventro2/models"
+
+        "gorm.io/gorm"
+)
+
+type ShowRepositoryPG struct {
+        db *gorm.DB
+}
+
+func NewShowRepositoryPG(db *gorm.DB) *ShowRepositoryPG <span class="cov8" title="1">{
+        return &amp;ShowRepositoryPG{db: db}
+}</span>
+
+// Create a new show
+func (r *ShowRepositoryPG) Create(show *models.Show) error <span class="cov8" title="1">{
+        return r.db.Create(show).Error
+}</span>
+
+// Get show by ID
+func (r *ShowRepositoryPG) GetByID(id string) (*models.Show, error) <span class="cov8" title="1">{
+        var show models.Show
+        if err := r.db.First(&amp;show, "id = ?", id).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;show, nil</span>
+}
+
+// List all shows
+func (r *ShowRepositoryPG) List() ([]models.Show, error) <span class="cov8" title="1">{
+        var shows []models.Show
+        if err := r.db.Find(&amp;shows).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return shows, nil</span>
+}
+
+// List shows for a given Event
+func (r *ShowRepositoryPG) ListByEvent(eventID string) ([]models.Show, error) <span class="cov8" title="1">{
+        var shows []models.Show
+        if err := r.db.Where("event_id = ?", eventID).Find(&amp;shows).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return shows, nil</span>
+}
+
+func (r *ShowRepositoryPG) Update(show *models.Show) error <span class="cov8" title="1">{
+        return r.db.Save(show).Error
+}</span>
+
+func (r *ShowRepositoryPG) Delete(id string) error <span class="cov8" title="1">{
+        return r.db.Delete(&amp;models.Show{}, "id = ?", id).Error
+}</span>
+
+func (r *ShowRepositoryPG) Find(filter models.ShowFilter) ([]models.Show, error) <span class="cov8" title="1">{
+        var shows []models.Show
+        query := r.db.Model(&amp;models.Show{})
+
+        if filter.ShowID != "" </span><span class="cov8" title="1">{
+                query = query.Where("id = ?", filter.ShowID)
+        }</span>
+        <span class="cov8" title="1">if filter.EventID != "" </span><span class="cov8" title="1">{
+                query = query.Where("event_id = ?", filter.EventID)
+        }</span>
+        <span class="cov8" title="1">if filter.HostID != "" </span><span class="cov8" title="1">{
+                query = query.Where("host_id = ?", filter.HostID)
+        }</span>
+        <span class="cov8" title="1">if filter.VenueID != "" </span><span class="cov8" title="1">{
+                query = query.Where("venue_id = ?", filter.VenueID)
+        }</span>
+
+        <span class="cov8" title="1">if err := query.Find(&amp;shows).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return shows, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file26" style="display: none">package userrepository
+
+import (
+        "eventro2/models"
+
+        "gorm.io/gorm"
+)
+
+type UserRepositoryPG struct {
+        db *gorm.DB
+}
+
+// constructor
+func NewUserRepositoryPG(db *gorm.DB) *UserRepositoryPG <span class="cov8" title="1">{
+        return &amp;UserRepositoryPG{db: db}
+}</span>
+
+// Create a new user
+func (r *UserRepositoryPG) Create(user *models.User) error <span class="cov8" title="1">{
+        return r.db.Create(user).Error
+}</span>
+
+// Get user by ID
+func (r *UserRepositoryPG) GetByID(id string) (*models.User, error) <span class="cov8" title="1">{
+        var user models.User
+        if err := r.db.First(&amp;user, "user_id = ?", id).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;user, nil</span>
+}
+
+// Get user by Email
+func (r *UserRepositoryPG) GetByEmail(email string) (*models.User, error) <span class="cov8" title="1">{
+        var user models.User
+        if err := r.db.First(&amp;user, "email = ?", email).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;user, nil</span>
+}
+
+// List all users
+func (r *UserRepositoryPG) GetUsers() ([]models.User, error) <span class="cov8" title="1">{
+        var users []models.User
+        if err := r.db.Find(&amp;users).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return users, nil</span>
+}
+
+// Update user
+func (r *UserRepositoryPG) Update(user *models.User) error <span class="cov8" title="1">{
+        return r.db.Save(user).Error
+}</span>
+
+// Delete user
+func (r *UserRepositoryPG) Delete(id string) error <span class="cov8" title="1">{
+        return r.db.Delete(&amp;models.User{}, "user_id = ?", id).Error
+}</span>
+
+func (r *UserRepositoryPG) GetBlockedUsers() ([]models.User, error) <span class="cov8" title="1">{
+        var users []models.User
+        if err := r.db.Where("is_blocked = ?", true).Find(&amp;users).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return users, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file27" style="display: none">package venuerepository
+
+import (
+        "eventro2/models"
+
+        "gorm.io/gorm"
+)
+
+type VenueRepositoryPG struct {
+        db *gorm.DB
+}
+
+func NewVenueRepositoryPG(db *gorm.DB) *VenueRepositoryPG <span class="cov8" title="1">{
+        return &amp;VenueRepositoryPG{db: db}
+}</span>
+
+// Create venue
+func (r *VenueRepositoryPG) Create(venue *models.Venue) error <span class="cov8" title="1">{
+        return r.db.Create(venue).Error
+}</span>
+
+// Get venue by ID
+func (r *VenueRepositoryPG) GetByID(id string) (*models.Venue, error) <span class="cov8" title="1">{
+        var venue models.Venue
+        if err := r.db.First(&amp;venue, "id = ?", id).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;venue, nil</span>
+}
+
+// List all venues
+func (r *VenueRepositoryPG) List() ([]models.Venue, error) <span class="cov8" title="1">{
+        var venues []models.Venue
+        if err := r.db.Find(&amp;venues).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return venues, nil</span>
+}
+
+// List venues by host
+func (r *VenueRepositoryPG) ListByHost(hostID string) ([]models.Venue, error) <span class="cov8" title="1">{
+        var venues []models.Venue
+        if err := r.db.Where("host_id = ?", hostID).Find(&amp;venues).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return venues, nil</span>
+}
+
+// List venues by city
+func (r *VenueRepositoryPG) ListByCity(city string) ([]models.Venue, error) <span class="cov8" title="1">{
+        var venues []models.Venue
+        if err := r.db.Where("city ILIKE ?", city).Find(&amp;venues).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return venues, nil</span>
+}
+
+// Update venue
+func (r *VenueRepositoryPG) Update(venue *models.Venue) error <span class="cov8" title="1">{
+        return r.db.Save(venue).Error
+}</span>
+
+// Delete venue
+func (r *VenueRepositoryPG) Delete(id string) error <span class="cov8" title="1">{
+        return r.db.Delete(&amp;models.Venue{}, "id = ?", id).Error
+}</span>
+
+func (r *VenueRepositoryPG) Find(filter models.VenueFilter) ([]models.Venue, error) <span class="cov8" title="1">{
+        var venues []models.Venue
+        query := r.db.Model(&amp;models.Venue{})
+
+        if filter.VenueID != "" </span><span class="cov8" title="1">{
+                query = query.Where("id = ?", filter.VenueID)
+        }</span>
+        <span class="cov8" title="1">if filter.HostID != "" </span><span class="cov8" title="1">{
+                query = query.Where("host_id = ?", filter.HostID)
+        }</span>
+        <span class="cov8" title="1">if filter.City != "" </span><span class="cov8" title="1">{
+                query = query.Where("city = ?", filter.City)
+        }</span>
+        <span class="cov8" title="1">if filter.IsBlocked </span><span class="cov8" title="1">{
+                query = query.Where("is_blocked = ?", filter.IsBlocked)
+        }</span>
+
+        <span class="cov8" title="1">if err := query.Find(&amp;venues).Error; err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return venues, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file28" style="display: none">package artistservice
+
+import (
+        "context"
+        "errors"
+        "eventro2/models"
+        artistrepository "eventro2/repository/artists_repository"
+
+        "github.com/google/uuid"
+)
+
+type Artistservice struct {
+        ArtistRepo artistrepository.ArtistRepository
+}
+
+func NewArtistService(artistRepo artistrepository.ArtistRepository) Artistservice <span class="cov8" title="1">{
+        return Artistservice{
+                ArtistRepo: artistRepo,
+        }
+}</span>
+
+func (as *Artistservice) CreateArtist(ctx context.Context, name, bio string) (models.Artist, error) <span class="cov8" title="1">{
+
+        if len(bio) &lt; 12 </span><span class="cov8" title="1">{
+                return models.Artist{}, errors.New("bio must be at least 12 characters long")
+        }</span>
+
+        <span class="cov8" title="1">artist := models.Artist{
+                ID:   uuid.New().String(),
+                Name: name,
+                Bio:  bio,
+        }
+
+        if err := as.ArtistRepo.Create(&amp;artist); err != nil </span><span class="cov8" title="1">{
+                return models.Artist{}, err
+        }</span>
+
+        <span class="cov8" title="1">return artist, nil</span>
+}
+
+func (as *Artistservice) DeleteArtist(ctx context.Context, id string) error <span class="cov8" title="1">{
+        if err := as.ArtistRepo.Delete(id); err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (as *Artistservice) GetArtists(ctx context.Context, name string) ([]models.Artist, error) <span class="cov8" title="1">{
+        if name != "" </span><span class="cov8" title="1">{
+                return as.ArtistRepo.SearchByName(name)
+        }</span>
+        <span class="cov8" title="1">return as.ArtistRepo.List()</span>
+}
+func (as *Artistservice) GetArtistByID(ctx context.Context, id string) (*models.Artist, error) <span class="cov8" title="1">{
+        return as.ArtistRepo.GetByID(id)
+}</span>
+</pre>
+		
+		<pre class="file" id="file29" style="display: none">package authorisation
+
+import (
+        "context"
+        "errors"
+        "eventro2/models"
+        userrepository "eventro2/repository/user_repository"
+        "net/mail"
+        "regexp"
+
+        "github.com/google/uuid"
+        "golang.org/x/crypto/bcrypt"
+)
+
+type AuthService struct {
+        UserRepo userrepository.UserRepository
+}
+
+func NewAuthService(userRepo userrepository.UserRepository) *AuthService <span class="cov8" title="1">{
+        return &amp;AuthService{
+                UserRepo: userRepo,
+        }
+}</span>
+
+func (a *AuthService) ValidateLogin(ctx context.Context, email, password string) (models.User, error) <span class="cov8" title="1">{
+        user, err := a.UserRepo.GetByEmail(email)
+        if err != nil </span><span class="cov8" title="1">{
+                return models.User{}, errors.New("invalid email or password")
+        }</span>
+        <span class="cov8" title="1">if user.IsBlocked </span><span class="cov8" title="1">{
+                return models.User{}, errors.New("user account is blocked, please contact admin")
+        }</span>
+
+        // Compare entered password with stored bcrypt hash
+        <span class="cov8" title="1">if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil </span><span class="cov8" title="1">{
+                return models.User{}, errors.New("invalid email or password")
+        }</span>
+
+        <span class="cov8" title="1">return *user, nil</span>
+}
+
+func (a *AuthService) HashPassword(password string) (string, error) <span class="cov8" title="1">{
+        hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+        return string(hashedBytes), err
+}</span>
+
+func (a *AuthService) IsValidEmail(email string) bool <span class="cov8" title="1">{
+        _, err := mail.ParseAddress(email)
+        return err == nil
+}</span>
+
+func (a *AuthService) IsValidPhoneNumber(phone string) bool <span class="cov8" title="1">{
+        var phoneRegex = regexp.MustCompile(`^\+?[1-9]\d{9,14}$`)
+        return phoneRegex.MatchString(phone)
+}</span>
+
+func (a *AuthService) IsValidPassword(password string) bool <span class="cov8" title="1">{
+        var (
+                minLength = len(password) &gt;= 12
+                hasNumber = regexp.MustCompile(`[0-9]`).MatchString(password)
+                hasUpper  = regexp.MustCompile(`[A-Z]`).MatchString(password)
+                hasLower  = regexp.MustCompile(`[a-z]`).MatchString(password)
+                hasSymbol = regexp.MustCompile(`[!@#$%^&amp;*()\-+]`).MatchString(password)
+        )
+
+        return minLength &amp;&amp; hasNumber &amp;&amp; hasUpper &amp;&amp; hasLower &amp;&amp; hasSymbol
+}</span>
+
+func (a *AuthService) Signup(ctx context.Context, username, email, phoneNumber, password string) (models.User, error) <span class="cov8" title="1">{
+        if !a.IsValidEmail(email) </span><span class="cov8" title="1">{
+                return models.User{}, errors.New("invalid email format")
+        }</span>
+
+        <span class="cov8" title="1">if _, err := a.UserRepo.GetByEmail(email); err == nil </span><span class="cov8" title="1">{
+                return models.User{}, errors.New("email already in use")
+        }</span>
+
+        <span class="cov8" title="1">if !a.IsValidPassword(password) </span><span class="cov8" title="1">{
+                return models.User{}, errors.New("password must be at least 12 characters long, and include uppercase, lowercase, number, and symbol")
+        }</span>
+
+        <span class="cov8" title="1">hashedPassword, err := a.HashPassword(password)
+        if err != nil </span><span class="cov0" title="0">{
+                return models.User{}, err
+        }</span>
+
+        <span class="cov8" title="1">if !a.IsValidPhoneNumber(phoneNumber) </span><span class="cov8" title="1">{
+                return models.User{}, errors.New("invalid phone number format")
+        }</span>
+
+        <span class="cov8" title="1">newUser := models.User{
+                UserID:      uuid.New().String(),
+                Username:    username,
+                Email:       email,
+                PhoneNumber: phoneNumber,
+                Password:    hashedPassword,
+                Role:        models.Customer,
+        }
+
+        if err := a.UserRepo.Create(&amp;newUser); err != nil </span><span class="cov8" title="1">{
+                return models.User{}, err
+        }</span>
+
+        <span class="cov8" title="1">return newUser, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file30" style="display: none">package authorisation
+
+import (
+        "errors"
+        "time"
+
+        "github.com/golang-jwt/jwt/v5"
+)
+
+var jwtSecret = []byte("your-secret-key")
+
+type Claims struct {
+        UserID string `json:"user_id"`
+        Email  string `json:"email"`
+        Role   string `json:"role"`
+        jwt.RegisteredClaims
+}
+
+func GenerateJWT(userID, email, role string) (string, error) <span class="cov8" title="1">{
+        claims := Claims{
+                UserID: userID,
+                Email:  email,
+                Role:   role,
+                RegisteredClaims: jwt.RegisteredClaims{
+                        ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+                },
+        }
+
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+        return token.SignedString(jwtSecret)
+}</span>
+
+func ValidateJWT(tokenString string) (*Claims, error) <span class="cov8" title="1">{
+        claims := &amp;Claims{}
+
+        token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
+
+                if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok </span><span class="cov0" title="0">{
+                        return nil, errors.New("unexpected signing method")
+                }</span>
+                <span class="cov8" title="1">return jwtSecret, nil</span>
+        })
+        <span class="cov8" title="1">if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">if !token.Valid </span><span class="cov0" title="0">{
+                return nil, errors.New("invalid token")
+        }</span>
+
+        <span class="cov8" title="1">return claims, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file31" style="display: none">package bookingservice
+
+import (
+        "context"
+        "errors"
+        "eventro2/models"
+        bookingrepository "eventro2/repository/booking_repository"
+        eventsrepository "eventro2/repository/event_repository"
+        showrepository "eventro2/repository/show_repository"
+        venuerepository "eventro2/repository/venue_repository"
+        "fmt"
+        "regexp"
+        "strings"
+)
+
+type BookingService struct {
+        BookingRepo bookingrepository.BookingRepository
+        ShowRepo    showrepository.ShowRepository
+        venueRepo   venuerepository.VenueRepository
+        eventRepo   eventsrepository.EventRepository
+}
+
+func NewBookingService(bRepo bookingrepository.BookingRepository, sRepo showrepository.ShowRepository, vRepo venuerepository.VenueRepository, eRepo eventsrepository.EventRepository) BookingService <span class="cov8" title="1">{
+        return BookingService{
+                BookingRepo: bRepo,
+                ShowRepo:    sRepo,
+                venueRepo:   vRepo,
+                eventRepo:   eRepo,
+        }
+}</span>
+
+func (bs *BookingService) AddBooking(
+        ctx context.Context,
+        userID string,
+        showID string,
+        requestedSeats []string,
+) (*models.BookingResponse, error) <span class="cov8" title="1">{
+        show, err := bs.ShowRepo.GetByID(showID)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("show not found: %w", err)
+        }</span>
+        <span class="cov8" title="1">if show.IsBlocked </span><span class="cov8" title="1">{
+                return nil, errors.New("cannot book tickets for a blocked show")
+        }</span>
+
+        <span class="cov8" title="1">booked := make(map[string]bool)
+        for _, s := range show.BookedSeats </span><span class="cov8" title="1">{
+                booked[s] = true
+        }</span>
+
+        <span class="cov8" title="1">for _, seat := range requestedSeats </span><span class="cov8" title="1">{
+                if booked[seat] </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("seat %s is already booked", seat)
+                }</span>
+                <span class="cov8" title="1">if !bs.isValidTicket(seat, show.BookedSeats) </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("seat %s is not valid", seat)
+                }</span>
+        }
+
+        <span class="cov8" title="1">numTickets := len(requestedSeats)
+        totalPrice := float64(numTickets) * show.Price
+
+        show.BookedSeats = append(show.BookedSeats, requestedSeats...)
+        if err := bs.ShowRepo.Update(show); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to update show bookings: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">newBooking := &amp;models.Booking{
+                UserID:            userID,
+                ShowID:            showID,
+                NumTickets:        numTickets,
+                TotalBookingPrice: totalPrice,
+                Seats:             requestedSeats,
+        }
+
+        if err := bs.BookingRepo.Create(newBooking); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("error creating booking: %w", err)
+        }</span>
+        <span class="cov8" title="1">bookingDTO := models.BookingResponse{
+                BookingID:         newBooking.BookingID,
+                UserID:            newBooking.UserID,
+                ShowID:            newBooking.ShowID,
+                TimeBooked:        newBooking.TimeBooked,
+                NumTickets:        newBooking.NumTickets,
+                TotalBookingPrice: newBooking.TotalBookingPrice,
+                Seats:             newBooking.Seats,
+        }
+
+        return &amp;bookingDTO, nil</span>
+}
+
+func (bs *BookingService) isValidTicket(userTicket string, bookedTickets []string) bool <span class="cov8" title="1">{
+        userTicket = strings.ToUpper(userTicket)
+
+        matched, err := regexp.MatchString(`^[A-J](10|[1-9])$`, userTicket)
+        if err != nil || !matched </span><span class="cov8" title="1">{
+                return false
+        }</span>
+
+        <span class="cov8" title="1">for _, ticket := range bookedTickets </span><span class="cov8" title="1">{
+                if strings.ToUpper(ticket) == userTicket </span><span class="cov8" title="1">{
+                        return false
+                }</span>
+        }
+        <span class="cov8" title="1">return true</span>
+}
+func (s *BookingService) BrowseBookings(ctx context.Context, bookingID, userID, showID string) ([]models.BookingResponse, error) <span class="cov8" title="1">{
+        bookings, err := s.BookingRepo.Find(bookingID, userID, showID)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("error fetching bookings: %w", err)
+        }</span>
+        <span class="cov8" title="1">bookingDTO := make([]models.BookingResponse, len(bookings))
+        for i, booking := range bookings </span><span class="cov8" title="1">{
+                bookingDTO[i] = models.BookingResponse{
+                        BookingID:         booking.BookingID,
+                        UserID:            booking.UserID,
+                        ShowID:            booking.ShowID,
+                        TimeBooked:        booking.TimeBooked,
+                        NumTickets:        booking.NumTickets,
+                        TotalBookingPrice: booking.TotalBookingPrice,
+                        Seats:             booking.Seats,
+                }
+        }</span>
+        <span class="cov8" title="1">return bookingDTO, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file32" style="display: none">package eventservice
+
+import (
+        "context"
+        "eventro2/models"
+        eventsrepository "eventro2/repository/event_repository"
+        "fmt"
+
+        "github.com/google/uuid"
+)
+
+type EventService struct {
+        EventRepo eventsrepository.EventRepository
+}
+
+func NewEventService(eventRepo eventsrepository.EventRepository) EventService <span class="cov8" title="1">{
+        return EventService{EventRepo: eventRepo}
+}</span>
+
+func (e *EventService) CreateNewEvent(ctx context.Context, name, description, duration string, category models.EventCategory, artistIDs []string) (models.EventResponse, error) <span class="cov8" title="1">{
+        eventID := uuid.New().String()
+        // Create the event
+        event := models.Event{
+                ID:          eventID,
+                Name:        name,
+                Description: description,
+                Duration:    duration,
+                Category:    category,
+                IsBlocked:   false,
+        }
+
+        if err := e.EventRepo.Create(&amp;event); err != nil </span><span class="cov8" title="1">{
+                return models.EventResponse{}, fmt.Errorf("failed to create event: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">for _, artistID := range artistIDs </span><span class="cov8" title="1">{
+                eventArtist := models.EventArtist{
+                        EventID:  eventID,
+                        ArtistID: artistID,
+                }
+                if err := e.EventRepo.AddEventArtist(&amp;eventArtist); err != nil </span><span class="cov8" title="1">{
+                        return models.EventResponse{}, fmt.Errorf("failed to associate artist %s: %w", artistID, err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">return models.EventResponse{
+                ID:          event.ID,
+                Name:        event.Name,
+                Description: event.Description,
+                Duration:    event.Duration,
+                Category:    string(event.Category),
+                IsBlocked:   event.IsBlocked,
+                ArtistIDs:   artistIDs,
+        }, nil</span>
+}
+
+func (s *EventService) BrowseEvents(ctx context.Context, filter models.EventFilter) ([]models.EventResponse, error) <span class="cov8" title="1">{
+        events, err := s.EventRepo.GetFilteredEvents(filter)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">var responses []models.EventResponse
+        for _, event := range events </span><span class="cov8" title="1">{
+                responses = append(responses, models.EventResponse{
+                        ID:          event.ID,
+                        Name:        event.Name,
+                        Description: event.Description,
+                        Duration:    event.Duration,
+                        Category:    string(event.Category),
+                        IsBlocked:   event.IsBlocked,
+                })
+        }</span>
+
+        <span class="cov8" title="1">return responses, nil</span>
+}
+
+func (e *EventService) DeleteEvent(ctx context.Context, eventID string) error <span class="cov8" title="1">{
+        if err := e.EventRepo.Delete(eventID); err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (e *EventService) UpdateEvent(ctx context.Context, eventID string, updateData models.EventUpdate) (models.EventResponse, error) <span class="cov8" title="1">{
+        // Fetch existing event
+        event, err := e.EventRepo.GetByID(eventID)
+        if err != nil </span><span class="cov8" title="1">{
+                return models.EventResponse{}, err
+        }</span>
+
+        <span class="cov8" title="1">if updateData.Name != nil </span><span class="cov8" title="1">{
+                event.Name = *updateData.Name
+        }</span>
+        <span class="cov8" title="1">if updateData.Description != nil </span><span class="cov8" title="1">{
+                event.Description = *updateData.Description
+        }</span>
+        <span class="cov8" title="1">if updateData.Duration != nil </span><span class="cov8" title="1">{
+                event.Duration = *updateData.Duration
+        }</span>
+        <span class="cov8" title="1">if updateData.Category != nil </span><span class="cov0" title="0">{
+                event.Category = *updateData.Category
+        }</span>
+        <span class="cov8" title="1">if updateData.IsBlocked != nil </span><span class="cov0" title="0">{
+                event.IsBlocked = *updateData.IsBlocked
+        }</span>
+
+        // Save updated event
+        <span class="cov8" title="1">if err := e.EventRepo.Update(event); err != nil </span><span class="cov8" title="1">{
+                return models.EventResponse{}, err
+        }</span>
+
+        <span class="cov8" title="1">return models.EventResponse{
+                ID:          event.ID,
+                Name:        event.Name,
+                Description: event.Description,
+                Duration:    event.Duration,
+                Category:    string(event.Category),
+                IsBlocked:   event.IsBlocked,
+        }, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file33" style="display: none">package showservice
+
+import (
+        "context"
+        "errors"
+        "eventro2/middleware"
+        "eventro2/models"
+        bookingrepository "eventro2/repository/booking_repository"
+        eventsrepository "eventro2/repository/event_repository"
+        showrepository "eventro2/repository/show_repository"
+        venuerepository "eventro2/repository/venue_repository"
+        "fmt"
+        "strings"
+        "time"
+
+        "github.com/google/uuid"
+)
+
+type ShowService struct {
+        ShowRepo  showrepository.ShowRepository
+        VenueRepo venuerepository.VenueRepository
+        BookRepo  bookingrepository.BookingRepository
+        EventRepo eventsrepository.EventRepository
+}
+
+func NewShowService(
+        showRepo showrepository.ShowRepository,
+        venueRepo venuerepository.VenueRepository,
+        bookRepo bookingrepository.BookingRepository,
+        eventRepo eventsrepository.EventRepository,
+) ShowService <span class="cov8" title="1">{
+        return ShowService{
+                ShowRepo:  showRepo,
+                VenueRepo: venueRepo,
+                BookRepo:  bookRepo,
+                EventRepo: eventRepo,
+        }
+}</span>
+
+func (s *ShowService) UpdateShow(ctx context.Context, showID string, userID string, update models.UpdateShowData) (models.ShowResponse, error) <span class="cov8" title="1">{
+        // fetch show first
+        show, err := s.ShowRepo.GetByID(showID)
+        if err != nil </span><span class="cov8" title="1">{
+                return models.ShowResponse{}, err
+        }</span>
+
+        // authorization check (only host can update)
+        <span class="cov8" title="1">if show.HostID != userID </span><span class="cov8" title="1">{
+                return models.ShowResponse{}, fmt.Errorf("forbidden: cannot update another user's show")
+        }</span>
+
+        // apply updates if provided
+        <span class="cov8" title="1">if update.Price != nil </span><span class="cov8" title="1">{
+                show.Price = *update.Price
+        }</span>
+        <span class="cov8" title="1">if update.ShowDate != nil </span><span class="cov0" title="0">{
+                show.ShowDate = *update.ShowDate
+        }</span>
+        <span class="cov8" title="1">if update.ShowTime != nil </span><span class="cov8" title="1">{
+                show.ShowTime = *update.ShowTime
+        }</span>
+        <span class="cov8" title="1">if update.IsBlocked != nil </span><span class="cov8" title="1">{
+                show.IsBlocked = *update.IsBlocked
+        }</span>
+
+        <span class="cov8" title="1">if err := s.ShowRepo.Update(show); err != nil </span><span class="cov8" title="1">{
+                return models.ShowResponse{}, err
+        }</span>
+
+        <span class="cov8" title="1">return models.ShowResponse{
+                ID:          show.ID,
+                HostID:      show.HostID,
+                VenueID:     show.VenueID,
+                EventID:     show.EventID,
+                CreatedAt:   show.CreatedAt,
+                IsBlocked:   show.IsBlocked,
+                Price:       show.Price,
+                ShowDate:    show.ShowDate,
+                ShowTime:    show.ShowTime,
+                BookedSeats: show.BookedSeats,
+        }, nil</span>
+}
+
+func (s *ShowService) BrowseShows(ctx context.Context, filter models.ShowFilter) ([]models.ShowResponse, error) <span class="cov8" title="1">{
+        shows, err := s.ShowRepo.Find(filter)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed to fetch shows: %w", err)
+        }</span>
+        <span class="cov8" title="1">showsDTO := make([]models.ShowResponse, len(shows))
+        for i, show := range shows </span><span class="cov8" title="1">{
+                showsDTO[i] = models.ShowResponse{
+                        ID:          show.ID,
+                        HostID:      show.HostID,
+                        VenueID:     show.VenueID,
+                        EventID:     show.EventID,
+                        CreatedAt:   show.CreatedAt,
+                        IsBlocked:   show.IsBlocked,
+                        Price:       show.Price,
+                        ShowDate:    show.ShowDate,
+                        ShowTime:    show.ShowTime,
+                        BookedSeats: show.BookedSeats,
+                }
+        }</span>
+        <span class="cov8" title="1">return showsDTO, nil</span>
+}
+
+func (s *ShowService) CreateShow(ctx context.Context, eventID string, venueID string, hostID string, price float64, showDate time.Time, showTime string) (models.ShowResponse, error) <span class="cov8" title="1">{
+        showID := uuid.New().String()
+
+        show := models.Show{
+                ID:          showID,
+                HostID:      hostID,
+                VenueID:     venueID,
+                EventID:     eventID,
+                IsBlocked:   false,
+                Price:       price,
+                ShowDate:    showDate,
+                ShowTime:    showTime,
+                BookedSeats: []string{},
+        }
+        showDTO := models.ShowResponse{
+                ID:          show.ID,
+                HostID:      show.HostID,
+                VenueID:     show.VenueID,
+                EventID:     show.EventID,
+                CreatedAt:   show.CreatedAt,
+                IsBlocked:   show.IsBlocked,
+                Price:       show.Price,
+                ShowDate:    show.ShowDate,
+                ShowTime:    show.ShowTime,
+                BookedSeats: show.BookedSeats,
+        }
+
+        if err := s.ShowRepo.Create(&amp;show); err != nil </span><span class="cov8" title="1">{
+                return models.ShowResponse{}, fmt.Errorf("failed to create show: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return showDTO, nil</span>
+}
+
+func (s *ShowService) DeleteShow(ctx context.Context, showID string) error <span class="cov8" title="1">{
+        show, err := s.ShowRepo.GetByID(showID)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("show not found: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">userID, _ := middleware.GetUserID(ctx)
+        role, _ := middleware.GetUserRole(ctx)
+
+        if strings.ToLower(role) != "admin" &amp;&amp; show.HostID != userID </span><span class="cov8" title="1">{
+                return errors.New("unauthorized to delete this show")
+        }</span>
+
+        <span class="cov8" title="1">if err := s.ShowRepo.Delete(showID); err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to delete show: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file34" style="display: none">package userservice
+
+import (
+        "context"
+        "eventro2/models"
+        userrepository "eventro2/repository/user_repository"
+        "fmt"
+)
+
+type UserService struct {
+        UserRepo userrepository.UserRepository
+}
+
+func NewUserService(userRepo userrepository.UserRepository) UserService <span class="cov8" title="1">{
+        return UserService{UserRepo: userRepo}
+}</span>
+
+func (s *UserService) BrowseUsers(ctx context.Context, userID string, blocked *bool) ([]models.User, error) <span class="cov8" title="1">{
+        if blocked != nil &amp;&amp; *blocked </span><span class="cov8" title="1">{
+                return s.UserRepo.GetBlockedUsers()
+        }</span>
+
+        <span class="cov8" title="1">return s.UserRepo.GetUsers()</span>
+}
+
+func (s *UserService) GetUserByID(ctx context.Context, userID string) (*models.User, error) <span class="cov8" title="1">{
+        if userID != "" </span><span class="cov8" title="1">{
+                return s.UserRepo.GetByID(userID)
+        }</span>
+        <span class="cov8" title="1">return nil, fmt.Errorf("invalid user ID")</span>
+}
+
+func (s *UserService) UpdateUser(ctx context.Context, userID string, req models.UpdateUserRequest) (models.User, error) <span class="cov8" title="1">{
+        user, err := s.UserRepo.GetByID(userID)
+        if err != nil </span><span class="cov8" title="1">{
+                return models.User{}, err
+        }</span>
+
+        <span class="cov8" title="1">if req.IsBlocked != nil </span><span class="cov8" title="1">{
+                user.IsBlocked = *req.IsBlocked
+        }</span>
+
+        <span class="cov8" title="1">if req.Role != nil </span><span class="cov8" title="1">{
+                user.Role = models.Role(*req.Role)
+        }</span>
+
+        <span class="cov8" title="1">if err := s.UserRepo.Update(user); err != nil </span><span class="cov8" title="1">{
+                return models.User{}, err
+        }</span>
+
+        <span class="cov8" title="1">return *user, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file35" style="display: none">package venueservice
+
+import (
+        "context"
+        "eventro2/models"
+        venuerepository "eventro2/repository/venue_repository"
+        "fmt"
+
+        "github.com/google/uuid"
+)
+
+type VenueService struct {
+        VenueRepo venuerepository.VenueRepository
+}
+
+func NewVenueService(repo venuerepository.VenueRepository) VenueService <span class="cov8" title="1">{
+        return VenueService{VenueRepo: repo}
+}</span>
+
+func (vs *VenueService) CreateVenue(ctx context.Context, hostID, name, city, state string, isSeatLayoutRequired bool) (models.VenueResponse, error) <span class="cov8" title="1">{
+        venueID := uuid.New().String()
+
+        venue := models.Venue{
+                ID:                   venueID,
+                HostID:               hostID,
+                Name:                 name,
+                City:                 city,
+                State:                state,
+                IsSeatLayoutRequired: isSeatLayoutRequired,
+        }
+
+        if err := vs.VenueRepo.Create(&amp;venue); err != nil </span><span class="cov8" title="1">{
+                return models.VenueResponse{}, fmt.Errorf("failed to create venue: %w", err)
+        }</span>
+        <span class="cov8" title="1">venueDTO := models.VenueResponse{
+                ID:                   venueID,
+                HostID:               hostID,
+                Name:                 name,
+                City:                 city,
+                State:                state,
+                IsSeatLayoutRequired: isSeatLayoutRequired,
+        }
+
+        return venueDTO, nil</span>
+}
+
+func (s *VenueService) UpdateVenue(ctx context.Context, venueID, userID, userRole string, update models.UpdateVenueData) (models.VenueResponse, error) <span class="cov8" title="1">{
+        venue, err := s.VenueRepo.GetByID(venueID)
+        if err != nil </span><span class="cov0" title="0">{
+                return models.VenueResponse{}, err
+        }</span>
+
+        // Normal updates: only host can update
+        <span class="cov8" title="1">if venue.HostID != userID &amp;&amp; update.IsBlocked == nil </span><span class="cov8" title="1">{
+                return models.VenueResponse{}, fmt.Errorf("forbidden: cannot update another user's venue")
+        }</span>
+
+        // Apply normal updates
+        <span class="cov8" title="1">if update.Name != nil </span><span class="cov8" title="1">{
+                venue.Name = *update.Name
+        }</span>
+        <span class="cov8" title="1">if update.City != nil </span><span class="cov0" title="0">{
+                venue.City = *update.City
+        }</span>
+        <span class="cov8" title="1">if update.State != nil </span><span class="cov8" title="1">{
+                venue.State = *update.State
+        }</span>
+        <span class="cov8" title="1">if update.IsSeatLayoutRequired != nil </span><span class="cov0" title="0">{
+                venue.IsSeatLayoutRequired = *update.IsSeatLayoutRequired
+        }</span>
+
+        // Moderation: host OR admin can block/unblock
+        <span class="cov8" title="1">if update.IsBlocked != nil </span><span class="cov8" title="1">{
+                if venue.HostID == userID || userRole == "admin" </span><span class="cov8" title="1">{
+                        venue.IsBlocked = *update.IsBlocked
+                }</span> else<span class="cov8" title="1"> {
+                        return models.VenueResponse{}, fmt.Errorf("forbidden: only host or admin can block/unblock")
+                }</span>
+        }
+
+        <span class="cov8" title="1">if err := s.VenueRepo.Update(venue); err != nil </span><span class="cov8" title="1">{
+                return models.VenueResponse{}, err
+        }</span>
+        <span class="cov8" title="1">venueDTO := models.VenueResponse{
+                ID:                   venue.ID,
+                HostID:               venue.HostID,
+                Name:                 venue.Name,
+                City:                 venue.City,
+                State:                venue.State,
+                IsSeatLayoutRequired: venue.IsSeatLayoutRequired,
+        }
+
+        return venueDTO, nil</span>
+}
+
+func (s *VenueService) DeleteVenue(ctx context.Context, venueID, userID, userRole string) error <span class="cov8" title="1">{
+        venue, err := s.VenueRepo.GetByID(venueID)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        // Only host or admin can delete
+        <span class="cov8" title="1">if venue.HostID != userID &amp;&amp; userRole != "admin" </span><span class="cov8" title="1">{
+                return fmt.Errorf("forbidden: cannot delete this venue")
+        }</span>
+
+        <span class="cov8" title="1">if err := s.VenueRepo.Delete(venueID); err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (s *VenueService) BrowseVenues(ctx context.Context, filter models.VenueFilter) ([]models.VenueResponse, error) <span class="cov8" title="1">{
+        venue, err := s.VenueRepo.Find(filter)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed to fetch venues: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">venueDTO := make([]models.VenueResponse, len(venue))
+        for i, v := range venue </span><span class="cov8" title="1">{
+                venueDTO[i] = models.VenueResponse{
+                        ID:                   v.ID,
+                        HostID:               v.HostID,
+                        Name:                 v.Name,
+                        City:                 v.City,
+                        State:                v.State,
+                        IsSeatLayoutRequired: v.IsSeatLayoutRequired,
+                }
+        }</span>
+        <span class="cov8" title="1">return venueDTO, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file36" style="display: none">package responses
+
+import (
+        "encoding/json"
+        "net/http"
+
+        "eventro2/models"
+)
+
+func InvalidRequest(w http.ResponseWriter) <span class="cov8" title="1">{
+        resp := models.CustomResponse{
+                Message:    "Invalid request body",
+                StatusCode: http.StatusBadRequest,
+        }
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusBadRequest)
+        if err := json.NewEncoder(w).Encode(resp); err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+        }</span>
+}
+
+func UnauthorisedRequest(w http.ResponseWriter) <span class="cov8" title="1">{
+        resp := models.CustomResponse{
+                Message:    "Unauthorized",
+                StatusCode: http.StatusUnauthorized,
+        }
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusUnauthorized)
+        if err := json.NewEncoder(w).Encode(resp); err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+        }</span>
+}
+
+func MethodNotAllowed(w http.ResponseWriter) <span class="cov8" title="1">{
+        resp := models.CustomResponse{
+                Message:    "Method not allowed",
+                StatusCode: http.StatusMethodNotAllowed,
+        }
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusMethodNotAllowed)
+        if err := json.NewEncoder(w).Encode(resp); err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+        }</span>
+}
+
+func InternalServerError(w http.ResponseWriter, message string) <span class="cov8" title="1">{
+        resp := models.CustomResponse{
+                Message:    message,
+                StatusCode: http.StatusInternalServerError,
+        }
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusInternalServerError)
+        if err := json.NewEncoder(w).Encode(resp); err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+        }</span>
+}
+
+func CustomError(w http.ResponseWriter, statusCode int, Message string) <span class="cov8" title="1">{
+        resp := models.CustomResponse{
+                Message:    Message,
+                StatusCode: statusCode,
+        }
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(statusCode)
+        if err := json.NewEncoder(w).Encode(resp); err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+        }</span>
+}
+
+func Forbidden(w http.ResponseWriter) <span class="cov8" title="1">{
+        resp := models.CustomResponse{
+                Message:    "Forbidden",
+                StatusCode: http.StatusForbidden,
+        }
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusForbidden)
+        if err := json.NewEncoder(w).Encode(resp); err != nil </span><span class="cov8" title="1">{
+                http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+        }</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
