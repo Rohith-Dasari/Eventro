@@ -38,4 +38,5 @@ type EventResponse struct {
 	Category    string         `json:"category"`
 	IsBlocked   bool           `json:"is_blocked"`
 	ArtistIDs   pq.StringArray `json:"artist_ids" gorm:"type:text[]"`
+	ArtistNames pq.StringArray `json:"artist_names" gorm:"type:text[]"`
 }
