@@ -80,15 +80,29 @@ func (r *EventRepositoryPG) GetEventsByCity(city string) ([]models.Event, error)
 	}
 	return events, nil
 }
-func (r *EventRepositoryPG) GetFilteredEvents(filter models.EventFilter) ([]models.Event, error) {
-	var events []models.Event
-	query := r.db.Model(&models.Event{}).Distinct()
+func (r *EventRepositoryPG) GetFilteredEvents(filter models.EventFilter) ([]models.EventResponse, error) {
+	var events []models.EventResponse
 
+	query := r.db.Table("events").
+		Select(`
+			events.id,
+			events.name,
+			events.description,
+			events.duration,
+			events.category,
+			events.is_blocked,
+			COALESCE(array_agg(a.id) FILTER (WHERE a.id IS NOT NULL), '{}') as artist_ids
+		`).
+		Joins("LEFT JOIN event_artists ea ON ea.event_id = events.id").
+		Joins("LEFT JOIN artists a ON ea.artist_id = a.id").
+		Group("events.id")
+
+	// apply filters
 	if filter.Name != "" {
-		query = query.Where("LOWER(name) LIKE ?", "%"+strings.ToLower(filter.Name)+"%")
+		query = query.Where("LOWER(events.name) LIKE ?", "%"+strings.ToLower(filter.Name)+"%")
 	}
 	if filter.Category != "" {
-		query = query.Where("category = ?", filter.Category)
+		query = query.Where("events.category = ?", filter.Category)
 	}
 	if filter.Location != "" {
 		query = query.Joins("JOIN shows s ON s.event_id = events.id").
@@ -96,18 +110,17 @@ func (r *EventRepositoryPG) GetFilteredEvents(filter models.EventFilter) ([]mode
 			Where("LOWER(v.city) = ?", strings.ToLower(filter.Location))
 	}
 	if filter.IsBlocked != nil {
-		query = query.Where("is_blocked = ?", *filter.IsBlocked)
+		query = query.Where("events.is_blocked = ?", *filter.IsBlocked)
 	}
 	if filter.ArtistName != "" {
-		query = query.Joins("JOIN event_artists ea ON ea.event_id = events.id").
-			Joins("JOIN artists a ON ea.artist_id = a.id").
-			Where("LOWER(a.name) LIKE ?", "%"+strings.ToLower(filter.ArtistName)+"%")
+		query = query.Where("LOWER(a.name) LIKE ?", "%"+strings.ToLower(filter.ArtistName)+"%")
 	}
 	if filter.EventID != "" {
-		query = query.Where("id = ?", filter.EventID)
+		query = query.Where("events.id = ?", filter.EventID)
 	}
 
-	if err := query.Find(&events).Error; err != nil {
+	// execute query
+	if err := query.Scan(&events).Error; err != nil {
 		return nil, err
 	}
 	return events, nil

@@ -59,20 +59,7 @@ func (s *EventService) BrowseEvents(ctx context.Context, filter models.EventFilt
 	if err != nil {
 		return nil, err
 	}
-
-	var responses []models.EventResponse
-	for _, event := range events {
-		responses = append(responses, models.EventResponse{
-			ID:          event.ID,
-			Name:        event.Name,
-			Description: event.Description,
-			Duration:    event.Duration,
-			Category:    string(event.Category),
-			IsBlocked:   event.IsBlocked,
-		})
-	}
-
-	return responses, nil
+	return events, nil
 }
 
 func (e *EventService) DeleteEvent(ctx context.Context, eventID string) error {

@@ -12,5 +12,5 @@ type EventRepository interface {
 	AddEventArtist(ea *models.EventArtist) error
 	GetArtistsByEventID(eventID string) ([]models.Artist, error)
 	GetEventsByCity(city string) ([]models.Event, error)
-	GetFilteredEvents(filter models.EventFilter) ([]models.Event, error)
+	GetFilteredEvents(filter models.EventFilter) ([]models.EventResponse, error)
 }
