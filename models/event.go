@@ -1,5 +1,7 @@
 package models
 
+import "github.com/lib/pq"
+
 type EventCategory string
 
 const (
@@ -29,11 +31,11 @@ type EventArtist struct {
 }
 
 type EventResponse struct {
-	ID          string   `json:"id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Duration    string   `json:"duration"`
-	Category    string   `json:"category"`
-	IsBlocked   bool     `json:"is_blocked"`
-	ArtistIDs   []string `json:"artist_ids"`
+	ID          string         `json:"id"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	Duration    string         `json:"duration"`
+	Category    string         `json:"category"`
+	IsBlocked   bool           `json:"is_blocked"`
+	ArtistIDs   pq.StringArray `json:"artist_ids" gorm:"type:text[]"`
 }

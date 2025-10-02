@@ -91,10 +91,9 @@ func (r *EventRepositoryPG) GetFilteredEvents(filter models.EventFilter) ([]mode
 			events.duration,
 			events.category,
 			events.is_blocked,
-			COALESCE(array_agg(a.id) FILTER (WHERE a.id IS NOT NULL), '{}') as artist_ids
+			COALESCE(array_agg(ea.artist_id) FILTER (WHERE ea.artist_id IS NOT NULL), '{}') as artist_ids
 		`).
 		Joins("LEFT JOIN event_artists ea ON ea.event_id = events.id").
-		Joins("LEFT JOIN artists a ON ea.artist_id = a.id").
 		Group("events.id")
 
 	// apply filters
