@@ -20,3 +20,11 @@ type VenueResponse struct {
 	IsSeatLayoutRequired bool
 	IsBlocked            bool
 }
+
+type VenueDTO struct {
+	ID                   string `json:"id"`
+	Name                 string `json:"name"`
+	City                 string `json:"city"`
+	State                string `json:"state"`
+	IsSeatLayoutRequired bool   `json:"is_seat_layout_required"`
+}

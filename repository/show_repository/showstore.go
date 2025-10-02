@@ -56,7 +56,10 @@ func (r *ShowRepositoryPG) Delete(id string) error {
 
 func (r *ShowRepositoryPG) Find(filter models.ShowFilter) ([]models.Show, error) {
 	var shows []models.Show
-	query := r.db.Model(&models.Show{})
+	query := r.db.Model(&models.Show{}).
+		Preload("Venue").
+		Preload("Event").
+		Preload("Host")
 
 	if filter.ShowID != "" {
 		query = query.Where("id = ?", filter.ShowID)

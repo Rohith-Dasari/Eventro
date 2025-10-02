@@ -38,3 +38,14 @@ type ShowResponse struct {
 	ShowTime    string    `json:"show_time"`
 	BookedSeats []string  `json:"booked_seats"`
 }
+
+type ShowDTO struct {
+	ID          string    `json:"id"`
+	HostID      string    `json:"host_id"`
+	EventID     string    `json:"event_id"`
+	Price       float64   `json:"price"`
+	ShowDate    time.Time `json:"show_date"`
+	ShowTime    string    `json:"show_time"`
+	BookedSeats []string  `json:"booked_seats"`
+	Venue       VenueDTO  `json:"venue"`
+}
