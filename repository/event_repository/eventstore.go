@@ -85,18 +85,19 @@ func (r *EventRepositoryPG) GetFilteredEvents(filter models.EventFilter) ([]mode
 
 	query := r.db.Table("events").
 		Select(`
-			events.id,
-			events.name,
-			events.description,
-			events.duration,
-			events.category,
-			events.is_blocked,
-			COALESCE(array_agg(ea.artist_id) FILTER (WHERE ea.artist_id IS NOT NULL), '{}') as artist_ids
-		`).
+        events.id,
+        events.name,
+        events.description,
+        events.duration,
+        events.category,
+        events.is_blocked,
+        COALESCE(array_agg(DISTINCT ea.artist_id) FILTER (WHERE ea.artist_id IS NOT NULL), '{}') as artist_ids,
+        COALESCE(array_agg(DISTINCT a.name) FILTER (WHERE a.name IS NOT NULL), '{}') as artist_names
+    `).
 		Joins("LEFT JOIN event_artists ea ON ea.event_id = events.id").
+		Joins("LEFT JOIN artists a ON ea.artist_id = a.id").
 		Group("events.id")
 
-	// apply filters
 	if filter.Name != "" {
 		query = query.Where("LOWER(events.name) LIKE ?", "%"+strings.ToLower(filter.Name)+"%")
 	}
@@ -118,7 +119,6 @@ func (r *EventRepositoryPG) GetFilteredEvents(filter models.EventFilter) ([]mode
 		query = query.Where("events.id = ?", filter.EventID)
 	}
 
-	// execute query
 	if err := query.Scan(&events).Error; err != nil {
 		return nil, err
 	}
