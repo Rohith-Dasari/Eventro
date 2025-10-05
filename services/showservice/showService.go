@@ -81,27 +81,12 @@ func (s *ShowService) UpdateShow(ctx context.Context, showID string, userID stri
 	}, nil
 }
 
-func (s *ShowService) BrowseShows(ctx context.Context, filter models.ShowFilter) ([]models.ShowResponse, error) {
+func (s *ShowService) BrowseShows(ctx context.Context, filter models.ShowFilter) ([]models.Show, error) {
 	shows, err := s.ShowRepo.Find(filter)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch shows: %w", err)
 	}
-	showsDTO := make([]models.ShowResponse, len(shows))
-	for i, show := range shows {
-		showsDTO[i] = models.ShowResponse{
-			ID:          show.ID,
-			HostID:      show.HostID,
-			VenueID:     show.VenueID,
-			EventID:     show.EventID,
-			CreatedAt:   show.CreatedAt,
-			IsBlocked:   show.IsBlocked,
-			Price:       show.Price,
-			ShowDate:    show.ShowDate,
-			ShowTime:    show.ShowTime,
-			BookedSeats: show.BookedSeats,
-		}
-	}
-	return showsDTO, nil
+	return shows, nil
 }
 
 func (s *ShowService) CreateShow(ctx context.Context, eventID string, venueID string, hostID string, price float64, showDate time.Time, showTime string) (models.ShowResponse, error) {
