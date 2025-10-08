@@ -5,6 +5,7 @@ import (
 	"eventro2/middleware"
 	"eventro2/models"
 	"eventro2/services/userservice"
+	"eventro2/utils/responses"
 	"net/http"
 	"strings"
 )
@@ -99,8 +100,11 @@ func (h *UserHandler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	query := r.URL.Query()
-	userID := query.Get("userId")
+	userID := r.PathValue("userID")
+	if userID == "" {
+		responses.InvalidRequest(w)
+		return
+	}
 
 	user, err := h.UserService.GetUserByID(r.Context(), userID)
 	if err != nil {
