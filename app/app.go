@@ -134,9 +134,9 @@ func SetupServer(DB *gorm.DB) http.Handler {
 	mux.Handle("PATCH /api/v1/venues/{venueID}", middleware.JWTAuth(venueHandler.UpdateVenue))
 
 	//users
-	mux.Handle("/api/v1/users", middleware.JWTAuth(userHandler.BrowseUsers))
-	mux.Handle("/api/v1/users/", middleware.JWTAuth(userHandler.UpdateUser))
-	mux.Handle("/api/v1/{userID}/profile", middleware.JWTAuth(userHandler.GetUserProfile))
+	mux.Handle("GET /api/v1/users", middleware.JWTAuth(userHandler.BrowseUsers))
+	mux.Handle("PATCH /api/v1/users/", middleware.JWTAuth(userHandler.UpdateUser))
+	mux.Handle("GET /api/v1/{userID}/profile", middleware.JWTAuth(userHandler.GetUserProfile))
 
 	//bookings
 	mux.Handle("POST /api/v1/bookings", middleware.JWTAuth(bookingHandler.CreateBooking))
