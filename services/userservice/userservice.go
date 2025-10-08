@@ -2,9 +2,12 @@ package userservice
 
 import (
 	"context"
+	"errors"
 	"eventro2/models"
 	userrepository "eventro2/repository/user_repository"
 	"fmt"
+
+	"gorm.io/gorm"
 )
 
 type UserService struct {
@@ -24,17 +27,33 @@ func (s *UserService) BrowseUsers(ctx context.Context, userID string, blocked *b
 }
 
 func (s *UserService) GetUserByID(ctx context.Context, userID string) (*models.User, error) {
-	if userID != "" {
-		return s.UserRepo.GetByID(userID)
+	if userID == "" {
+		return nil, fmt.Errorf("invalid user ID")
 	}
-	return nil, fmt.Errorf("invalid user ID")
+
+	user, err := s.UserRepo.GetByID(userID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("user not found")
+		}
+		return nil, err
+	}
+	return user, nil
 }
 
 func (s *UserService) GetUserByMailID(ctx context.Context, mail string) (*models.User, error) {
-	if mail != "" {
-		return s.UserRepo.GetByEmail(mail)
+	if mail == "" {
+		return nil, fmt.Errorf("invalid email")
 	}
-	return nil, fmt.Errorf("invalid user ID")
+
+	user, err := s.UserRepo.GetByEmail(mail)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("user not found")
+		}
+		return nil, err
+	}
+	return user, nil
 }
 
 func (s *UserService) UpdateUser(ctx context.Context, userID string, req models.UpdateUserRequest) (models.User, error) {

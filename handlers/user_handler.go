@@ -108,6 +108,14 @@ func (h *UserHandler) GetUserByMailID(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.UserService.GetUserByMailID(r.Context(), mailID)
 	if err != nil {
+		if err.Error() == "user not found" {
+			http.Error(w, "User not found", http.StatusNotFound)
+			return
+		}
+		if err.Error() == "invalid email" {
+			responses.InvalidRequest(w)
+			return
+		}
 		http.Error(w, "Failed to fetch user: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
