@@ -30,6 +30,13 @@ func (s *UserService) GetUserByID(ctx context.Context, userID string) (*models.U
 	return nil, fmt.Errorf("invalid user ID")
 }
 
+func (s *UserService) GetUserByMailID(ctx context.Context, mail string) (*models.User, error) {
+	if mail != "" {
+		return s.UserRepo.GetByEmail(mail)
+	}
+	return nil, fmt.Errorf("invalid user ID")
+}
+
 func (s *UserService) UpdateUser(ctx context.Context, userID string, req models.UpdateUserRequest) (models.User, error) {
 	user, err := s.UserRepo.GetByID(userID)
 	if err != nil {
