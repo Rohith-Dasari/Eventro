@@ -124,3 +124,20 @@ func (r *EventRepositoryPG) GetFilteredEvents(filter models.EventFilter) ([]mode
 	}
 	return events, nil
 }
+
+func (r *EventRepositoryPG) GetEventsHostedByHost(hostID string) ([]models.Event, error) {
+	var events []models.Event
+
+	sub := r.db.Model(&models.Show{}).
+		Select("event_id").
+		Where("host_id = ?", hostID)
+
+	if err := r.db.
+		Preload("Shows", "host_id = ?", hostID).
+		Where("id IN (?)", sub).
+		Find(&events).Error; err != nil {
+		return nil, err
+	}
+
+	return events, nil
+}

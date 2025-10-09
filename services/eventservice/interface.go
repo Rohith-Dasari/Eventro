@@ -11,4 +11,5 @@ type EventServiceI interface {
 	BrowseEvents(ctx context.Context, filter models.EventFilter) ([]models.EventResponse, error)
 	DeleteEvent(ctx context.Context, eventID string) error
 	UpdateEvent(ctx context.Context, eventID string, updateData models.EventUpdate) (models.EventResponse, error)
+	GetHostEvents(ctx context.Context, hostID string) ([]models.Event, error)
 }

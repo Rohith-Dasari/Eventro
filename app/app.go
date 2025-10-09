@@ -120,6 +120,7 @@ func SetupServer(DB *gorm.DB) http.Handler {
 	mux.Handle("POST /api/v1/events", middleware.JWTAuth(eventHandler.CreateEvent))             //create
 	mux.Handle("PATCH /api/v1/events/{eventID}", middleware.JWTAuth(eventHandler.UpdateEvent))  //patch
 	mux.Handle("DELETE /api/v1/events/{eventID}", middleware.JWTAuth(eventHandler.DeleteEvent)) //delete
+	mux.Handle("GET /api/v1/hosts/{hostID}/events", middleware.JWTAuth(eventHandler.EventsOfHost))
 
 	//shows
 	mux.Handle("GET /api/v1/shows", middleware.JWTAuth(showHandler.BrowseShows))            // browse

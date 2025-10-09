@@ -106,3 +106,7 @@ func (e *EventService) UpdateEvent(ctx context.Context, eventID string, updateDa
 		IsBlocked:   event.IsBlocked,
 	}, nil
 }
+
+func (e *EventService) GetHostEvents(ctx context.Context, hostID string) ([]models.Event, error) {
+	return e.EventRepo.GetEventsHostedByHost(hostID)
+}

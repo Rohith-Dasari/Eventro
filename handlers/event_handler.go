@@ -164,3 +164,28 @@ func (h *EventHandler) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(updatedEvent)
 }
+
+func (h *EventHandler) EventsOfHost(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("hit")
+	if r.Method != http.MethodGet {
+		responses.MethodNotAllowed(w)
+		return
+	}
+	hostID := r.PathValue("hostID")
+	if hostID == "" {
+		responses.InvalidRequest(w)
+		return
+	}
+
+	events, err := h.EventService.GetHostEvents(r.Context(), hostID)
+	if err != nil {
+		responses.InternalServerError(w, "Failed to fetch events")
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(events); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+
+}
