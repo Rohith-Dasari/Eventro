@@ -126,18 +126,24 @@ func (r *EventRepositoryPG) GetFilteredEvents(filter models.EventFilter) ([]mode
 }
 
 func (r *EventRepositoryPG) GetEventsHostedByHost(hostID string) ([]models.Event, error) {
-	var events []models.Event
-
-	sub := r.db.Model(&models.Show{}).
-		Select("event_id").
-		Where("host_id = ?", hostID)
-
+	var eventIDs []string
 	if err := r.db.
-		Preload("Shows", "host_id = ?", hostID).
-		Where("id IN (?)", sub).
-		Find(&events).Error; err != nil {
+		Model(&models.Show{}).
+		Distinct("event_id").
+		Where("host_id = ?", hostID).
+		Pluck("event_id", &eventIDs).Error; err != nil {
 		return nil, err
 	}
 
+	var events []models.Event
+	if len(eventIDs) == 0 {
+		return events, nil
+	}
+
+	if err := r.db.
+		Where("id IN ?", eventIDs).
+		Find(&events).Error; err != nil {
+		return nil, err
+	}
 	return events, nil
 }
