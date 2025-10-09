@@ -6,6 +6,7 @@ import (
 	"eventro2/models"
 	"eventro2/services/venueservice"
 	"eventro2/utils/responses"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -74,29 +75,34 @@ func (h *VenueHandler) UpdateVenue(w http.ResponseWriter, r *http.Request) {
 		responses.MethodNotAllowed(w)
 		return
 	}
+
 	venueID := r.PathValue("venueID")
 	if venueID == "" {
 		responses.InvalidRequest(w)
 		return
 	}
+	fmt.Println("reaching till hereeeee")
 
 	userID, err := middleware.GetUserID(r.Context())
 	if err != nil || userID == "" {
 		responses.UnauthorisedRequest(w)
 		return
 	}
+	fmt.Println("reaching till here")
 
 	userRole, err := middleware.GetUserRole(r.Context())
 	if err != nil || userRole != "Host" {
 		responses.UnauthorisedRequest(w)
 		return
 	}
+	fmt.Println("reaching till here with role")
 
 	var req UpdateVenueRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		responses.InvalidRequest(w)
 		return
 	}
+	fmt.Println("decoded")
 
 	update := models.UpdateVenueData{
 		Name:                 req.Name,
@@ -105,12 +111,15 @@ func (h *VenueHandler) UpdateVenue(w http.ResponseWriter, r *http.Request) {
 		IsSeatLayoutRequired: req.IsSeatLayoutRequired,
 		IsBlocked:            req.IsBlocked,
 	}
+	
 
 	updatedVenue, err := h.VenueService.UpdateVenue(r.Context(), venueID, userID, userRole, update)
 	if err != nil {
+		fmt.Println(err)
 		responses.Forbidden(w)
 		return
 	}
+	fmt.Println("done")
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(updatedVenue)

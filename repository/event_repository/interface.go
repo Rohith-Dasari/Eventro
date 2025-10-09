@@ -13,4 +13,5 @@ type EventRepository interface {
 	GetArtistsByEventID(eventID string) ([]models.Artist, error)
 	GetEventsByCity(city string) ([]models.Event, error)
 	GetFilteredEvents(filter models.EventFilter) ([]models.EventResponse, error)
+	GetEventsHostedByHost(hostID string) ([]models.Event, error)
 }
