@@ -142,6 +142,7 @@ func (h *EventHandler) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//change
+	fmt.Println("reaching update event")
 
 	eventID := r.PathValue("eventID")
 	if eventID == "" {

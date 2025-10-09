@@ -6,6 +6,7 @@ import (
 	"eventro2/models"
 	"eventro2/services/userservice"
 	"eventro2/utils/responses"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -96,15 +97,18 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) GetUserByMailID(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("hitt at getuserbymailid")
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	mailID := r.PathValue("mailID")
+	mailID := r.PathValue("email")
 	if mailID == "" {
 		responses.InvalidRequest(w)
 		return
 	}
+
+	fmt.Println("reaching till here")
 
 	user, err := h.UserService.GetUserByMailID(r.Context(), mailID)
 	if err != nil {
