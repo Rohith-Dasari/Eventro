@@ -125,25 +125,52 @@ func (r *EventRepositoryPG) GetFilteredEvents(filter models.EventFilter) ([]mode
 	return events, nil
 }
 
-func (r *EventRepositoryPG) GetEventsHostedByHost(hostID string) ([]models.Event, error) {
-	var eventIDs []string
-	if err := r.db.
-		Model(&models.Show{}).
-		Distinct("event_id").
-		Where("host_id = ?", hostID).
-		Pluck("event_id", &eventIDs).Error; err != nil {
+// func (r *EventRepositoryPG) GetEventsHostedByHost(hostID string) ([]models.Event, error) {
+// 	var eventIDs []string
+// 	if err := r.db.
+// 		Model(&models.Show{}).
+// 		Distinct("event_id").
+// 		Where("host_id = ?", hostID).
+// 		Pluck("event_id", &eventIDs).Error; err != nil {
+// 		return nil, err
+// 	}
+
+// 	var events []models.Event
+// 	if len(eventIDs) == 0 {
+// 		return events, nil
+// 	}
+
+// 	if err := r.db.
+// 		Where("id IN ?", eventIDs).
+// 		Find(&events).Error; err != nil {
+// 		return nil, err
+// 	}
+// 	return events, nil
+// }
+
+func (r *EventRepositoryPG) GetEventsHostedByHost(hostID string) ([]models.EventResponse, error) {
+	var events []models.EventResponse
+
+	query := r.db.Table("events").
+		Select(`
+			events.id,
+			events.name,
+			events.description,
+			events.duration,
+			events.category,
+			events.is_blocked,
+			COALESCE(array_agg(DISTINCT ea.artist_id) FILTER (WHERE ea.artist_id IS NOT NULL), '{}') AS artist_ids,
+			COALESCE(array_agg(DISTINCT a.name) FILTER (WHERE a.name IS NOT NULL), '{}') AS artist_names
+		`).
+		Joins("JOIN shows s ON s.event_id = events.id").
+		Joins("LEFT JOIN event_artists ea ON ea.event_id = events.id").
+		Joins("LEFT JOIN artists a ON ea.artist_id = a.id").
+		Where("s.host_id = ?", hostID).
+		Group("events.id")
+
+	if err := query.Scan(&events).Error; err != nil {
 		return nil, err
 	}
 
-	var events []models.Event
-	if len(eventIDs) == 0 {
-		return events, nil
-	}
-
-	if err := r.db.
-		Where("id IN ?", eventIDs).
-		Find(&events).Error; err != nil {
-		return nil, err
-	}
 	return events, nil
 }

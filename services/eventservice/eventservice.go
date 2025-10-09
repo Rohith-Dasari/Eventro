@@ -107,6 +107,6 @@ func (e *EventService) UpdateEvent(ctx context.Context, eventID string, updateDa
 	}, nil
 }
 
-func (e *EventService) GetHostEvents(ctx context.Context, hostID string) ([]models.Event, error) {
+func (e *EventService) GetHostEvents(ctx context.Context, hostID string) ([]models.EventResponse, error) {
 	return e.EventRepo.GetEventsHostedByHost(hostID)
 }
