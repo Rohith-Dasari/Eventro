@@ -31,7 +31,7 @@ func (h *EventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 
 	// Admin authorization check
 	role, err := middleware.GetUserRole(r.Context())
-	if err != nil || role != "Admin" {
+	if err != nil || role != "Admin" || role != "Host" {
 		responses.Forbidden(w)
 		return
 	}
