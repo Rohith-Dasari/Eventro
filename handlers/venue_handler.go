@@ -89,7 +89,6 @@ func (h *VenueHandler) UpdateVenue(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("reaching till here")
-
 	userRole, err := middleware.GetUserRole(r.Context())
 	if err != nil || userRole != "Host" {
 		responses.UnauthorisedRequest(w)
@@ -111,7 +110,6 @@ func (h *VenueHandler) UpdateVenue(w http.ResponseWriter, r *http.Request) {
 		IsSeatLayoutRequired: req.IsSeatLayoutRequired,
 		IsBlocked:            req.IsBlocked,
 	}
-	
 
 	updatedVenue, err := h.VenueService.UpdateVenue(r.Context(), venueID, userID, userRole, update)
 	if err != nil {

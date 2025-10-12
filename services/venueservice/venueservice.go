@@ -50,12 +50,10 @@ func (s *VenueService) UpdateVenue(ctx context.Context, venueID, userID, userRol
 		return models.VenueResponse{}, err
 	}
 
-	// Normal updates: only host can update
 	if venue.HostID != userID && update.IsBlocked == nil {
 		return models.VenueResponse{}, fmt.Errorf("forbidden: cannot update another user's venue")
 	}
 
-	// Apply normal updates
 	if update.Name != nil {
 		venue.Name = *update.Name
 	}
@@ -69,7 +67,6 @@ func (s *VenueService) UpdateVenue(ctx context.Context, venueID, userID, userRol
 		venue.IsSeatLayoutRequired = *update.IsSeatLayoutRequired
 	}
 
-	// Moderation: host OR admin can block/unblock
 	if update.IsBlocked != nil {
 		if venue.HostID == userID || userRole == "admin" {
 			venue.IsBlocked = *update.IsBlocked
@@ -88,6 +85,7 @@ func (s *VenueService) UpdateVenue(ctx context.Context, venueID, userID, userRol
 		City:                 venue.City,
 		State:                venue.State,
 		IsSeatLayoutRequired: venue.IsSeatLayoutRequired,
+		IsBlocked:            venue.IsBlocked,
 	}
 
 	return venueDTO, nil
@@ -99,7 +97,6 @@ func (s *VenueService) DeleteVenue(ctx context.Context, venueID, userID, userRol
 		return err
 	}
 
-	// Only host or admin can delete
 	if venue.HostID != userID && userRole != "admin" {
 		return fmt.Errorf("forbidden: cannot delete this venue")
 	}
@@ -126,6 +123,7 @@ func (s *VenueService) BrowseVenues(ctx context.Context, filter models.VenueFilt
 			City:                 v.City,
 			State:                v.State,
 			IsSeatLayoutRequired: v.IsSeatLayoutRequired,
+			IsBlocked:            v.IsBlocked,
 		}
 	}
 	return venueDTO, nil

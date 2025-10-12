@@ -2,6 +2,7 @@ package showrepository
 
 import (
 	"eventro2/models"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -55,11 +56,15 @@ func (r *ShowRepositoryPG) Delete(id string) error {
 }
 
 func (r *ShowRepositoryPG) Find(filter models.ShowFilter) ([]models.Show, error) {
+	now := time.Now()
+
 	var shows []models.Show
 	query := r.db.Model(&models.Show{}).
 		Preload("Venue").
 		Preload("Event").
 		Preload("Host")
+
+	query = query.Where("show_date >= ?", now)
 
 	if filter.ShowID != "" {
 		query = query.Where("id = ?", filter.ShowID)
