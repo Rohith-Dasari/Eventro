@@ -12,7 +12,6 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
 	golang.org/x/crypto v0.31.0
-	gorm.io/gorm v1.31.1
 )
 
 require (
@@ -29,8 +28,5 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.40.2 // indirect
 	github.com/aws/smithy-go v1.23.2 // indirect
-	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/stretchr/testify v1.8.1 // indirect
-	golang.org/x/text v0.21.0 // indirect
 )

@@ -20,6 +20,7 @@ func NewVenueService(repo venuerepository.VenueRepositoryI) *VenueService {
 
 func (vs *VenueService) CreateVenue(ctx context.Context, hostID, name, city, state string, isSeatLayoutRequired bool) (models.VenueResponse, error) {
 	venueID := uuid.New().String()
+	city = strings.ToLower(city)
 
 	venue := models.Venue{
 		ID:     venueID,

@@ -51,7 +51,6 @@ func (s *ShowService) BrowseShows(ctx context.Context, eventID, city, date, venu
 	}
 
 	if hostID != "" {
-		//only keep shows which has shows[i].HostID =hostID
 		filtered := make([]models.ShowDTO, 0, len(shows))
 		for _, show := range shows {
 			if show.HostID == hostID {
@@ -59,6 +58,22 @@ func (s *ShowService) BrowseShows(ctx context.Context, eventID, city, date, venu
 			}
 		}
 		return filtered, nil
+	}
+
+	userRole, err := authenticationmiddleware.GetUserRole(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if strings.ToLower(userRole) == "customer" {
+		filtered := make([]models.ShowDTO, 0, len(shows))
+		for _, show := range shows {
+			if !show.IsBlocked {
+				filtered = append(filtered, show)
+			}
+		}
+		return filtered, nil
+
 	}
 	return shows, nil
 }
@@ -93,6 +108,24 @@ func (s *ShowService) GetShowByID(ctx context.Context, showID string) (*models.S
 
 	if show, err = s.ShowRepo.GetByID(ctx, showID); err != nil {
 		return &models.ShowDTO{}, fmt.Errorf("failed to retrieve show: %w", err)
+	}
+
+	userRole, err := authenticationmiddleware.GetUserRole(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if strings.ToLower(userRole) == "host" {
+		userEmail, err := authenticationmiddleware.GetUserEmail(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if show.HostID != userEmail {
+			return nil, fmt.Errorf("host cannot retrieve other's shows")
+		}
+	} else if strings.ToLower(userRole) == "customer" {
+		if show.IsBlocked {
+			return nil, nil
+		}
 	}
 	return show, nil
 }
